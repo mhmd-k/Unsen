@@ -106,12 +106,15 @@ function Header() {
               <NavLink to="wishlist">
                 <BsSuitHeart />
               </NavLink>
-              <Link onClick={() => setCartShow(!cartShow)}>
+              <button
+                className="btn cart-btn fs-4"
+                onClick={() => setCartShow(!cartShow)}
+              >
                 <span style={{ fontSize: 14, fontWeight: "600" }}>
                   {formatCurrency(total)}
                 </span>{" "}
                 <BsCart4 />
-              </Link>
+              </button>
             </div>
           </Navbar.Collapse>
         </Container>
@@ -143,9 +146,12 @@ function Header() {
             <NavLink to="wishlist">
               <BsSuitHeart />
             </NavLink>
-            <Link onClick={() => setCartShow(!cartShow)}>
+            <button
+              className="btn cart-btn fs-4"
+              onClick={() => setCartShow(!cartShow)}
+            >
               <BsCart4 />
-            </Link>
+            </button>
           </div>
         </Container>
       </Navbar>

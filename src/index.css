@@ -99,6 +99,13 @@ input:focus {
   flex-direction: column;
   padding: 0;
 }
+.cart-btn {
+  padding: 0;
+  gap: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 /* end header */
 /* landing */
 .landing h2 {
