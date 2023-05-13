@@ -13,7 +13,7 @@ function Layout() {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-    }, 1500);
+    }, 1000);
   }, [pathname]);
 
   return (
