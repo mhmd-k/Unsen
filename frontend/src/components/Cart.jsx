@@ -4,6 +4,7 @@ import CartProductCard from "./CartProductCard";
 import { formatCurrency } from "../utils/formatCurrency";
 import { useCartConext } from "../context/cartContext";
 
+// eslint-disable-next-line react/prop-types
 export default function Cart({ setCartShow }) {
   const { cart, total } = useCartConext();
   const navigate = useNavigate();

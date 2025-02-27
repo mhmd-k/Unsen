@@ -2,6 +2,7 @@ import { useState, useContext, createContext, useEffect } from "react";
 
 const AlertContext = createContext(undefined);
 
+// eslint-disable-next-line react/prop-types
 export default function AlertProvider({ children }) {
   const [state, setState] = useState({
     isOpen: false,

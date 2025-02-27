@@ -1,14 +1,19 @@
-import { BsCart2, BsEye } from "react-icons/bs";
+import { BsSuitHeart, BsCart2, BsEye, BsFillHeartFill } from "react-icons/bs";
 import { formatCurrency } from "../utils/formatCurrency";
-import { AiOutlineClose } from "react-icons/ai";
-import { useWishlistContext } from "../context/WishlistContext";
 import { useCartConext } from "../context/cartContext";
+import { useWishlistContext } from "../context/WishlistContext";
+import { memo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function WishlistCard({ id, imageUrl, title, price, type }) {
-  const { removeFromWishlist } = useWishlistContext();
+// eslint-disable-next-line react/prop-types
+let ProductCard = ({ id, imageUrl, title, price, type }) => {
+  const { inWishlist, addToWishlist, removeFromWishlist } =
+    useWishlistContext();
 
+  const [heartClicked, setHeartClicked] = useState(inWishlist(id));
   const { addItem } = useCartConext();
+
+  const exists = inWishlist(id);
 
   const navigate = useNavigate();
 
@@ -20,14 +25,27 @@ function WishlistCard({ id, imageUrl, title, price, type }) {
     navigate(`/shop/${id}`, { state: { isLoading: true } });
   }
 
+  function handleClick(item) {
+    if (heartClicked) {
+      removeFromWishlist(item.id);
+    } else {
+      addToWishlist(item);
+    }
+    setHeartClicked(!heartClicked);
+  }
+
   return (
     <div className="card position-relative">
       <button
         className="btn wishlist"
         title="Add to wishlist"
-        onClick={() => removeFromWishlist(id)}
+        style={{
+          backgroundColor: exists ? "#E33131" : "white",
+          color: exists ? "white" : "black",
+        }}
+        onClick={() => handleClick({ id, imageUrl, title, price, type })}
       >
-        <AiOutlineClose />
+        {inWishlist(id) ? <BsFillHeartFill /> : <BsSuitHeart />}
       </button>
       <div className="image">
         <img src={imageUrl} alt="..." />
@@ -58,6 +76,8 @@ function WishlistCard({ id, imageUrl, title, price, type }) {
       <p className="text-muted">{formatCurrency(price)}</p>
     </div>
   );
-}
+};
 
-export default WishlistCard;
+ProductCard = memo(ProductCard);
+
+export default ProductCard;

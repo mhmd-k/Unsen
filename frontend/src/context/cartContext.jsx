@@ -3,6 +3,7 @@ import { useAlertContext } from "./AlertContext";
 
 const CartContext = createContext(undefined);
 
+// eslint-disable-next-line react/prop-types
 export default function CartProvider({ children }) {
   const [cart, setCart] = useState(
     JSON.parse(sessionStorage.getItem("cart")) || []

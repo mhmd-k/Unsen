@@ -6,7 +6,11 @@ function Footer() {
       <Container>
         All Rights Reserved © 2023 <span>Unsen</span> store - Developed by{" "}
         <span>
-          <a href="https://mhmd-k.github.io/portfolio/" target="_blank">
+          <a
+            href="https://mhmd-k.github.io/portfolio/"
+            target="_blank"
+            rel="noreferrer"
+          >
             Mohammad Alkayyali
           </a>
         </span>

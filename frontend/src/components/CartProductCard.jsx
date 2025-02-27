@@ -1,10 +1,11 @@
-import React from "react";
 import { Stack } from "react-bootstrap";
 import { formatCurrency } from "../utils/formatCurrency";
 import { useCartConext } from "../context/cartContext";
 import { BsTrash } from "react-icons/bs";
+import { memo } from "react";
 
-function CartProductCard({ id, imageUrl, title, price, quantity }) {
+// eslint-disable-next-line react/prop-types
+let CartProductCard = ({ id, imageUrl, title, price, quantity }) => {
   const { increaseQuantity, decreaseQuantity, setQuantity } = useCartConext();
 
   function handleChange(e) {
@@ -59,6 +60,8 @@ function CartProductCard({ id, imageUrl, title, price, quantity }) {
       </Stack>
     </Stack>
   );
-}
+};
+
+CartProductCard = memo(CartProductCard);
 
 export default CartProductCard;

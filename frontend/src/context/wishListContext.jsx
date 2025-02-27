@@ -3,6 +3,7 @@ import { useAlertContext } from "./AlertContext";
 
 const WishlistContext = createContext(undefined);
 
+// eslint-disable-next-line react/prop-types
 export default function WishlistProvider({ children }) {
   const [wishlist, setWishlist] = useState(
     JSON.parse(localStorage.getItem("wishlist")) || []
