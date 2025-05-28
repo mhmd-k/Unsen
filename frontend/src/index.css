@@ -117,6 +117,8 @@ input:focus {
   color: var(--text-color);
 }
 .landing-btn {
+  width: 200px;
+  text-align: center;
   border-radius: 20px;
   background-color: var(--btn-color);
   color: white;
@@ -158,7 +160,7 @@ input:focus {
   -ms-transform: translateY(-70px);
   -o-transform: translateY(-70px);
 }
-.carousel-item button {
+.carousel-item a {
   opacity: 0;
   transform: translateX(100px);
   -webkit-transform: translateX(100px);
@@ -173,7 +175,7 @@ input:focus {
   transition-delay: 0.3s;
 }
 .carousel-item.active h2,
-.carousel-item.active button {
+.carousel-item.active a {
   opacity: 1;
 }
 .carousel-item.active h2 {
@@ -183,7 +185,7 @@ input:focus {
   -ms-transform: translateY(0);
   -o-transform: translateY(0);
 }
-.carousel-item.active button {
+.carousel-item.active a {
   transform: translateX(0);
   -webkit-transform: translateX(0);
   -moz-transform: translateX(0);
@@ -201,7 +203,7 @@ input:focus {
   margin: 0;
   display: flex;
   flex-direction: column;
-  top: 50%;
+  top: 60%;
   padding-left: 20px;
 }
 .carousel-indicators button {
@@ -599,7 +601,7 @@ button.add-to-wishlist:hover span {
 }
 /* end product detail */
 /* alert */
-.alert {
+.global-alert {
   transition: var(--main-transition);
   opacity: 0;
   transform: translateY(-50%);
@@ -617,7 +619,7 @@ button.add-to-wishlist:hover span {
   -ms-transform: translateY(-50%);
   -o-transform: translateY(-50%);
 }
-.alert.show {
+.global-alert.show {
   opacity: 1;
   transform: translateY(0%);
   -webkit-transform: translateY(0%);
@@ -631,3 +633,11 @@ footer span a {
   color: var(--main-color);
 }
 /* end footer */
+
+/* signup */
+.signup-bg {
+  flex: 1;
+  background-image: url(./assets/images/landing/Electronic-2.png);
+  background-position: center;
+  background-size: cover;
+}

@@ -1,6 +1,6 @@
 import { Stack } from "react-bootstrap";
-import { formatCurrency } from "../utils/formatCurrency";
-import { useCartConext } from "../context/cartContext";
+import { formatCurrency } from "../lib/utils";
+import { useCartConext } from "../contexts/CartContext";
 import { BsTrash } from "react-icons/bs";
 import { memo } from "react";
 

@@ -1,8 +1,8 @@
 import { BsCart2, BsEye } from "react-icons/bs";
-import { formatCurrency } from "../utils/formatCurrency";
+import { formatCurrency } from "../lib/utils";
 import { AiOutlineClose } from "react-icons/ai";
-import { useWishlistContext } from "../context/WishlistContext";
-import { useCartConext } from "../context/cartContext";
+import { useWishlistContext } from "../contexts/WishListContext";
+import { useCartConext } from "../contexts/CartContext";
 import { useNavigate } from "react-router-dom";
 import { memo } from "react";
 

@@ -1,15 +1,15 @@
-const express = require("express");
-const cors = require("cors");
-const credentials = require("./middleware/credentials");
-const cookieParser = require("cookie-parser");
-const corsOptions = require("./config/corsOptions");
-const authRoutes = require("./routes/authRouter");
-require("dotenv").config();
+import express from "express";
+import cors from "cors";
+import credentials from "./middleware/credentials.js";
+import cookieParser from "cookie-parser";
+import corsOptions from "./config/corsOptions.js";
+import authRoutes from "./routes/authRouter.js";
+import "dotenv/config";
+import { connectDB } from "./config/db.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-const connectDB = require("./config/db");
 connectDB();
 
 // Middlewares
@@ -40,6 +40,4 @@ app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
 
-module.exports = {
-  app,
-};
+export { app };

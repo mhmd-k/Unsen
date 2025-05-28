@@ -9,8 +9,8 @@ import { Link, NavLink } from "react-router-dom";
 import { BsTextLeft, BsCart4, BsSuitHeart, BsSearch } from "react-icons/bs";
 import { AiOutlineClose } from "react-icons/ai";
 import Cart from "./Cart";
-import { useCartConext } from "../context/cartContext";
-import { formatCurrency } from "../utils/formatCurrency";
+import { useCartConext } from "../contexts/CartContext";
+import { formatCurrency } from "../lib/utils";
 
 const categories = ["Headphones", "Phone cases", "Speakers", "Phone Cases"];
 

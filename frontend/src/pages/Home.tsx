@@ -1,52 +1,55 @@
-import { Carousel, Col, Container, Row, Figure } from "react-bootstrap";
+import { Carousel, Col, Container, Row, Figure, Stack } from "react-bootstrap";
 import { BsFillArrowRightCircleFill } from "react-icons/bs";
-import Button from "react-bootstrap/Button";
 import imageone from "../assets/images/catigories/cate1.png";
 import imageTwo from "../assets/images/catigories/cate2.png";
 import imageThree from "../assets/images/catigories/cate3.png";
 import imageFour from "../assets/images/catigories/cate4.png";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+
+const carouselItems = [
+  {
+    title: "Color your look",
+    subtitle: "Featured Apple Accessories",
+  },
+  {
+    title: "New arrivals",
+    subtitle: "Sale up to 30% today",
+  },
+  {
+    title: "Accessories",
+    subtitle: "New arrivals collection",
+  },
+];
 
 function Home() {
-  const navigate = useNavigate();
-
-  function handleClick() {
-    navigate("shop");
-  }
+  const { user } = useAuth();
 
   return (
     <>
       <div className="landing">
         <Carousel keyboard={false} controls={false}>
-          <Carousel.Item>
-            <Carousel.Caption>
-              <h2 className="text-dark">Color your look</h2>
-              <p>Featured Apple Accessories</p>
-              <Button className="landing-btn" onClick={handleClick}>
-                SHOP NOW <BsFillArrowRightCircleFill />
-              </Button>
-            </Carousel.Caption>
-          </Carousel.Item>
-          <Carousel.Item>
-            <Carousel.Caption>
-              <h2 className="text-dark">New arrivals</h2>
-              <p>Sale up to 30% today</p>
-              <Button className="landing-btn" onClick={handleClick}>
-                SHOP NOW <BsFillArrowRightCircleFill />
-              </Button>
-            </Carousel.Caption>
-          </Carousel.Item>
-          <Carousel.Item>
-            <Carousel.Caption>
-              <h2 className="text-dark">Accessories</h2>
-              <p>New arrivals collection</p>
-              <Button className="landing-btn" onClick={handleClick}>
-                SHOP NOW <BsFillArrowRightCircleFill />
-              </Button>
-            </Carousel.Caption>
-          </Carousel.Item>
+          {carouselItems.map((item, index) => (
+            <Carousel.Item key={index}>
+              <Carousel.Caption>
+                <h2 className="text-dark">{item.title}</h2>
+                <p>{item.subtitle}</p>
+                <Stack gap={2}>
+                  <Link className="landing-btn" to="/shop">
+                    SHOP NOW <BsFillArrowRightCircleFill />
+                  </Link>
+                  {!user && (
+                    <Link className="landing-btn" to="/signup">
+                      Create Account <BsFillArrowRightCircleFill />
+                    </Link>
+                  )}
+                </Stack>
+              </Carousel.Caption>
+            </Carousel.Item>
+          ))}
         </Carousel>
       </div>
+
       <div className="categories pb-5">
         <h3 className="fs-2 text-center py-5">Top Categories</h3>
         <Container>

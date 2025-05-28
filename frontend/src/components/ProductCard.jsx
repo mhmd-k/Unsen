@@ -1,7 +1,7 @@
 import { BsSuitHeart, BsCart2, BsEye, BsFillHeartFill } from "react-icons/bs";
-import { formatCurrency } from "../utils/formatCurrency";
-import { useCartConext } from "../context/cartContext";
-import { useWishlistContext } from "../context/WishlistContext";
+import { formatCurrency } from "../lib/utils";
+import { useCartConext } from "../contexts/CartContext";
+import { useWishlistContext } from "../contexts/WishListContext";
 import { memo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 

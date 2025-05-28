@@ -1,8 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Stack } from "react-bootstrap";
 import CartProductCard from "./CartProductCard";
-import { formatCurrency } from "../utils/formatCurrency";
-import { useCartConext } from "../context/cartContext";
+import { formatCurrency } from "../lib/utils";
+import { useCartConext } from "../contexts/CartContext";
 
 // eslint-disable-next-line react/prop-types
 export default function Cart({ setCartShow }) {
@@ -12,10 +12,6 @@ export default function Cart({ setCartShow }) {
     setCartShow();
     navigate("shop");
   }
-
-  const products = cart.map((product) => (
-    <CartProductCard key={product.id} {...product} />
-  ));
 
   if (cart.length === 0) {
     return (
@@ -41,7 +37,10 @@ export default function Cart({ setCartShow }) {
   return (
     <div className="cart" style={{ overflowY: "scroll" }}>
       <Stack gap={2} direction="column" style={{ flex: 0 }}>
-        {products}
+        {/* products in cart */}
+        {cart.map((product) => (
+          <CartProductCard key={product.id} {...product} />
+        ))}
       </Stack>
       <div className="bottom-cart-total p-3">
         <Stack direction="horizontal">

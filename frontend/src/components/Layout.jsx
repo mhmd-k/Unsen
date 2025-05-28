@@ -1,32 +1,23 @@
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
-import { useState, useEffect } from "react";
-import loader from "../assets/icons/Infinity-1s-150px (1).svg";
+import { useAuth } from "../contexts/AuthContext";
+import { Alert } from "react-bootstrap";
 
 function Layout() {
-  const [isLoading, setIsLoading] = useState(false);
-  const { pathname } = useLocation();
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-  }, [pathname]);
+  const { user, isAuthenticated } = useAuth();
 
   return (
     <>
       <Header />
       <main>
-        {isLoading ? (
-          <div className="loader" style={{ height: "60vh" }}>
-            <img src={loader} alt="" style={{ width: "100px" }} />
-          </div>
-        ) : (
-          <Outlet />
+        {user && !isAuthenticated && (
+          <Alert variant="warning">
+            You can&apos;t place an order or sell an item until you verify your
+            email!
+          </Alert>
         )}
+        <Outlet />
       </main>
       <Footer />
     </>

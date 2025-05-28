@@ -1,7 +1,7 @@
 import { Col, Container, Row } from "react-bootstrap";
-import { useCartConext } from "../context/cartContext";
-import { useWishlistContext } from "../context/WishlistContext";
-import { formatCurrency } from "../utils/formatCurrency";
+import { useCartConext } from "../contexts/CartContext";
+import { useWishlistContext } from "../contexts/WishListContext";
+import { formatCurrency } from "../lib/utils";
 import { BsSuitHeart } from "react-icons/bs";
 import { data } from "../data/data";
 import ProductCard from "../components/ProductCard";

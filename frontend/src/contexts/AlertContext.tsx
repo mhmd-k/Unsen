@@ -1,9 +1,31 @@
-import { useState, useContext, createContext, useEffect } from "react";
+import {
+  useState,
+  useContext,
+  createContext,
+  useEffect,
+  ReactNode,
+} from "react";
 
-const AlertContext = createContext(undefined);
+type AlertState = {
+  isOpen: boolean;
+  type: string;
+  message: string;
+};
 
-// eslint-disable-next-line react/prop-types
-export default function AlertProvider({ children }) {
+type AlertContextType = AlertState & {
+  onOpen: (type: string, message: string) => void;
+  onClose: () => void;
+};
+
+const AlertContext = createContext<AlertContextType>({
+  isOpen: false,
+  type: "",
+  message: "",
+  onOpen: () => {},
+  onClose: () => {},
+});
+
+export function AlertProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState({
     isOpen: false,
     type: "info",
@@ -22,7 +44,7 @@ export default function AlertProvider({ children }) {
     return () => clearTimeout(timeId);
   }, [state]);
 
-  const onOpen = (type, message) => {
+  const onOpen = (type: string, message: string) => {
     setState({
       isOpen: true,
       type,

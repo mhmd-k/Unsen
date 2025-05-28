@@ -1,4 +1,4 @@
-import { useWishlistContext } from "../context/WishlistContext";
+import { useWishlistContext } from "../contexts/WishListContext";
 import WishlistCard from "../components/WishlistCard";
 import { Container, Stack } from "react-bootstrap";
 import { Link } from "react-router-dom";

@@ -1,13 +1,14 @@
 import { useContext, createContext, useState, useEffect } from "react";
 import { useAlertContext } from "./AlertContext";
 
-const WishlistContext = createContext(undefined);
+const WishlistContext = createContext({});
 
 // eslint-disable-next-line react/prop-types
-export default function WishlistProvider({ children }) {
-  const [wishlist, setWishlist] = useState(
-    JSON.parse(localStorage.getItem("wishlist")) || []
-  );
+export function WishlistProvider({ children }) {
+  const [wishlist, setWishlist] = useState(() => {
+    const storedWishlist = localStorage.getItem("wishlist");
+    return storedWishlist ? JSON.parse(storedWishlist) : null;
+  });
   const { onOpen } = useAlertContext();
 
   useEffect(() => {
@@ -48,6 +49,7 @@ export default function WishlistProvider({ children }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useWishlistContext() {
   return useContext(WishlistContext);
 }

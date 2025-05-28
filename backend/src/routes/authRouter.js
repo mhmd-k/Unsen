@@ -1,11 +1,14 @@
-const express = require("express");
-const AuthController = require("../controllers/authController");
+import express from "express";
+import authController from "../controllers/authController.js";
+import verifyJWT from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.post("/signup", AuthController.signup);
-router.post("/login", AuthController.login);
-router.post("/logout", AuthController.logout);
-router.post("/refresh-token", AuthController.refreshToken);
+router.post("/signup", authController.signup);
+router.post("/login", authController.login);
+router.post("/verify-email", authController.verifyEmail);
+router.post("/resend-verification", authController.resendVerificationEmail);
+router.get("/refresh", authController.refreshToken);
+router.post("/logout", verifyJWT, authController.logout);
 
-module.exports = router;
+export default router;

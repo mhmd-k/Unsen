@@ -1,17 +1,19 @@
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
 
-function verifyToken(req, res, next) {
-  const token = req.header("Authorization").split(" ")[1];
+const verifyJWT = (req, res, next) => {
+  const authHeader = req.headers.authorization || req.headers.Authorization;
 
-  if (!token) return res.status(401).json({ error: "Access denied" });
-
-  try {
-    const decoded = jwt.verify(token, process.env.ACCESS_SECRET);
-    req.userId = decoded.userId;
-    next();
-  } catch (error) {
-    res.status(401).json({ error: "Invalid token" });
+  if (!authHeader?.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "Unauthorized" });
   }
-}
 
-module.exports = verifyToken;
+  const token = authHeader.split(" ")[1];
+
+  jwt.verify(token, process.env.ACCESS_SECRET, (err, decoded) => {
+    if (err) return res.status(403).json({ message: "Forbidden" });
+    req.user = decoded;
+    next();
+  });
+};
+
+export default verifyJWT;

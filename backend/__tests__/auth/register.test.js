@@ -27,7 +27,14 @@ describe("POST /signup", () => {
   });
 
   it("should return 409 if user already exists", async () => {
-    User.findOne.mockResolvedValue({ email: "test@example.com" });
+    User.findOne.mockResolvedValue({
+      get: () => ({
+        email: "test@example.com",
+        id: 1,
+        username: "testuser",
+        role: "CUSTOMER",
+      }),
+    });
 
     const response = await request(app).post("/signup").send({
       username: "testuser",
@@ -40,15 +47,16 @@ describe("POST /signup", () => {
   });
 
   it("should return 201 and create a new user", async () => {
+    const hashedPassword = await bcrypt.hash("password123", 10);
     User.findOne.mockResolvedValue(null);
-    User.prototype.save = jest.fn().mockResolvedValue({
-      _doc: {
-        _id: "605c5d7d11111e0a1247e011",
+    User.create.mockResolvedValue({
+      get: () => ({
+        id: 1,
         username: "testuser",
         email: "test@example.com",
-        password: await bcrypt.hash("password123", 10),
+        password: hashedPassword,
         role: "CUSTOMER",
-      },
+      }),
     });
 
     const response = await request(app).post("/signup").send({
@@ -58,11 +66,9 @@ describe("POST /signup", () => {
       role: "CUSTOMER",
     });
 
-    console.log("Response:", response.body);
-
     expect(response.status).toBe(201);
     expect(response.body).toEqual({
-      id: "605c5d7d11111e0a1247e011",
+      id: 1,
       username: "testuser",
       email: "test@example.com",
       role: "CUSTOMER",
@@ -77,7 +83,7 @@ describe("POST /signup", () => {
       username: "testuser",
       email: "test@example.com",
       password: "password123",
-      role: "user",
+      role: "CUSTOMER",
     });
 
     expect(response.status).toBe(500);
