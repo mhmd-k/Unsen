@@ -11,7 +11,7 @@ body {
 #root {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -20,6 +20,8 @@ input::-webkit-inner-spin-button {
 }
 main {
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 .nav-link {
   padding: 0;
@@ -634,10 +636,31 @@ footer span a {
 }
 /* end footer */
 
-/* signup */
-.signup-bg {
-  flex: 1;
+/* signup & login*/
+.login-signup-bg {
   background-image: url(./assets/images/landing/Electronic-2.png);
   background-position: center;
   background-size: cover;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-link {
+  display: block;
+  width: 100%;
+  border-bottom: 2px solid transparent;
+  font-weight: 400;
+  transition: var(--main-transition);
+  -webkit-transition: var(--main-transition);
+  -moz-transition: var(--main-transition);
+  -ms-transition: var(--main-transition);
+  -o-transition: var(--main-transition);
+}
+.auth-link:hover,
+.auth-link.active {
+  font-weight: 500;
+  border-bottom: 2px solid var(--btn-color);
+  color: var(--btn-color);
 }

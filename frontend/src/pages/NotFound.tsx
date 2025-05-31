@@ -1,7 +1,7 @@
 import { Container } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-function ErrorElement() {
+function NotFound() {
   return (
     <Container
       style={{ height: "60vh" }}
@@ -15,4 +15,4 @@ function ErrorElement() {
   );
 }
 
-export default ErrorElement;
+export default NotFound;

@@ -6,47 +6,66 @@ import {
   ReactNode,
 } from "react";
 import { AuthContextType, AuthUser } from "../types";
+import { useNavigate } from "react-router-dom";
+import { axiosPrivate } from "../api/axios";
+import toast from "react-hot-toast";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const AUTH_STORAGE_KEY = "auth_user";
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(() => {
-    // Initialize from localStorage
-    const storedUser = localStorage.getItem(AUTH_STORAGE_KEY);
-    return storedUser ? JSON.parse(storedUser) : null;
-  });
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-  const isAuthenticated = !!user;
+  console.log(user);
 
-  console.log("user: ", user);
-
-  // Update localStorage when user changes
+  // Check for existing session on mount
   useEffect(() => {
-    if (user) {
-      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
-    } else {
-      localStorage.removeItem(AUTH_STORAGE_KEY);
+    const checkAuth = async () => {
+      try {
+        const { data } = await axiosPrivate.get("/auth/refresh");
+        setUser(data.user);
+      } catch (error) {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
+  const logout = async () => {
+    try {
+      await axiosPrivate.post(
+        "/auth/logout",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${user?.accessToken}`,
+          },
+        }
+      );
+      setUser(null);
+      toast.success("Successfully logged out");
+      navigate("/login");
+    } catch (error: any) {
+      console.error("Logout error:", error);
+      toast.error(
+        error?.message ||
+          "An error occured while logging you out! please try again"
+      );
     }
-  }, [user]);
+  };
 
-  const login = (userData: AuthUser) => {
+  const updateUser = (userData: AuthUser | null) => {
     setUser(userData);
-  };
-
-  const logout = () => {
-    setUser(null);
-  };
-
-  const updateUser = (userData: Partial<AuthUser>) => {
-    setUser((prev) => (prev ? { ...prev, ...userData } : null));
   };
 
   const value = {
     user,
-    isAuthenticated,
-    login,
+    loading,
+    isAuthenticated: !!user,
     logout,
     updateUser,
   };

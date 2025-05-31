@@ -57,8 +57,8 @@ export interface AuthUser {
 
 export interface AuthContextType {
   user: AuthUser | null;
+  loading: boolean;
   isAuthenticated: boolean;
-  login: (user: AuthUser) => void;
   logout: () => void;
-  updateUser: (user: Partial<AuthUser>) => void;
+  updateUser: (user: AuthUser) => void;
 }

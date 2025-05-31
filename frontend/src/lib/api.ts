@@ -7,14 +7,7 @@ import {
   VerifyEmailResponse,
 } from "../types/auth";
 import { ApiError } from "../types/api";
-import { API_URL } from "./constants";
-
-const api = axios.create({
-  baseURL: API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+import { api } from "../api/axios";
 
 // Error handler for axios requests
 function handleAxiosError(error: unknown): never {
@@ -56,7 +49,9 @@ export async function signup(data: SignupData): Promise<SignupResponse> {
 
 export async function login(data: LoginData): Promise<LoginResponse> {
   try {
-    const response = await api.post<LoginResponse>("/auth/login", data);
+    const response = await api.post<LoginResponse>("/auth/login", data, {
+      withCredentials: true,
+    });
     return response.data;
   } catch (error) {
     handleAxiosError(error);
@@ -65,9 +60,15 @@ export async function login(data: LoginData): Promise<LoginResponse> {
 
 export async function verifyEmail(token: string): Promise<VerifyEmailResponse> {
   try {
-    const response = await api.post<VerifyEmailResponse>("/auth/verify-email", {
-      token,
-    });
+    const response = await api.post<VerifyEmailResponse>(
+      "/auth/verify-email",
+      {
+        token,
+      },
+      {
+        withCredentials: true,
+      }
+    );
     return response.data;
   } catch (error) {
     handleAxiosError(error);

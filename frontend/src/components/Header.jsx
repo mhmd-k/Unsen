@@ -6,11 +6,18 @@ import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import { Link, NavLink } from "react-router-dom";
-import { BsTextLeft, BsCart4, BsSuitHeart, BsSearch } from "react-icons/bs";
+import {
+  BsTextLeft,
+  BsCart4,
+  BsSuitHeart,
+  BsSearch,
+  BsPerson,
+} from "react-icons/bs";
 import { AiOutlineClose } from "react-icons/ai";
 import Cart from "./Cart";
 import { useCartConext } from "../contexts/CartContext";
 import { formatCurrency } from "../lib/utils";
+import { useAuth } from "../contexts/AuthContext";
 
 const categories = ["Headphones", "Phone cases", "Speakers", "Phone Cases"];
 
@@ -19,10 +26,16 @@ function Header() {
   const [cartShow, setCartShow] = useState(false);
 
   const { total } = useCartConext();
+  const { logout, isAuthenticated } = useAuth();
 
   function handleClick() {
     setCartShow(!cartShow);
   }
+
+  const handleLogout = () => {
+    setShow(false);
+    logout();
+  };
 
   const categoriesArr = categories.map((e) => (
     <NavLink
@@ -103,6 +116,20 @@ function Header() {
               <Link to="shop" state={{ search: true }}>
                 <BsSearch />
               </Link>
+              {isAuthenticated && (
+                <NavDropdown
+                  title={<BsPerson />}
+                  id="profile-dropdown"
+                  className="text-dark"
+                >
+                  <NavDropdown.Item as={Link} to="/profile">
+                    Profile
+                  </NavDropdown.Item>
+                  <NavDropdown.Item onClick={handleLogout}>
+                    Logout
+                  </NavDropdown.Item>
+                </NavDropdown>
+              )}
               <NavLink to="wishlist">
                 <BsSuitHeart />
               </NavLink>
@@ -164,7 +191,7 @@ function Header() {
             onClick={() => setShow(!show)}
           />
         </Offcanvas.Header>
-        <Offcanvas.Body className="d-lg-none p-0">
+        <Offcanvas.Body className="d-lg-none p-0 d-flex flex-column justify-content-between">
           <Nav className="links">
             <NavLink
               to="/"
@@ -188,7 +215,22 @@ function Header() {
             >
               {categoriesArr}
             </NavDropdown>
+            <NavLink
+              to="profile"
+              onClick={() => setShow(!show)}
+              className="text-decoration-none"
+            >
+              Profile
+            </NavLink>
           </Nav>
+          <Button
+            variant="danger mb-4 mx-4"
+            size="lg"
+            style={{ borderRadius: "30px" }}
+            onClick={handleLogout}
+          >
+            Log out
+          </Button>
         </Offcanvas.Body>
       </Offcanvas>
       <Offcanvas

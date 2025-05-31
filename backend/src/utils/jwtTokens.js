@@ -21,7 +21,7 @@ export const generateRefreshToken = (user) => {
 export const storeRefreshTokenInCookie = (res, token) => {
   res.cookie("refreshToken", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: true,
     sameSite: "strict",
     maxAge: 24 * 60 * 60 * 1000, // 1 day
   });
