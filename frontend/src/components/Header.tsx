@@ -26,7 +26,13 @@ function Header() {
   const [cartShow, setCartShow] = useState(false);
 
   const { total } = useCartConext();
-  const { logout, isAuthenticated } = useAuth();
+  const { logout, isAuthenticated, user } = useAuth();
+
+  const navLinks = [
+    { path: "/", label: "Home" },
+    { path: "shop", label: "Shop", state: { search: false } },
+    { path: "account", label: "Account", hide: !user },
+  ];
 
   function handleClick() {
     setCartShow(!cartShow);
@@ -75,16 +81,19 @@ function Header() {
                 fontWeight: "500",
               }}
             >
-              <NavLink to="/" className="text-decoration-none text-dark">
-                Home
-              </NavLink>
-              <NavLink
-                to="shop"
-                state={{ search: false }}
-                className="text-decoration-none text-dark"
-              >
-                Shop
-              </NavLink>
+              {navLinks.map(
+                (link) =>
+                  !link.hide && (
+                    <NavLink
+                      key={link.path}
+                      to={link.path}
+                      state={link.state}
+                      className="text-decoration-none text-dark"
+                    >
+                      {link.label}
+                    </NavLink>
+                  )
+              )}
               <NavDropdown
                 title="Collections"
                 id="basic-nav-dropdown"
@@ -113,6 +122,11 @@ function Header() {
               </NavDropdown>
             </Nav>
             <div className="d-flex gap-3 fs-5 header-icons">
+              {!isAuthenticated && (
+                <Link to="/login" className="main-btn">
+                  Login
+                </Link>
+              )}
               <Link to="shop" state={{ search: true }}>
                 <BsSearch />
               </Link>
@@ -122,8 +136,8 @@ function Header() {
                   id="profile-dropdown"
                   className="text-dark"
                 >
-                  <NavDropdown.Item as={Link} to="/profile">
-                    Profile
+                  <NavDropdown.Item as={Link} to="/account">
+                    Account
                   </NavDropdown.Item>
                   <NavDropdown.Item onClick={handleLogout}>
                     Logout
@@ -193,21 +207,17 @@ function Header() {
         </Offcanvas.Header>
         <Offcanvas.Body className="d-lg-none p-0 d-flex flex-column justify-content-between">
           <Nav className="links">
-            <NavLink
-              to="/"
-              onClick={() => setShow(!show)}
-              className="text-decoration-none"
-            >
-              Home
-            </NavLink>
-            <NavLink
-              to="shop"
-              state={{ search: false }}
-              onClick={() => setShow(!show)}
-              className="text-decoration-none"
-            >
-              Shop
-            </NavLink>
+            {navLinks.map((link) => (
+              <NavLink
+                key={link.path}
+                to={link.path}
+                state={link.state}
+                onClick={() => setShow(!show)}
+                className="text-decoration-none"
+              >
+                {link.label}
+              </NavLink>
+            ))}
             <NavDropdown
               title="Collections"
               id="basic-nav-dropdown"
@@ -215,14 +225,8 @@ function Header() {
             >
               {categoriesArr}
             </NavDropdown>
-            <NavLink
-              to="profile"
-              onClick={() => setShow(!show)}
-              className="text-decoration-none"
-            >
-              Profile
-            </NavLink>
           </Nav>
+
           <Button
             variant="danger mb-4 mx-4"
             size="lg"

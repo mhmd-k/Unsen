@@ -120,7 +120,7 @@ const Login: React.FC = () => {
               disabled={status === "loading"}
             >
               {status === "loading" ? (
-                <Spinner animation="border" role="status" />
+                <Spinner size="sm" animation="border" role="status" />
               ) : (
                 "Login"
               )}

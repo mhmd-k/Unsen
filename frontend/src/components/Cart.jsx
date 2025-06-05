@@ -53,12 +53,7 @@ export default function Cart({ setCartShow }) {
           </span>
         </Stack>
         <div className="my-5 text-center">
-          <Link
-            className="cart-link py-3 px-5"
-            style={{ borderRadius: "30px" }}
-          >
-            CHECK OUT
-          </Link>
+          <Link className="main-btn py-3 px-5">CHECK OUT</Link>
         </div>
       </div>
     </div>

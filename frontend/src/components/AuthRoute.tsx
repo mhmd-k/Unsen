@@ -3,7 +3,7 @@ import { useAuth } from "../contexts/AuthContext";
 import loadingSpinner from "../assets/icons/Infinity-1s-150px (1).svg";
 
 export const AuthRoute = () => {
-  const { isAuthenticated, loading } = useAuth();
+  const { user, loading } = useAuth();
 
   if (loading) {
     return (
@@ -13,7 +13,7 @@ export const AuthRoute = () => {
     );
   }
 
-  if (isAuthenticated) {
+  if (user) {
     return <Navigate to="/" replace />;
   }
 

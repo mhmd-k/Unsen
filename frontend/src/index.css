@@ -46,6 +46,29 @@ input:focus {
   display: grid;
   place-items: center;
 }
+.main-btn {
+  background-color: var(--btn-color);
+  color: white;
+  width: fit-content;
+  margin: 0 auto;
+  font-size: 14px;
+  padding: 5px 20px;
+  border: none;
+  transition: var(--main-transition);
+  -webkit-transition: var(--main-transition);
+  -moz-transition: var(--main-transition);
+  -ms-transition: var(--main-transition);
+  -o-transition: var(--main-transition);
+  border-radius: 30px;
+  -webkit-border-radius: 30px;
+  -moz-border-radius: 30px;
+  -ms-border-radius: 30px;
+  -o-border-radius: 30px;
+}
+.main-btn:hover {
+  color: white !important;
+  background-color: var(--main-color);
+}
 /* header */
 .header-icons a svg {
   cursor: pointer;
@@ -602,39 +625,11 @@ button.add-to-wishlist:hover span {
   }
 }
 /* end product detail */
-/* alert */
-.global-alert {
-  transition: var(--main-transition);
-  opacity: 0;
-  transform: translateY(-50%);
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 10000;
-  width: 100%;
-  -webkit-transition: var(--main-transition);
-  -moz-transition: var(--main-transition);
-  -ms-transition: var(--main-transition);
-  -o-transition: var(--main-transition);
-  -webkit-transform: translateY(-50%);
-  -moz-transform: translateY(-50%);
-  -ms-transform: translateY(-50%);
-  -o-transform: translateY(-50%);
-}
-.global-alert.show {
-  opacity: 1;
-  transform: translateY(0%);
-  -webkit-transform: translateY(0%);
-  -moz-transform: translateY(0%);
-  -ms-transform: translateY(0%);
-  -o-transform: translateY(0%);
-}
-/* end alert */
+
 /* footer */
 footer span a {
   color: var(--main-color);
 }
-/* end footer */
 
 /* signup & login*/
 .login-signup-bg {
@@ -663,4 +658,53 @@ footer span a {
   font-weight: 500;
   border-bottom: 2px solid var(--btn-color);
   color: var(--btn-color);
+}
+
+/* btns */
+.wishlist-account-btn {
+  border-radius: 30px;
+  background-color: transparent;
+  color: rgb(235, 29, 156);
+  border-color: rgb(235, 29, 156);
+  border-width: 3px;
+  font-weight: 500;
+  -webkit-border-radius: 30px;
+  -moz-border-radius: 30px;
+  -ms-border-radius: 30px;
+  -o-border-radius: 30px;
+
+  svg {
+    font-size: 25px;
+    margin-right: 5px;
+  }
+}
+
+.wishlist-account-btn:hover {
+  background-color: rgb(235, 29, 156);
+  border-color: rgb(235, 29, 156);
+  color: white;
+}
+
+.change-pass-account-btn {
+  border-radius: 30px;
+  background-color: transparent;
+  color: var(--text-color);
+  border-color: var(--text-color);
+  border-width: 3px;
+  font-weight: 500;
+  -webkit-border-radius: 30px;
+  -moz-border-radius: 30px;
+  -ms-border-radius: 30px;
+  -o-border-radius: 30px;
+
+  svg {
+    font-size: 25px;
+    margin-right: 5px;
+  }
+}
+
+.change-pass-account-btn:hover {
+  background-color: var(--text-color);
+  border-color: var(--text-color);
+  color: white;
 }

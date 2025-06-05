@@ -1,6 +1,5 @@
 import { Routes, Route } from "react-router-dom";
 import { AuthRoute } from "../components/AuthRoute";
-// import { ProtectedRoute } from "../components/ProtectedRoute";
 import Home from "../pages/Home";
 import Layout from "../components/Layout";
 import Shop from "../pages/Shop";
@@ -12,10 +11,14 @@ import Login from "../pages/Login";
 import ForgotPassword from "../pages/ForgotPassword";
 import AuthLayout from "../components/AuthLayout";
 import NotFound from "../pages/NotFound";
-import AlertInfo from "../components/AlertInfo";
 import { Toaster } from "react-hot-toast";
+import { ProtectedRoute } from "../components/ProtectedRoute";
+import Account from "../pages/Account";
+import { useAxiosInterceptors } from "../hooks/useAxiosInterceptors";
 
 const AppRoutes = () => {
+  useAxiosInterceptors();
+
   return (
     <>
       <Routes>
@@ -31,6 +34,11 @@ const AppRoutes = () => {
           </Route>
 
           {/* Protected routes - only accessible when logged in */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/account" element={<Account />} />
+          </Route>
+
+          {/* Public routes */}
           <Route path="/" element={<Home />} />
           <Route path="shop" element={<Shop />} />
           <Route path="shop/:id" element={<ProductDetail />} />
@@ -41,7 +49,6 @@ const AppRoutes = () => {
         </Route>
       </Routes>
 
-      <AlertInfo />
       <Toaster
         toastOptions={{
           duration: 6000,

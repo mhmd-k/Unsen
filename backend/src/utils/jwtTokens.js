@@ -4,7 +4,7 @@ export const generateAccessToken = (user) => {
   return jwt.sign(
     { userId: user.id, email: user.email },
     process.env.ACCESS_SECRET,
-    { expiresIn: "15m" }
+    { expiresIn: "1m" }
   );
 };
 
@@ -13,7 +13,7 @@ export const generateRefreshToken = (user) => {
     { userId: user.id, email: user.email },
     process.env.REFRESH_SECRET,
     {
-      expiresIn: "1d",
+      expiresIn: "14d",
     }
   );
 };
@@ -23,6 +23,6 @@ export const storeRefreshTokenInCookie = (res, token) => {
     httpOnly: true,
     secure: true,
     sameSite: "strict",
-    maxAge: 24 * 60 * 60 * 1000, // 1 day
+    maxAge: 24 * 60 * 60 * 1000 * 14, // 14 day
   });
 };

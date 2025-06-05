@@ -395,7 +395,7 @@ const Signup: React.FC = () => {
                 disabled={status === "loading"}
               >
                 {status === "loading" ? (
-                  <Spinner animation="border" role="status" />
+                  <Spinner animation="border" role="status" size="sm" />
                 ) : (
                   "Sign Up"
                 )}
