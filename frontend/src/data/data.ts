@@ -16,9 +16,9 @@ import fifteen from "/src/assets/images/products/speaker-3.png";
 import sixteen from "/src/assets/images/products/headphones-3.png";
 import seventeen from "/src/assets/images/products/headphones-4.png";
 import eighteen from "/src/assets/images/products/headphones-5.png";
-import { product } from "../types";
+import type { Product } from "@/types";
 
-export const data: product[] = [
+export const data: Product[] = [
   {
     id: 1,
     imageUrl: one,

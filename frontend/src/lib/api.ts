@@ -1,16 +1,18 @@
 import axios, { AxiosError } from "axios";
 import {
-  SignupData,
-  SignupResponse,
-  LoginData,
-  LoginResponse,
-  VerifyEmailResponse,
-} from "../types/auth";
-import { ApiError } from "../types/api";
+  type SignupData,
+  type SignupResponse,
+  type LoginData,
+  type LoginResponse,
+  type VerifyEmailResponse,
+  type ApiError,
+} from "@/types";
 import { api } from "../api/axios";
 
 // Error handler for axios requests
 function handleAxiosError(error: unknown): never {
+  console.log(error);
+
   if (axios.isAxiosError(error)) {
     const axiosError = error as AxiosError<ApiError>;
     if (axiosError.response) {
@@ -30,8 +32,9 @@ export async function signup(data: SignupData): Promise<SignupResponse> {
   try {
     const response = await api.post<SignupResponse>("/auth/signup", data);
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (
+      error instanceof AxiosError &&
       error.response?.status === 409 &&
       error.response?.data?.resendEmailOption
     ) {

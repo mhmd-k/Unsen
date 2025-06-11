@@ -1,13 +1,32 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Form, Button, Row, Col, Card, Alert, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { resendVerificationEmail, signup } from "../lib/api";
 import { useState } from "react";
-import { SelectOption, SignupData, Status } from "../types";
+import type { SelectOption, SignupData, Status } from "../types";
 import { BsCheck } from "react-icons/bs";
 import toast from "react-hot-toast";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Alert, AlertDescription } from "../components/ui/alert";
+import { AlertCircleIcon, Loader2 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
+import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
+import { AxiosError } from "axios";
 
 // Define the form data type using Zod schema
 const signupSchema = z
@@ -113,12 +132,15 @@ const Signup: React.FC = () => {
   const [showResendEmailBtn, setShowResendEmailBtn] = useState<boolean>(false);
   const [showVerifyEmail, setShowVerifyEmail] = useState<boolean>(false);
 
+  console.log("showResendEmailBtn:", showResendEmailBtn);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
     getValues,
+    setValue,
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -156,11 +178,15 @@ const Signup: React.FC = () => {
 
       setStatus("success");
       setShowVerifyEmail(true);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.log(error);
 
       setStatus("error");
-      setErrorMessage(error.message || "An error occurred during signup");
+      setErrorMessage(
+        error instanceof AxiosError
+          ? error.message
+          : "An error occurred during signup"
+      );
     }
   };
 
@@ -173,15 +199,19 @@ const Signup: React.FC = () => {
       setResendEmailStatus("success");
       setShowVerifyEmail(true);
       toast.success("Check your email");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.log(error);
 
       setResendEmailStatus("error");
       toast.error(
-        error.message || "An error occurred during resending verification email"
+        error instanceof AxiosError
+          ? error.message
+          : "An error occurred during resending verification email"
       );
       setErrorMessage(
-        error.message || "An error occurred during resending verification email"
+        error instanceof AxiosError
+          ? error.message
+          : "An error occurred during resending verification email"
       );
     }
   };
@@ -189,232 +219,242 @@ const Signup: React.FC = () => {
   const role = watch("role");
 
   return (
-    <Col md={8} lg={6}>
-      <Card className="shadow">
+    <Card className="w-[400px] max-w-full mx-auto">
+      <CardHeader>
+        <div className="flex border-b">
+          <Button
+            asChild
+            variant="ghost"
+            className="flex-1 rounded-none border-b-2 border-primary"
+          >
+            <Link to="/signup">SIGN UP</Link>
+          </Button>
+          <Button
+            asChild
+            variant="ghost"
+            className="flex-1 rounded-none border-b-2 border-transparent hover:border-primary"
+          >
+            <Link to="/login">LOGIN</Link>
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent>
         {showVerifyEmail ? (
-          <Card.Body className="p-4">
-            <h1 className="text-center">
-              Done <BsCheck />
+          <div className="space-y-4">
+            <h1 className="text-2xl font-bold text-center">
+              Done <BsCheck className="inline-block" />
             </h1>
-            <p>Check your email, a verification link has been sent to it.</p>
-            <p>
-              Didn't recive an email?{" "}
+            <p className="text-center text-muted-foreground">
+              Check your email, a verification link has been sent to it.
+            </p>
+            <p className="text-center">
+              Didn't receive an email?{" "}
               <Button
                 variant="link"
                 onClick={handleResendEmail}
                 disabled={resendEmailStatus === "loading"}
+                className="p-0"
               >
                 {resendEmailStatus === "loading" ? (
                   <>
-                    Resending email <Spinner animation="border" role="status" />
+                    Resending email{" "}
+                    <Loader2 className="ml-2 h-4 w-4 animate-spin" />
                   </>
                 ) : (
                   "Resend email"
                 )}
               </Button>
             </p>
-          </Card.Body>
+          </div>
         ) : (
-          <Card.Body className="p-4">
-            <Row className="mb-4 border-bottom">
-              <Col className="text-center p-0">
-                <Link to="/signup" className="active auth-link pb-2">
-                  SIGN UP
-                </Link>
-              </Col>
-              <Col className="text-center p-0">
-                <Link to="/login" className="auth-link pb-2">
-                  LOGIN
-                </Link>
-              </Col>
-            </Row>
-            <Form onSubmit={handleSubmit(onSubmit)}>
-              <Form.Group className="mb-3">
-                <Form.Label>Username</Form.Label>
-                <Form.Control
+          <>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Username</Label>
+                <Input
+                  id="name"
                   type="text"
                   {...register("name")}
-                  isInvalid={!!errors.name}
+                  className={errors.name ? "border-red-500" : ""}
                 />
-                <Form.Control.Feedback type="invalid">
-                  {errors.name?.message}
-                </Form.Control.Feedback>
-              </Form.Group>
+                {errors.name && (
+                  <p className="text-sm text-red-500">{errors.name.message}</p>
+                )}
+              </div>
 
-              <Form.Group className="mb-3">
-                <Form.Label>Email</Form.Label>
-                <Form.Control
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
                   type="email"
                   {...register("email")}
-                  isInvalid={!!errors.email}
+                  className={errors.email ? "border-red-500" : ""}
                 />
-                <Form.Control.Feedback type="invalid">
-                  {errors.email?.message}
-                </Form.Control.Feedback>
-              </Form.Group>
+                {errors.email && (
+                  <p className="text-sm text-red-500">{errors.email.message}</p>
+                )}
+              </div>
 
-              <Form.Group className="mb-3">
-                <Form.Label>Password</Form.Label>
-                <Form.Control
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
                   type="password"
                   {...register("password")}
-                  isInvalid={!!errors.password}
+                  className={errors.password ? "border-red-500" : ""}
                 />
-                <Form.Control.Feedback type="invalid">
-                  {errors.password?.message}
-                </Form.Control.Feedback>
-              </Form.Group>
+                {errors.password && (
+                  <p className="text-sm text-red-500">
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
 
-              <Form.Group className="mb-3">
-                <Form.Label>Confirm Password</Form.Label>
-                <Form.Control
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Input
+                  id="confirmPassword"
                   type="password"
                   {...register("confirmPassword")}
-                  isInvalid={!!errors.confirmPassword}
+                  className={errors.confirmPassword ? "border-red-500" : ""}
                 />
-                <Form.Control.Feedback type="invalid">
-                  {errors.confirmPassword?.message}
-                </Form.Control.Feedback>
-              </Form.Group>
+                {errors.confirmPassword && (
+                  <p className="text-sm text-red-500">
+                    {errors.confirmPassword.message}
+                  </p>
+                )}
+              </div>
 
-              <Form.Group className="mb-3">
-                <Form.Label>I want to sign up as a:</Form.Label>
-                <div>
-                  <Form.Check
-                    type="radio"
-                    label="Customer"
-                    value="CUSTOMER"
-                    {...register("role")}
-                    inline
-                  />
-                  <Form.Check
-                    type="radio"
-                    label="Seller"
-                    value="SELLER"
-                    {...register("role")}
-                    inline
-                  />
-                </div>
-              </Form.Group>
+              <div className="space-y-2">
+                <Label>Role</Label>
+                <RadioGroup
+                  defaultValue="CUSTOMER"
+                  onValueChange={(value) =>
+                    setValue("role", value as "CUSTOMER" | "SELLER")
+                  }
+                  className="flex gap-4"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="CUSTOMER" id="customer" />
+                    <Label htmlFor="customer">Customer</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="SELLER" id="seller" />
+                    <Label htmlFor="seller">Seller</Label>
+                  </div>
+                </RadioGroup>
+              </div>
 
               {role === "SELLER" && (
-                <>
-                  <Alert variant="warning">
-                    Enter any fake info u want, this project is just to show
-                    case that I am able to build a functional e-commerce
-                    application
-                  </Alert>
-
-                  <Form.Group className="mb-3" controlId="">
-                    <Form.Label>Bank Name</Form.Label>
-                    <Form.Control
-                      as="select"
-                      {...register("bankName")}
-                      isInvalid={!!errors.bankName}
+                <div className="space-y-4 border-t pt-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="bankName">Bank Name</Label>
+                    <Select
+                      onValueChange={(value) => setValue("bankName", value)}
                     >
-                      <option value="">Select a bank</option>
-                      {bankOptions.map((bank) => (
-                        <option key={bank.value} value={bank.value}>
-                          {bank.label}
-                        </option>
-                      ))}
-                    </Form.Control>
-                    <Form.Control.Feedback type="invalid">
-                      {errors.bankName?.message}
-                    </Form.Control.Feedback>
-                  </Form.Group>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a bank" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {bankOptions.map((option) => (
+                          <SelectItem
+                            key={option.value}
+                            value={option.value.toString()}
+                          >
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {errors.bankName && (
+                      <p className="text-sm text-red-500">
+                        {errors.bankName.message}
+                      </p>
+                    )}
+                  </div>
 
-                  <Form.Group className="mb-3">
-                    <Form.Label>Account Holder Name</Form.Label>
-                    <Form.Control
+                  <div className="space-y-2">
+                    <Label htmlFor="accountHolderName">
+                      Account Holder Name
+                    </Label>
+                    <Input
+                      id="accountHolderName"
                       type="text"
                       {...register("accountHolderName")}
-                      isInvalid={!!errors.accountHolderName}
+                      className={
+                        errors.accountHolderName ? "border-red-500" : ""
+                      }
                     />
-                    <Form.Control.Feedback type="invalid">
-                      {errors.accountHolderName?.message}
-                    </Form.Control.Feedback>
-                  </Form.Group>
+                    {errors.accountHolderName && (
+                      <p className="text-sm text-red-500">
+                        {errors.accountHolderName.message}
+                      </p>
+                    )}
+                  </div>
 
-                  <Form.Group className="mb-3">
-                    <Form.Label>Account Number</Form.Label>
-                    <Form.Control
+                  <div className="space-y-2">
+                    <Label htmlFor="accountNumber">Account Number</Label>
+                    <Input
+                      id="accountNumber"
                       type="text"
                       {...register("accountNumber")}
-                      isInvalid={!!errors.accountNumber}
+                      className={errors.accountNumber ? "border-red-500" : ""}
                     />
-                    <Form.Control.Feedback type="invalid">
-                      {errors.accountNumber?.message}
-                    </Form.Control.Feedback>
-                  </Form.Group>
+                    {errors.accountNumber && (
+                      <p className="text-sm text-red-500">
+                        {errors.accountNumber.message}
+                      </p>
+                    )}
+                  </div>
 
-                  <Form.Group className="mb-3">
-                    <Form.Label>Routing Number</Form.Label>
-                    <Form.Control
+                  <div className="space-y-2">
+                    <Label htmlFor="routingNumber">Routing Number</Label>
+                    <Input
+                      id="routingNumber"
                       type="text"
                       {...register("routingNumber")}
-                      isInvalid={!!errors.routingNumber}
-                      maxLength={9}
+                      className={errors.routingNumber ? "border-red-500" : ""}
                     />
-                    <Form.Control.Feedback type="invalid">
-                      {errors.routingNumber?.message}
-                    </Form.Control.Feedback>
-                  </Form.Group>
-                </>
+                    {errors.routingNumber && (
+                      <p className="text-sm text-red-500">
+                        {errors.routingNumber.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
               )}
 
               {status === "error" && errorMessage && (
-                <Alert variant="danger" className="mb-3">
-                  {errorMessage}{" "}
-                  {showResendEmailBtn && (
-                    <Button
-                      variant="link"
-                      onClick={handleResendEmail}
-                      disabled={resendEmailStatus === "loading"}
-                    >
-                      {resendEmailStatus === "loading" ? (
-                        <>
-                          Resending email{" "}
-                          <Spinner animation="border" role="status" />
-                        </>
-                      ) : (
-                        "Resend email"
-                      )}
-                    </Button>
-                  )}
+                <Alert variant="destructive">
+                  <AlertCircleIcon />
+                  <AlertDescription>{errorMessage}</AlertDescription>
                 </Alert>
               )}
 
               <Button
-                variant="primary"
                 type="submit"
-                className="w-100 mb-3"
-                style={{
-                  background: "var(--main-color)",
-                }}
+                className="w-full"
                 disabled={status === "loading"}
               >
                 {status === "loading" ? (
-                  <Spinner animation="border" role="status" size="sm" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   "Sign Up"
                 )}
               </Button>
-
-              <p className="text-center m-0">
-                Already have an account?{" "}
-                <Link
-                  to="/login"
-                  className="text-primary text-decoration-underline"
-                >
-                  Login
-                </Link>
-              </p>
-            </Form>
-          </Card.Body>
+            </form>
+          </>
         )}
-      </Card>
-    </Col>
+      </CardContent>
+      <CardFooter className="flex justify-center">
+        <p className="text-center text-sm text-muted-foreground">
+          Already have an account?{" "}
+          <Button asChild variant="link" className="p-0">
+            <Link to="/login">Login</Link>
+          </Button>
+        </p>
+      </CardFooter>
+    </Card>
   );
 };
 

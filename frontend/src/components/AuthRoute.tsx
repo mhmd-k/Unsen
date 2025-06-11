@@ -7,7 +7,7 @@ export const AuthRoute = () => {
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center">
+      <div className="flex justify-center">
         <img src={loadingSpinner} alt="loading spinner" />
       </div>
     );

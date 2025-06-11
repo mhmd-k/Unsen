@@ -1,11 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Stack } from "react-bootstrap";
-import CartProductCard from "./CartProductCard";
 import { formatCurrency } from "../lib/utils";
 import { useCartConext } from "../contexts/CartContext";
+import CartProductCard from "./CartProductCard";
 
-// eslint-disable-next-line react/prop-types
-export default function Cart({ setCartShow }) {
+export default function Cart({ setCartShow }: { setCartShow: () => void }) {
   const { cart, total } = useCartConext();
   const navigate = useNavigate();
   function ReturnToShop() {
@@ -16,44 +14,37 @@ export default function Cart({ setCartShow }) {
   if (cart.length === 0) {
     return (
       <div className="cart">
-        <Stack gap={2} className="text-center mt-5">
-          <h4
-            className="text-muted"
-            style={{
-              fontSize: 14,
-              fontWeight: "400",
-            }}
-          >
+        <div className="flex flex-col gap-2 text-center mt-5">
+          <h4 className="text-gray-600 font-normal text-lg">
             Your cart is empty
           </h4>
           <button className="cart-link" onClick={ReturnToShop}>
             RETURN TO SHOP
           </button>
-        </Stack>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="cart" style={{ overflowY: "scroll" }}>
-      <Stack gap={2} direction="column" style={{ flex: 0 }}>
+    <div className="cart overflow-y-auto">
+      <div className="flex flex-col gap-2 flex-0">
         {/* products in cart */}
         {cart.map((product) => (
           <CartProductCard key={product.id} {...product} />
         ))}
-      </Stack>
+      </div>
       <div className="bottom-cart-total p-3">
-        <Stack direction="horizontal">
-          <div style={{ fontWeight: "500", fontSize: 20 }}>Subtotal: </div>
-          <span
-            className="text-danger ms-auto"
-            style={{ fontWeight: "600", fontSize: 20 }}
-          >
+        <div className="flex">
+          <div className="font-medium text-xl">Subtotal: </div>
+          <span className="text-danger ms-auto font-semibold text-xl">
             {formatCurrency(total)}
           </span>
-        </Stack>
+        </div>
         <div className="my-5 text-center">
-          <Link className="main-btn py-3 px-5">CHECK OUT</Link>
+          <Link to="#" className="main-btn py-3 px-5">
+            CHECK OUT
+          </Link>
         </div>
       </div>
     </div>

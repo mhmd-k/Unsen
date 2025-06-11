@@ -1,9 +1,16 @@
-import { Container, Button } from "react-bootstrap";
 import { useAuth } from "../contexts/AuthContext";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ChangePasswordModal from "../components/ChangePasswordModal";
 import { BsLockFill, BsSuitHeart } from "react-icons/bs";
+import { Button } from "../components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import { Separator } from "../components/ui/separator";
 
 const Account = () => {
   const { user } = useAuth();
@@ -11,51 +18,71 @@ const Account = () => {
   const [showPasswordModal, setShowPasswordModal] = useState(false);
 
   return (
-    <Container className="py-4">
-      <h1 className="mb-0">Account Information</h1>
-      <hr />
-      <div className="mb-4">
-        <div className="row">
-          <div className="col-md-6">
-            <p>
-              <strong>Username:</strong> {user?.username}
-            </p>
-            <p>
-              <strong>Email:</strong> {user?.email}
-            </p>
+    <div className="container py-8">
+      <Card>
+        <CardHeader>
+          <CardTitle>Account Information</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Username
+                </p>
+                <p className="text-lg">{user?.username}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Email
+                </p>
+                <p className="text-lg">{user?.email}</p>
+              </div>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Role
+                </p>
+                <p className="text-lg">{user?.role}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Account Status
+                </p>
+                <p className="text-lg">
+                  {user?.isVerified ? "Verified" : "Not Verified"}
+                </p>
+              </div>
+            </div>
           </div>
-          <div className="col-md-6">
-            <p>
-              <strong>Role:</strong> {user?.role}
-            </p>
-            <p>
-              <strong>Account Status:</strong>{" "}
-              {user?.isVerified ? "Verified" : "Not Verified"}
-            </p>
-          </div>
-        </div>
-      </div>
 
-      <div className="d-flex gap-3">
-        <Button
-          className="wishlist-account-btn"
-          onClick={() => navigate("/wishlist")}
-        >
-          <BsSuitHeart /> Wishlist
-        </Button>
-        <Button
-          className="change-pass-account-btn"
-          onClick={() => setShowPasswordModal(true)}
-        >
-          <BsLockFill /> Change Password
-        </Button>
-      </div>
+          <Separator className="my-6" />
+
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={() => navigate("/wishlist")}
+              className="flex items-center gap-2"
+            >
+              <BsSuitHeart /> Wishlist
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setShowPasswordModal(true)}
+              className="flex items-center gap-2"
+            >
+              <BsLockFill /> Change Password
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       <ChangePasswordModal
         show={showPasswordModal}
         onHide={() => setShowPasswordModal(false)}
       />
-    </Container>
+    </div>
   );
 };
 

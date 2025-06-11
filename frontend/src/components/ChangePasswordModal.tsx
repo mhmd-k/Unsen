@@ -1,7 +1,16 @@
-import { Modal, Form, Button } from "react-bootstrap";
 import { useState } from "react";
 import { axiosPrivate } from "../api/axios";
 import toast from "react-hot-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "./ui/dialog";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 
 interface ChangePasswordModalProps {
   show: boolean;
@@ -46,18 +55,19 @@ const ChangePasswordModal = ({ show, onHide }: ChangePasswordModalProps) => {
   };
 
   return (
-    <Modal show={show} onHide={onHide}>
-      <Modal.Header closeButton>
-        <Modal.Title>Change Password</Modal.Title>
-      </Modal.Header>
-      <Form onSubmit={handlePasswordChange}>
-        <Modal.Body>
-          <Form.Group className="mb-3">
-            <Form.Label>Current Password</Form.Label>
-            <Form.Control
+    <Dialog open={show} onOpenChange={onHide}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Change Password</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handlePasswordChange} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="currentPassword">Current Password</Label>
+            <Input
+              id="currentPassword"
               type="password"
               value={passwordData.currentPassword}
-              onChange={(e) =>
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setPasswordData((prev) => ({
                   ...prev,
                   currentPassword: e.target.value,
@@ -65,13 +75,14 @@ const ChangePasswordModal = ({ show, onHide }: ChangePasswordModalProps) => {
               }
               required
             />
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>New Password</Form.Label>
-            <Form.Control
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="newPassword">New Password</Label>
+            <Input
+              id="newPassword"
               type="password"
               value={passwordData.newPassword}
-              onChange={(e) =>
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setPasswordData((prev) => ({
                   ...prev,
                   newPassword: e.target.value,
@@ -79,13 +90,14 @@ const ChangePasswordModal = ({ show, onHide }: ChangePasswordModalProps) => {
               }
               required
             />
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Confirm New Password</Form.Label>
-            <Form.Control
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="confirmPassword">Confirm New Password</Label>
+            <Input
+              id="confirmPassword"
               type="password"
               value={passwordData.confirmPassword}
-              onChange={(e) =>
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setPasswordData((prev) => ({
                   ...prev,
                   confirmPassword: e.target.value,
@@ -93,18 +105,18 @@ const ChangePasswordModal = ({ show, onHide }: ChangePasswordModalProps) => {
               }
               required
             />
-          </Form.Group>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={onHide}>
-            Cancel
-          </Button>
-          <Button variant="primary" type="submit" disabled={loading}>
-            {loading ? "Submiting..." : "Submit"}
-          </Button>
-        </Modal.Footer>
-      </Form>
-    </Modal>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={onHide} type="button">
+              Cancel
+            </Button>
+            <Button type="submit" disabled={loading}>
+              {loading ? "Submitting..." : "Submit"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 };
 

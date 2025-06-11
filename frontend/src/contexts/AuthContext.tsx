@@ -3,16 +3,17 @@ import {
   useContext,
   useState,
   useEffect,
-  ReactNode,
+  type ReactNode,
 } from "react";
-import { AuthContextType, AuthUser } from "../types";
 import { useNavigate } from "react-router-dom";
 import { axiosPrivate } from "../api/axios";
 import toast from "react-hot-toast";
+import type { AuthContextType, AuthUser } from "@/types";
+import { AxiosError } from "axios";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const { data } = await axiosPrivate.get("/auth/refresh");
         setUser(data.user);
-      } catch (error) {
+      } catch {
         setUser(null);
       } finally {
         setLoading(false);
@@ -37,7 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     try {
-      await axiosPrivate.post(
+      const res = await axiosPrivate.post(
         "/auth/logout",
         {},
         {
@@ -46,14 +47,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           },
         }
       );
-      setUser(null);
-      toast.success("Successfully logged out");
-      navigate("/login");
-    } catch (error: any) {
+
+      if (res.status === 200) {
+        setUser(null);
+        toast.success("Successfully logged out");
+        navigate("/login");
+      }
+    } catch (error: unknown) {
       console.error("Logout error:", error);
       toast.error(
-        error?.message ||
-          "An error occured while logging you out! please try again"
+        error instanceof AxiosError
+          ? error.message
+          : "An error occured while logging you out! please try again"
       );
     }
   };
@@ -73,10 +78,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-export function useAuth() {
+function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }
+
+export { AuthProvider, useAuth };

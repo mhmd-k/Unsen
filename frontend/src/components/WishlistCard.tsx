@@ -5,9 +5,9 @@ import { useWishlistContext } from "../contexts/WishListContext";
 import { useCartConext } from "../contexts/CartContext";
 import { useNavigate } from "react-router-dom";
 import { memo } from "react";
+import type { Product } from "@/types";
 
-// eslint-disable-next-line react/prop-types
-let WishlistCard = ({ id, imageUrl, title, price, type }) => {
+let WishlistCard = ({ id, imageUrl, title, price, type }: Product) => {
   const { removeFromWishlist } = useWishlistContext();
 
   const { addItem } = useCartConext();
@@ -39,7 +39,9 @@ let WishlistCard = ({ id, imageUrl, title, price, type }) => {
           </button>
           <button
             className="btn add-top-cart"
-            onClick={() => addItem({ id, imageUrl, title, price, type })}
+            onClick={() =>
+              addItem({ id, imageUrl, title, price, type, quantity: 1 })
+            }
           >
             Add To Cart
           </button>
@@ -51,7 +53,9 @@ let WishlistCard = ({ id, imageUrl, title, price, type }) => {
         </button>
         <button
           className="btn border add-to-cart w-50"
-          onClick={() => addItem({ id, imageUrl, title, price, type })}
+          onClick={() =>
+            addItem({ id, imageUrl, title, price, type, quantity: 1 })
+          }
         >
           <BsCart2 />
         </button>
@@ -62,6 +66,4 @@ let WishlistCard = ({ id, imageUrl, title, price, type }) => {
   );
 };
 
-WishlistCard = memo(WishlistCard);
-
-export default WishlistCard;
+export default memo(WishlistCard);

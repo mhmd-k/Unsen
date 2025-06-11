@@ -1,18 +1,18 @@
 import { Outlet } from "react-router-dom";
-import Header from "./Header";
+import Appbar from "./Appbar";
 import Footer from "./Footer";
 import { useAuth } from "../contexts/AuthContext";
-import { Alert } from "react-bootstrap";
+import { Alert } from "./ui/alert";
 
 function Layout() {
   const { user, isAuthenticated } = useAuth();
 
   return (
     <>
-      <Header />
+      <Appbar />
       <main>
         {user && !isAuthenticated && (
-          <Alert variant="warning">
+          <Alert>
             You can&apos;t place an order or sell an item until you verify your
             email!
           </Alert>

@@ -1,11 +1,16 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Form, Button, Col, Card, Alert, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { Status } from "../types";
+import type { Status } from "../types";
 import { BsArrowLeft, BsCheck } from "react-icons/bs";
+import { Card, CardContent } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Alert, AlertDescription } from "../components/ui/alert";
+import { Loader2 } from "lucide-react";
 
 // Define the form data type using Zod schema
 const forgotPasswordSchema = z.object({
@@ -47,85 +52,90 @@ const ForgotPassword: React.FC = () => {
   };
 
   return (
-    <Col md={8} lg={6}>
-      <Card className="shadow">
-        <Card.Body className="p-4">
-          <Alert variant="warning">This feature doesn't work yet</Alert>
+    <div className="container max-w-md mx-auto px-4">
+      <Card>
+        <CardContent className="p-6">
+          <Alert
+            variant="default"
+            className="mb-4 bg-yellow-50 border-yellow-200"
+          >
+            <AlertDescription className="text-yellow-800">
+              This feature doesn't work yet
+            </AlertDescription>
+          </Alert>
 
           {showSuccess ? (
-            <>
-              <h1 className="text-center">
-                Done <BsCheck />
+            <div className="space-y-4">
+              <h1 className="text-2xl font-bold text-center">
+                Done <BsCheck className="inline-block" />
               </h1>
-              <p className="text-center">
+              <p className="text-center text-muted-foreground">
                 If an account exists with this email, you will receive a
                 password reset link.
               </p>
               <div className="text-center">
-                <Link
-                  to="/login"
-                  className="text-primary text-decoration-underline"
-                >
-                  Back to Login
-                </Link>
+                <Button asChild variant="link">
+                  <Link to="/login">Back to Login</Link>
+                </Button>
               </div>
-            </>
+            </div>
           ) : (
-            <>
-              <h2 className="text-center mb-4">Forgot Password</h2>
-              <p className="text-center mb-4">
+            <div className="space-y-4">
+              <h2 className="text-2xl font-bold text-center">
+                Forgot Password
+              </h2>
+              <p className="text-center text-muted-foreground">
                 Enter your email address and we'll send you a link to reset your
                 password.
               </p>
-              <Form onSubmit={handleSubmit(onSubmit)}>
-                <Form.Group className="mb-3">
-                  <Form.Label>Email</Form.Label>
-                  <Form.Control
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
                     type="email"
                     {...register("email")}
-                    isInvalid={!!errors.email}
+                    className={errors.email ? "border-red-500" : ""}
                   />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.email?.message}
-                  </Form.Control.Feedback>
-                </Form.Group>
+                  {errors.email && (
+                    <p className="text-sm text-red-500">
+                      {errors.email.message}
+                    </p>
+                  )}
+                </div>
 
                 {status === "error" && errorMessage && (
-                  <Alert variant="danger" className="mb-3">
-                    {errorMessage}
+                  <Alert variant="destructive">
+                    <AlertDescription>{errorMessage}</AlertDescription>
                   </Alert>
                 )}
 
                 <Button
-                  variant="primary"
                   type="submit"
-                  className="w-100 mb-3"
-                  style={{
-                    background: "var(--main-color)",
-                  }}
+                  className="w-full"
                   disabled={status === "loading"}
                 >
                   {status === "loading" ? (
-                    <Spinner animation="border" role="status" />
+                    <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
                     "Send Reset Link"
                   )}
                 </Button>
 
-                <div className="text-center m-0">
-                  <Link
-                    to="/login"
-                    className="text-primary text-decoration-underline"
-                  >
-                    <BsArrowLeft className="me-2" /> Back to Login
-                  </Link>
+                <div className="text-center">
+                  <Button asChild variant="link">
+                    <Link to="/login">
+                      <BsArrowLeft className="mr-2 inline-block" /> Back to
+                      Login
+                    </Link>
+                  </Button>
                 </div>
-              </Form>
-            </>
+              </form>
+            </div>
           )}
-        </Card.Body>
+        </CardContent>
       </Card>
-    </Col>
+    </div>
   );
 };
 

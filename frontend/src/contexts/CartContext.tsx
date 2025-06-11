@@ -1,13 +1,13 @@
+import type { CartItem } from "@/types";
 import {
   createContext,
   useContext,
   useEffect,
   useState,
-  ReactNode,
+  type ReactNode,
 } from "react";
 import toast from "react-hot-toast";
 import { FiAlertTriangle } from "react-icons/fi";
-import { CartItem } from "../types";
 
 interface CartContextType {
   cart: CartItem[];

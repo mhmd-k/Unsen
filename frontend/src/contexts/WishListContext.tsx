@@ -1,26 +1,26 @@
+import type { Product } from "@/types";
 import {
   useContext,
   createContext,
   useState,
   useEffect,
-  PropsWithChildren,
+  type ReactNode,
 } from "react";
 import toast from "react-hot-toast";
 import { FiAlertTriangle } from "react-icons/fi";
-import { Product } from "../types";
 
 type WishlistContextType = {
   wishlist: Product[];
   addToWishlist: (item: Product) => void;
   removeFromWishlist: (id: number) => void;
-  inWishlist: (id: number) => void;
+  inWishlist: (id: number) => boolean;
 };
 
 const WishlistContext = createContext<WishlistContextType | undefined>(
   undefined
 );
 
-export function WishlistProvider({ children }: PropsWithChildren) {
+export function WishlistProvider({ children }: { children: ReactNode }) {
   const [wishlist, setWishlist] = useState<Product[]>(() => {
     const storedWishlist = localStorage.getItem("wishlist");
     return storedWishlist ? JSON.parse(storedWishlist) : null;
