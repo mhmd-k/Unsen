@@ -440,7 +440,7 @@ input:focus {
   height: 100%;
 }
 .cart-link {
-  background-color: var(--btn-color);
+  background-color: var(--color-black-btn);
   color: white;
   width: fit-content;
   margin: 0 auto;

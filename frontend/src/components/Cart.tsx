@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { formatCurrency } from "../lib/utils";
 import { useCartConext } from "../contexts/CartContext";
 import CartProductCard from "./CartProductCard";
+import { Button } from "./ui/button";
 
 export default function Cart({ setCartShow }: { setCartShow: () => void }) {
   const { cart, total } = useCartConext();
@@ -18,9 +19,9 @@ export default function Cart({ setCartShow }: { setCartShow: () => void }) {
           <h4 className="text-gray-600 font-normal text-lg">
             Your cart is empty
           </h4>
-          <button className="cart-link" onClick={ReturnToShop}>
+          <Button className="cart-link rounded-none" onClick={ReturnToShop}>
             RETURN TO SHOP
-          </button>
+          </Button>
         </div>
       </div>
     );

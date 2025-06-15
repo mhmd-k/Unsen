@@ -3,8 +3,7 @@ import { User } from "../../models/associations.js";
 
 class PasswordController {
   changePassword = async (req, res) => {
-    const { currentPassword, newPassword } = req.body;
-    const userId = req.user.id;
+    const { currentPassword, newPassword, userId } = req.body;
 
     try {
       const user = await User.findByPk(userId);

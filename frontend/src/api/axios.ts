@@ -1,11 +1,13 @@
 import axios from "axios";
 import { API_URL } from "../lib/constants";
 
-export const api = axios.create({
+const api = axios.create({
   baseURL: API_URL,
 });
 
-export const axiosPrivate = axios.create({
+const apiPrivate = axios.create({
   baseURL: API_URL,
   withCredentials: true,
 });
+
+export { api, apiPrivate };

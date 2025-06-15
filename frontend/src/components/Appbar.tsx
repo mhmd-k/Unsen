@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { BsTextLeft, BsSuitHeart, BsSearch } from "react-icons/bs";
 import { useCartConext } from "../contexts/CartContext";
 import { formatCurrency } from "../lib/utils";
@@ -33,7 +33,12 @@ import {
   Speaker,
   Gamepad2,
   User,
+  LogOut,
+  UserCog,
 } from "lucide-react";
+import toast from "react-hot-toast";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
+import { AxiosError } from "axios";
 
 const categories = ["Headphones", "Phone cases", "Speakers", "Phone Cases"];
 
@@ -41,22 +46,38 @@ function Appbar() {
   const [show, setShow] = useState(false);
   const [cartShow, setCartShow] = useState(false);
 
+  const navigate = useNavigate();
+
   const { total } = useCartConext();
-  const { logout, isAuthenticated, user } = useAuth();
+  const { updateUser, isAuthenticated } = useAuth();
+  const axiosPrivate = useAxiosPrivate();
 
   const navLinks = [
     { path: "/", label: "Home" },
     { path: "shop", label: "Shop", state: { search: false } },
-    { path: "account", label: "Account", hide: !user },
   ];
 
   function handleClick() {
     setCartShow(!cartShow);
   }
 
-  const handleLogout = () => {
-    setShow(false);
-    logout();
+  const handleLogout = async () => {
+    try {
+      // Call logout endpoint to invalidate tokens on the server
+      await axiosPrivate.post("/auth/logout");
+      updateUser(null);
+      toast.success("Successfully logged out");
+      navigate("/login");
+    } catch (error: unknown) {
+      console.error("Logout error:", error);
+      toast.error(
+        error instanceof AxiosError
+          ? error.message
+          : "An error occurred while logging you out! Please try again"
+      );
+    } finally {
+      setShow(false);
+    }
   };
 
   const categoriesArr = categories.map((e) => (
@@ -83,20 +104,13 @@ function Appbar() {
             </Link>
 
             <nav className="m-auto flex align-items-center">
-              {navLinks.map(
-                (link) =>
-                  !link.hide && (
-                    <Button variant="ghost">
-                      <NavLink
-                        key={link.path}
-                        to={link.path}
-                        state={link.state}
-                      >
-                        {link.label}
-                      </NavLink>
-                    </Button>
-                  )
-              )}
+              {navLinks.map((link) => (
+                <Button variant="ghost" key={link.path}>
+                  <NavLink to={link.path} state={link.state}>
+                    {link.label}
+                  </NavLink>
+                </Button>
+              ))}
 
               <NavigationMenu>
                 <NavigationMenuList>
@@ -161,17 +175,22 @@ function Appbar() {
                   <NavigationMenuList>
                     <NavigationMenuItem>
                       <NavigationMenuTrigger className="p-0">
-                        <User />
+                        <User strokeWidth={1.2} />
                       </NavigationMenuTrigger>
                       <NavigationMenuContent>
                         <NavigationMenuLink asChild>
-                          <NavLink to="/account">Account</NavLink>
+                          <NavLink
+                            to="/account"
+                            className="cursor-pointer flex-row whitespace-nowrap gap-2"
+                          >
+                            <UserCog /> Account
+                          </NavLink>
                         </NavigationMenuLink>
                         <NavigationMenuLink
-                          className="cursor-pointer"
+                          className="cursor-pointer flex-row whitespace-nowrap gap-2"
                           onClick={handleLogout}
                         >
-                          Log out
+                          <LogOut /> Log out
                         </NavigationMenuLink>
                       </NavigationMenuContent>
                     </NavigationMenuItem>
@@ -217,7 +236,7 @@ function Appbar() {
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px] sm:w-[400px]">
               <SheetHeader></SheetHeader>
-              <div className="container px-2 mx-auto flex flex-col gap-4 mt-4">
+              <div className="container h-full px-2 mx-auto flex flex-col gap-4 mt-4">
                 {navLinks.map((link) => (
                   <NavLink
                     key={link.path}
@@ -241,13 +260,22 @@ function Appbar() {
                   <DropdownMenuContent>{categoriesArr}</DropdownMenuContent>
                 </DropdownMenu>
                 {isAuthenticated && (
-                  <Button
-                    variant="destructive"
-                    className="mt-4"
-                    onClick={handleLogout}
-                  >
-                    Log out
-                  </Button>
+                  <div className="flex gap-4 mt-auto mb-4 ">
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      onClick={() => navigate("/account")}
+                    >
+                      <UserCog className="size-6" />
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      className="flex-1 rounded-none"
+                      onClick={handleLogout}
+                    >
+                      Log out <LogOut />
+                    </Button>
+                  </div>
                 )}
               </div>
             </SheetContent>

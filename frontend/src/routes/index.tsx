@@ -14,11 +14,8 @@ import NotFound from "../pages/NotFound";
 import { Toaster } from "react-hot-toast";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import Account from "../pages/Account";
-import { useAxiosInterceptors } from "../hooks/useAxiosInterceptors";
 
 const AppRoutes = () => {
-  useAxiosInterceptors();
-
   return (
     <>
       <Routes>

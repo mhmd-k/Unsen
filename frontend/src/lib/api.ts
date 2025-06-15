@@ -7,7 +7,7 @@ import {
   type VerifyEmailResponse,
   type ApiError,
 } from "@/types";
-import { api } from "../api/axios";
+import { api, apiPrivate } from "../api/axios";
 
 // Error handler for axios requests
 function handleAxiosError(error: unknown): never {
@@ -87,6 +87,31 @@ export async function resendVerificationEmail(
       { email }
     );
     return response.data;
+  } catch (error) {
+    handleAxiosError(error);
+  }
+}
+
+export async function changePassword(
+  currentPassword: string,
+  newPassword: string,
+  token: string | undefined,
+  userId: number | undefined
+): Promise<void> {
+  try {
+    await apiPrivate.post(
+      "/auth/change-password",
+      {
+        currentPassword,
+        newPassword,
+        userId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
   } catch (error) {
     handleAxiosError(error);
   }

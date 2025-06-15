@@ -2,29 +2,25 @@ import {
   createContext,
   useContext,
   useState,
-  useEffect,
   type ReactNode,
+  useLayoutEffect,
 } from "react";
-import { useNavigate } from "react-router-dom";
-import { axiosPrivate } from "../api/axios";
-import toast from "react-hot-toast";
 import type { AuthContextType, AuthUser } from "@/types";
-import { AxiosError } from "axios";
+import { apiPrivate } from "@/api/axios";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   console.log(user);
 
   // Check for existing session on mount
-  useEffect(() => {
+  useLayoutEffect(() => {
     const checkAuth = async () => {
       try {
-        const { data } = await axiosPrivate.get("/auth/refresh");
+        const { data } = await apiPrivate.get("/auth/refresh");
         setUser(data.user);
       } catch {
         setUser(null);
@@ -36,33 +32,6 @@ function AuthProvider({ children }: { children: ReactNode }) {
     checkAuth();
   }, []);
 
-  const logout = async () => {
-    try {
-      const res = await axiosPrivate.post(
-        "/auth/logout",
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${user?.accessToken}`,
-          },
-        }
-      );
-
-      if (res.status === 200) {
-        setUser(null);
-        toast.success("Successfully logged out");
-        navigate("/login");
-      }
-    } catch (error: unknown) {
-      console.error("Logout error:", error);
-      toast.error(
-        error instanceof AxiosError
-          ? error.message
-          : "An error occured while logging you out! please try again"
-      );
-    }
-  };
-
   const updateUser = (userData: AuthUser | null) => {
     setUser(userData);
   };
@@ -71,7 +40,6 @@ function AuthProvider({ children }: { children: ReactNode }) {
     user,
     loading,
     isAuthenticated: !!user,
-    logout,
     updateUser,
   };
 

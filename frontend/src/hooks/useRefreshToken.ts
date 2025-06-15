@@ -1,4 +1,4 @@
-import { api } from "../api/axios";
+import { apiPrivate } from "../api/axios";
 import { useAuth } from "../contexts/AuthContext";
 
 const useRefreshToken = () => {
@@ -6,7 +6,7 @@ const useRefreshToken = () => {
 
   const refresh = async () => {
     try {
-      const response = await api.get("/auth/refresh");
+      const response = await apiPrivate.get("/auth/refresh");
 
       console.log(response);
 

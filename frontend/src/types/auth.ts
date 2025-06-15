@@ -59,6 +59,5 @@ export interface AuthContextType {
   user: AuthUser | null;
   loading: boolean;
   isAuthenticated: boolean;
-  logout: () => void;
   updateUser: (user: AuthUser | null) => void;
 }

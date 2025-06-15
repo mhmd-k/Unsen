@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import useRefreshToken from "./useRefreshToken";
-import { axiosPrivate } from "../api/axios";
+import { apiPrivate } from "@/api/axios";
 
 const useAxiosPrivate = () => {
   const { user } = useAuth();
   const refresh = useRefreshToken();
 
   useEffect(() => {
-    const requestIntercept = axiosPrivate.interceptors.request.use(
+    const requestIntercept = apiPrivate.interceptors.request.use(
       (config) => {
         if (!config.headers["Authorization"]) {
           config.headers["Authorization"] = `Bearer ${user?.accessToken}`;
@@ -18,16 +18,20 @@ const useAxiosPrivate = () => {
       (error) => Promise.reject(error)
     );
 
-    const responseIntercept = axiosPrivate.interceptors.response.use(
+    const responseIntercept = apiPrivate.interceptors.response.use(
       (response) => response,
       async (error) => {
         const prevRequest = error?.config;
-        if (error?.response?.status === 401 && !prevRequest?.sent) {
+        if (
+          (error?.response?.status === 401 ||
+            error?.response?.status === 403) &&
+          !prevRequest?.sent
+        ) {
           prevRequest.sent = true;
           try {
             const newAccessToken = await refresh();
             prevRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
-            return axiosPrivate(prevRequest);
+            return apiPrivate(prevRequest);
           } catch (refreshError) {
             return Promise.reject(refreshError);
           }
@@ -37,12 +41,12 @@ const useAxiosPrivate = () => {
     );
 
     return () => {
-      axiosPrivate.interceptors.request.eject(requestIntercept);
-      axiosPrivate.interceptors.response.eject(responseIntercept);
+      apiPrivate.interceptors.request.eject(requestIntercept);
+      apiPrivate.interceptors.response.eject(responseIntercept);
     };
   }, [user, refresh]);
 
-  return axiosPrivate;
+  return apiPrivate;
 };
 
 export default useAxiosPrivate;
