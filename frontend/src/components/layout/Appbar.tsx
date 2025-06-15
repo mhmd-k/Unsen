@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { BsTextLeft, BsSuitHeart, BsSearch } from "react-icons/bs";
-import { useCartConext } from "../contexts/CartContext";
-import { formatCurrency } from "../lib/utils";
-import { useAuth } from "../contexts/AuthContext";
+import { useCartConext } from "@/contexts/CartContext";
+import { formatCurrency } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   NavigationMenu,
   NavigationMenuContent,

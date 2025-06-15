@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { AuthRoute } from "../components/AuthRoute";
 import Home from "../pages/Home";
-import Layout from "../components/Layout";
+import Layout from "@/components/layout";
 import Shop from "../pages/Shop";
 import Wishlist from "../pages/Wishlist";
 import ProductDetail from "../pages/ProductDetail";

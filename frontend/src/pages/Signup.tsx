@@ -16,8 +16,7 @@ import {
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-import { Alert, AlertDescription } from "../components/ui/alert";
-import { AlertCircleIcon, Loader2 } from "lucide-react";
+import { Loader2, Eye, EyeOff } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -33,7 +32,13 @@ const signupSchema = z
   .object({
     name: z.string().min(3, "Name must be at least 3 characters"),
     email: z.string().email("Invalid email address"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#@$!%*?&])[A-Za-z\d#@$!%*?&]{8,}$/,
+        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+      ),
     confirmPassword: z.string(),
     role: z.enum(["CUSTOMER", "SELLER"]),
     // Seller specific fields
@@ -128,9 +133,11 @@ const bankOptions: SelectOption[] = [
 const Signup: React.FC = () => {
   const [status, setStatus] = useState<Status>("idle");
   const [resendEmailStatus, setResendEmailStatus] = useState<Status>("idle");
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showResendEmailBtn, setShowResendEmailBtn] = useState<boolean>(false);
   const [showVerifyEmail, setShowVerifyEmail] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState<boolean>(false);
 
   console.log("showResendEmailBtn:", showResendEmailBtn);
 
@@ -151,7 +158,6 @@ const Signup: React.FC = () => {
   const onSubmit = async (formData: SignupFormData) => {
     try {
       setStatus("loading");
-      setErrorMessage(null);
 
       // Transform form data to match API SignupData type
       const signupData: SignupData = {
@@ -172,7 +178,7 @@ const Signup: React.FC = () => {
       if (response.resendEmailOption) {
         setShowResendEmailBtn(true);
         setStatus("error");
-        setErrorMessage(response.message);
+        toast.error(response.message);
         return;
       }
 
@@ -182,8 +188,8 @@ const Signup: React.FC = () => {
       console.log(error);
 
       setStatus("error");
-      setErrorMessage(
-        error instanceof AxiosError
+      toast.error(
+        error instanceof Error
           ? error.message
           : "An error occurred during signup"
       );
@@ -208,7 +214,7 @@ const Signup: React.FC = () => {
           ? error.message
           : "An error occurred during resending verification email"
       );
-      setErrorMessage(
+      toast.error(
         error instanceof AxiosError
           ? error.message
           : "An error occurred during resending verification email"
@@ -297,12 +303,27 @@ const Signup: React.FC = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  {...register("password")}
-                  className={errors.password ? "border-red-500" : ""}
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    {...register("password")}
+                    className={errors.password ? "border-red-500" : ""}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
                 {errors.password && (
                   <p className="text-sm text-red-500">
                     {errors.password.message}
@@ -312,12 +333,27 @@ const Signup: React.FC = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  {...register("confirmPassword")}
-                  className={errors.confirmPassword ? "border-red-500" : ""}
-                />
+                <div className="relative">
+                  <Input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    {...register("confirmPassword")}
+                    className={errors.confirmPassword ? "border-red-500" : ""}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
                 {errors.confirmPassword && (
                   <p className="text-sm text-red-500">
                     {errors.confirmPassword.message}
@@ -422,13 +458,6 @@ const Signup: React.FC = () => {
                     )}
                   </div>
                 </div>
-              )}
-
-              {status === "error" && errorMessage && (
-                <Alert variant="destructive">
-                  <AlertCircleIcon />
-                  <AlertDescription>{errorMessage}</AlertDescription>
-                </Alert>
               )}
 
               <Button

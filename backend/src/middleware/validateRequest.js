@@ -7,7 +7,7 @@ const validateRequest = (req, res, next) => {
       message: errors
         .array()
         .map((e) => e.msg)
-        .join(", "),
+        .join("\n"),
       errors: errors.array().map((err) => ({
         field: err.path,
         message: err.msg,

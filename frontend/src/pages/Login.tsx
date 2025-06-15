@@ -16,8 +16,7 @@ import {
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-import { Alert, AlertDescription } from "../components/ui/alert";
-import { AlertCircleIcon, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 // Define the form data type using Zod schema
 const loginSchema = z.object({
@@ -30,7 +29,6 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 const Login: React.FC = () => {
   const [status, setStatus] = useState<Status>("idle");
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const { updateUser } = useAuth();
   const navigate = useNavigate();
@@ -48,7 +46,6 @@ const Login: React.FC = () => {
 
     try {
       setStatus("loading");
-      setErrorMessage(null);
 
       const res = await login(formData);
 
@@ -69,11 +66,6 @@ const Login: React.FC = () => {
         }
       );
       setStatus("error");
-      setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : "An error occurred during login"
-      );
     }
   };
 
@@ -124,13 +116,6 @@ const Login: React.FC = () => {
               <p className="text-sm text-red-500">{errors.password.message}</p>
             )}
           </div>
-
-          {status === "error" && errorMessage && (
-            <Alert variant="destructive">
-              <AlertCircleIcon />
-              <AlertDescription>{errorMessage}</AlertDescription>
-            </Alert>
-          )}
 
           <Button asChild variant="link" className="p-0">
             <Link to="/forgot-password">Forgot your password?</Link>

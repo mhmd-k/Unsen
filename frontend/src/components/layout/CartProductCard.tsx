@@ -1,9 +1,9 @@
-import { formatCurrency } from "../lib/utils";
-import { useCartConext } from "../contexts/CartContext";
+import { formatCurrency } from "@/lib/utils";
+import { useCartConext } from "@/contexts/CartContext";
 import { BsTrash } from "react-icons/bs";
 import { memo, type ChangeEvent } from "react";
 import type { CartItem } from "@/types";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 
 const CartProductCard = ({
   id,

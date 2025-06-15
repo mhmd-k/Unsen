@@ -25,19 +25,21 @@ function VerifyEmail() {
         setStatus("loading");
         const response = await verifyEmail(token);
         updateUser(response.user);
+        toast.success("Email verified successfuly");
         setStatus("success");
-        // Redirect to home page after 2 seconds
-        toast.loading("Redirecting to home page...");
-        setTimeout(() => {
-          navigate("/");
-        }, 5000);
-      } catch (error) {
+        navigate("/");
+      } catch (error: unknown) {
         setStatus("error");
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "An error occured during verifying your email!"
+        );
       }
     };
 
     verifyUserEmail();
-  }, []);
+  }, [navigate, searchParams, updateUser]);
 
   return (
     <div className="container max-w-2xl mx-auto px-4">

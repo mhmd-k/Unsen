@@ -1,8 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
-import { formatCurrency } from "../lib/utils";
-import { useCartConext } from "../contexts/CartContext";
+import { formatCurrency } from "@/lib/utils";
+import { useCartConext } from "@/contexts/CartContext";
 import CartProductCard from "./CartProductCard";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 
 export default function Cart({ setCartShow }: { setCartShow: () => void }) {
   const { cart, total } = useCartConext();

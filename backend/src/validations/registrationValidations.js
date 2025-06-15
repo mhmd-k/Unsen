@@ -4,9 +4,7 @@ export const signupValidation = [
   body("username")
     .trim()
     .isLength({ min: 3, max: 30 })
-    .withMessage("Username must be between 3 and 30 characters")
-    .matches(/^[a-zA-Z0-9_]+$/)
-    .withMessage("Username can only contain letters, numbers, and underscores"),
+    .withMessage("Username must be between 3 and 30 characters"),
 
   body("email")
     .isEmail()
@@ -14,7 +12,7 @@ export const signupValidation = [
     .normalizeEmail(),
 
   body("password")
-    .isLength({ min: 6 })
+    .isLength({ min: 8 })
     .withMessage("Password must be at least 6 characters long")
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
     .withMessage(

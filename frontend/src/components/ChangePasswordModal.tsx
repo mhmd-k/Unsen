@@ -14,17 +14,19 @@ import { changePassword } from "@/lib/api";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 const passwordSchema = z
   .object({
     currentPassword: z.string().min(1, "Current password is required"),
-    newPassword: z.string().min(8, "Password must be at least 8 characters"),
-    // .regex(
-    //   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-    //   "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
-    // ),
+    newPassword: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#@$!%*?&])[A-Za-z\d#@$!%*?&]{8,}$/,
+        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+      ),
     confirmPassword: z.string().min(1, "Please confirm your password"),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
@@ -183,7 +185,11 @@ const ChangePasswordModal = ({ show, onHide }: ChangePasswordModalProps) => {
               Cancel
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? "Submitting..." : "Submit"}
+              {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                "Submit"
+              )}
             </Button>
           </DialogFooter>
         </form>

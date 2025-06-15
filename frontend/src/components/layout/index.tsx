@@ -1,8 +1,8 @@
 import { Outlet } from "react-router-dom";
 import Appbar from "./Appbar";
 import Footer from "./Footer";
-import { useAuth } from "../contexts/AuthContext";
-import { Alert } from "./ui/alert";
+import { useAuth } from "@/contexts/AuthContext";
+import { Alert } from "@/components/ui/alert";
 
 function Layout() {
   const { user, isAuthenticated } = useAuth();
