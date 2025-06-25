@@ -5,6 +5,7 @@ import {
   type ReactNode,
   useLayoutEffect,
 } from "react";
+import loadingSpinner from "../assets/icons/Infinity-1s-150px (1).svg";
 import type { AuthContextType, AuthUser } from "@/types";
 import { apiPrivate } from "@/api/axios";
 
@@ -43,6 +44,13 @@ function AuthProvider({ children }: { children: ReactNode }) {
     updateUser,
   };
 
+  if (loading)
+    return (
+      <div className="flex justify-center">
+        <img src={loadingSpinner} alt="loading spinner" />
+      </div>
+    );
+
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
@@ -56,4 +64,4 @@ function useAuth() {
 
 export { AuthProvider, useAuth };
 
-// pass to test user: 123F#Ccs
+// pass to test user: 123F#Ccs1

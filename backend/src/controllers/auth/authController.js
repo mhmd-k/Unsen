@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { User } from "../../models/associations.js";
+import { SellerBankAccount, User } from "../../models/associations.js";
 import {
   generateAccessToken,
   storeRefreshTokenInCookie,
@@ -25,14 +25,28 @@ class AuthController {
       if (!isPasswordValid)
         return res.status(401).json({ message: "Invalid credentials" });
 
+      const sellerBankAccount = await SellerBankAccount.findOne({
+        where: {
+          userId: user.dataValues.id,
+        },
+      });
+
       // Generate tokens
-      const accessToken = generateAccessToken(user);
-      const refreshToken = generateRefreshToken(user);
+      const accessToken = generateAccessToken(user.id, user.email);
+      const refreshToken = generateRefreshToken(user.id, user.email);
 
       storeRefreshTokenInCookie(res, refreshToken);
 
       const userData = user.get({ plain: true });
-      res.json({ user: { ...userData, password: undefined, accessToken } });
+      const sellerBankAccountData = sellerBankAccount.get({ plain: true });
+      res.json({
+        user: {
+          ...userData,
+          ...sellerBankAccountData,
+          password: undefined,
+          accessToken,
+        },
+      });
     } catch (err) {
       console.log(err);
 
@@ -43,7 +57,7 @@ class AuthController {
   refreshToken = async (req, res) => {
     const refreshToken = req.cookies.refreshToken;
 
-    console.log("refresh token: ", refreshToken)
+    console.log("refresh token: ", refreshToken);
 
     if (!refreshToken)
       return res.status(401).json({ message: "Refresh token required" });
@@ -59,15 +73,30 @@ class AuthController {
           const user = await User.findByPk(decoded.userId);
           if (!user) return res.status(404).json({ message: "User not found" });
 
+          const sellerBankAccount = await SellerBankAccount.findOne({
+            where: {
+              userId: user.dataValues.id,
+            },
+          });
+
           const userData = user.get({ plain: true });
-          const newAccessToken = generateAccessToken(userData);
-          const newRefreshToken = generateRefreshToken(userData);
+          const sellerBankAccountData = sellerBankAccount.get({ plain: true });
+
+          const newAccessToken = generateAccessToken(
+            userData.id,
+            userData.email
+          );
+          const newRefreshToken = generateRefreshToken(
+            userData.id,
+            userData.email
+          );
 
           storeRefreshTokenInCookie(res, newRefreshToken);
 
           res.status(200).json({
             user: {
               ...userData,
+              ...sellerBankAccountData,
               password: undefined,
               accessToken: newAccessToken,
             },

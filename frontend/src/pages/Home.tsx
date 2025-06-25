@@ -69,13 +69,26 @@ function Home() {
                     {item.subtitle}
                   </p>
                   <div className="flex flex-col gap-4">
-                    <Button
-                      onClick={() => navigate("/shop")}
-                      size="lg"
-                      className="landing-btn"
-                    >
-                      SHOP NOW <BsFillArrowRightCircleFill />
-                    </Button>
+                    {user?.role === "CUSTOMER" && (
+                      <Button
+                        onClick={() => navigate("/signup")}
+                        size="lg"
+                        className="landing-btn"
+                      >
+                        SHOP NOW <BsFillArrowRightCircleFill />
+                      </Button>
+                    )}
+
+                    {user?.role === "SELLER" && (
+                      <Button
+                        onClick={() => navigate("/add-product")}
+                        size="lg"
+                        className="landing-btn"
+                      >
+                        SELL NOW <BsFillArrowRightCircleFill />
+                      </Button>
+                    )}
+
                     {!user && (
                       <Button
                         onClick={() => navigate("/signup")}
@@ -95,7 +108,7 @@ function Home() {
 
       <div className="py-12">
         <h2 className="text-4xl text-center mb-12">Top Categories</h2>
-        <div className="container px-2 mx-auto">
+        <div className="container px-4 mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <Card className="bg-white p-0">
               <Link to="shop?collection=headphones" className="group">

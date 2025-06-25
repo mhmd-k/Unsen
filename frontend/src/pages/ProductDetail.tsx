@@ -7,6 +7,7 @@ import { Button } from "../components/ui/button";
 import { Separator } from "../components/ui/separator";
 import ProductCard from "@/components/ProductCard";
 import { ShoppingBag } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Product {
   id: number;
@@ -23,6 +24,7 @@ export default function ProductDetail() {
     item || "{}"
   ) as Product;
 
+  const { user } = useAuth();
   const { addItem } = useCartConext();
   const { addToWishlist } = useWishlistContext();
 
@@ -40,7 +42,7 @@ export default function ProductDetail() {
 
   return (
     <>
-      <div className="container px-2 mx-auto py-8">
+      <div className="container px-4 mx-auto py-8">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
           <div className="md:col-span-5">
             <div className="relative overflow-hidden">
@@ -57,33 +59,35 @@ export default function ProductDetail() {
               sagittis. Ut id nisl quis enim dignissim sagittis. Fusce ac felis
               sitpharetra condimentum...
             </p>
-            <div className="space-y-4 grid">
-              <Button
-                size="lg"
-                className="w-full h-[50px] md:max-w-[250px] bg-black-btn rounded-none hover:bg-main"
-                onClick={handleAddToCart}
-              >
-                ADD TO CART <ShoppingBag />
-              </Button>
-              <Button
-                variant="ghost"
-                size="lg"
-                className="group p-0 justify-start w-full max-w-[200px] hover:text-emerald-500 hover:bg-transparent"
-                onClick={handleAddToWishlist}
-              >
-                <span className="border-1 border-black p-2 rounded-full group-hover:border-emerald-500">
-                  <BsSuitHeart />
-                </span>{" "}
-                Add to Wishlist
-              </Button>
-            </div>
+            {user?.role === "CUSTOMER" && (
+              <div className="space-y-4 grid">
+                <Button
+                  size="lg"
+                  className="w-full h-[50px] md:max-w-[250px] bg-black-btn rounded-none hover:bg-main"
+                  onClick={handleAddToCart}
+                >
+                  ADD TO CART <ShoppingBag />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  className="group p-0 justify-start w-full max-w-[200px] hover:text-emerald-500 hover:bg-transparent"
+                  onClick={handleAddToWishlist}
+                >
+                  <span className="border-1 border-black p-2 rounded-full group-hover:border-emerald-500">
+                    <BsSuitHeart />
+                  </span>{" "}
+                  Add to Wishlist
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       <Separator />
 
-      <div className="container px-2 mx-auto py-8">
+      <div className="container px-4 mx-auto py-8">
         <h2 className="text-3xl text-center mb-8">Related Products</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 products">
           {data

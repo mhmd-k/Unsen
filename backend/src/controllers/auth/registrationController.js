@@ -94,6 +94,11 @@ class RegistrationController {
           verificationToken: token,
         },
       });
+      const sellerBankAccount = await SellerBankAccount.findOne({
+        where: {
+          userId: user.dataValues.id,
+        },
+      });
 
       if (!user) {
         return res.status(400).json({ message: "Invalid verification token" });
@@ -113,8 +118,8 @@ class RegistrationController {
 
       // Generate tokens after successful verification
       const userData = user.get({ plain: true });
-      const accessToken = generateAccessToken(userData);
-      const refreshToken = generateRefreshToken(userData);
+      const accessToken = generateAccessToken(userData.id, userData.email);
+      const refreshToken = generateRefreshToken(userData.id, userData.email);
 
       storeRefreshTokenInCookie(res, refreshToken);
 
@@ -122,6 +127,7 @@ class RegistrationController {
         message: "Email verified successfully",
         user: {
           ...userData,
+          ...sellerBankAccount.get({ plain: true }),
           password: undefined,
           accessToken,
         },

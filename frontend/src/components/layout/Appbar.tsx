@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import { BsTextLeft, BsSuitHeart, BsSearch } from "react-icons/bs";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { BsSuitHeart, BsSearch } from "react-icons/bs";
 import { useCartConext } from "@/contexts/CartContext";
 import { formatCurrency } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
@@ -23,6 +23,8 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Cart from "./Cart";
@@ -32,15 +34,19 @@ import {
   Smartphone,
   Speaker,
   Gamepad2,
-  User,
   LogOut,
   UserCog,
+  CircleUserRound,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { AxiosError } from "axios";
+import MobileSidebar from "./MobileSidebar";
 
-const categories = ["Headphones", "Phone cases", "Speakers", "Phone Cases"];
+const navLinks = [
+  { path: "/", label: "Home" },
+  { path: "shop", label: "Shop", state: { search: false } },
+];
 
 function Appbar() {
   const [show, setShow] = useState(false);
@@ -49,15 +55,11 @@ function Appbar() {
   const navigate = useNavigate();
 
   const { total } = useCartConext();
-  const { updateUser, isAuthenticated } = useAuth();
+  const { updateUser, isAuthenticated, user } = useAuth();
   const axiosPrivate = useAxiosPrivate();
+  const location = useLocation();
 
-  const navLinks = [
-    { path: "/", label: "Home" },
-    { path: "shop", label: "Shop", state: { search: false } },
-  ];
-
-  function handleClick() {
+  function handleShowCart() {
     setCartShow(!cartShow);
   }
 
@@ -79,17 +81,6 @@ function Appbar() {
       setShow(false);
     }
   };
-
-  const categoriesArr = categories.map((e) => (
-    <NavLink
-      key={e}
-      to={`shop?collection=${e.toLowerCase().split(" ").join("-")}`}
-      onClick={() => setShow(!show)}
-      className="text-decoration-none"
-    >
-      {e}
-    </NavLink>
-  ));
 
   return (
     <>
@@ -162,62 +153,77 @@ function Appbar() {
             </nav>
 
             <div className="flex gap-3 items-center fs-5 header-icons">
-              {!isAuthenticated && (
+              {!isAuthenticated && !location.pathname.includes("login") && (
                 <Link to="/login" className="main-btn">
                   Login
                 </Link>
               )}
+              {isAuthenticated &&
+                user?.role === "SELLER" &&
+                !location.pathname.includes("add-product") && (
+                  <Link to="/add-product" className="main-btn">
+                    Sell a product
+                  </Link>
+                )}
               <Link to="shop" state={{ search: true }}>
                 <BsSearch />
               </Link>
-              {isAuthenticated && (
-                <NavigationMenu>
-                  <NavigationMenuList>
-                    <NavigationMenuItem>
-                      <NavigationMenuTrigger className="p-0">
-                        <User strokeWidth={1.2} />
-                      </NavigationMenuTrigger>
-                      <NavigationMenuContent>
-                        <NavigationMenuLink asChild>
-                          <NavLink
-                            to="/account"
-                            className="cursor-pointer flex-row whitespace-nowrap gap-2"
-                          >
-                            <UserCog /> Account
-                          </NavLink>
-                        </NavigationMenuLink>
-                        <NavigationMenuLink
-                          className="cursor-pointer flex-row whitespace-nowrap gap-2"
-                          onClick={handleLogout}
-                        >
-                          <LogOut /> Log out
-                        </NavigationMenuLink>
-                      </NavigationMenuContent>
-                    </NavigationMenuItem>
-                  </NavigationMenuList>
-                </NavigationMenu>
+
+              {user?.role === "CUSTOMER" && (
+                <NavLink to="wishlist">
+                  <BsSuitHeart />
+                </NavLink>
               )}
-              <NavLink to="wishlist">
-                <BsSuitHeart />
-              </NavLink>
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" className="gap-1">
-                    <span className="text-xs font-semibold">
-                      {formatCurrency(total)}
-                    </span>
-                    <ShoppingCart strokeWidth={1.6} className="size-5" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="right">
-                  <SheetHeader>
-                    <SheetTitle className="text-xl font-normal">
-                      SHOPPING CART
-                    </SheetTitle>
-                  </SheetHeader>
-                  <Cart setCartShow={handleClick} />
-                </SheetContent>
-              </Sheet>
+
+              {isAuthenticated && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    <CircleUserRound
+                      strokeWidth={1}
+                      className="cursor-pointer hover:text-main hover:scale-115 ease-in-out duration-300 transition-all"
+                    />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start">
+                    <DropdownMenuGroup>
+                      <DropdownMenuItem>
+                        <NavLink
+                          to="/account"
+                          className="cursor-pointer flex whitespace-nowrap gap-2"
+                        >
+                          <UserCog /> Account
+                        </NavLink>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={handleLogout}
+                        className="flex gap-2"
+                      >
+                        <LogOut /> Log out
+                      </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+
+              {user?.role !== "SELLER" && (
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <Button variant="ghost" className="gap-1">
+                      <span className="text-xs font-semibold">
+                        {formatCurrency(total)}
+                      </span>
+                      <ShoppingCart strokeWidth={1.6} className="size-5" />
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent side="right">
+                    <SheetHeader>
+                      <SheetTitle className="text-xl font-normal">
+                        SHOPPING CART
+                      </SheetTitle>
+                    </SheetHeader>
+                    <Cart setCartShow={handleShowCart} />
+                  </SheetContent>
+                </Sheet>
+              )}
             </div>
           </div>
         </div>
@@ -225,61 +231,12 @@ function Appbar() {
 
       {/* mobile Appbar */}
       <div className="lg:hidden sticky z-10 shadow-lg py-2">
-        <div className="container px-2 mx-auto flex justify-between items-center">
-          <Sheet>
-            <SheetTrigger asChild>
-              <div className="header-icons">
-                <a href="#">
-                  <BsTextLeft size={30} />
-                </a>
-              </div>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-[300px] sm:w-[400px]">
-              <SheetHeader></SheetHeader>
-              <div className="container h-full px-2 mx-auto flex flex-col gap-4 mt-4">
-                {navLinks.map((link) => (
-                  <NavLink
-                    key={link.path}
-                    to={link.path}
-                    state={link.state}
-                    onClick={() => setShow(false)}
-                    className="text-lg hover:text-primary transition-colors"
-                  >
-                    {link.label}
-                  </NavLink>
-                ))}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <a
-                      href="#"
-                      className="text-lg hover:text-primary transition-colors"
-                    >
-                      Collections
-                    </a>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>{categoriesArr}</DropdownMenuContent>
-                </DropdownMenu>
-                {isAuthenticated && (
-                  <div className="flex gap-4 mt-auto mb-4 ">
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => navigate("/account")}
-                    >
-                      <UserCog className="size-6" />
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      className="flex-1 rounded-none"
-                      onClick={handleLogout}
-                    >
-                      Log out <LogOut />
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </SheetContent>
-          </Sheet>
+        <div className="container px-4 mx-auto flex justify-between items-center">
+          <MobileSidebar
+            handleLogout={handleLogout}
+            show={show}
+            setShow={setShow}
+          />
 
           <NavLink to="/" className="text-2xl font-semibold transition-all">
             unsen.
@@ -289,27 +246,32 @@ function Appbar() {
             <Link to="shop" state={{ search: true }}>
               <BsSearch />
             </Link>
-            <NavLink to="wishlist">
-              <BsSuitHeart />
-            </NavLink>
 
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="header-icons">
-                  <a href="#">
-                    <ShoppingCart strokeWidth={1.6} className="size-6" />
-                  </a>
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right">
-                <SheetHeader>
-                  <SheetTitle className="text-xl font-normal">
-                    SHOPPING CART
-                  </SheetTitle>
-                </SheetHeader>
-                <Cart setCartShow={handleClick} />
-              </SheetContent>
-            </Sheet>
+            {user?.role === "CUSTOMER" && (
+              <NavLink to="wishlist">
+                <BsSuitHeart />
+              </NavLink>
+            )}
+
+            {user?.role !== "SELLER" && (
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="header-icons">
+                    <a href="#">
+                      <ShoppingCart strokeWidth={1.6} className="size-6" />
+                    </a>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right">
+                  <SheetHeader>
+                    <SheetTitle className="text-xl font-normal">
+                      SHOPPING CART
+                    </SheetTitle>
+                  </SheetHeader>
+                  <Cart setCartShow={handleShowCart} />
+                </SheetContent>
+              </Sheet>
+            )}
           </div>
         </div>
       </div>

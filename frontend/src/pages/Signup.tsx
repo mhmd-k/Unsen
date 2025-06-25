@@ -4,7 +4,7 @@ import { z } from "zod";
 import { Link } from "react-router-dom";
 import { resendVerificationEmail, signup } from "../lib/api";
 import { useState } from "react";
-import type { SelectOption, SignupData, Status } from "../types";
+import type { SignupData, Status } from "../types";
 import { BsCheck } from "react-icons/bs";
 import toast from "react-hot-toast";
 import {
@@ -26,6 +26,7 @@ import {
 } from "../components/ui/select";
 import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
 import { AxiosError } from "axios";
+import { bankOptions } from "@/lib/constants";
 
 // Define the form data type using Zod schema
 const signupSchema = z
@@ -44,11 +45,29 @@ const signupSchema = z
     // Seller specific fields
     bankName: z.string().optional(),
     accountHolderName: z.string().optional(),
-    accountNumber: z.string().optional(),
-    routingNumber: z
-      .union([z.string().length(0), z.string().min(9)])
+    accountNumber: z
+      .string()
       .optional()
-      .transform((e) => (e === "" ? undefined : e)),
+      .refine((val) => {
+        if (!val) return true;
+        return /^\d{8,17}$/.test(val);
+      }, "Account number must be between 8-17 digits"),
+    routingNumber: z
+      .string()
+      .optional()
+      .refine((val) => {
+        if (!val) return true;
+        if (!/^\d{9}$/.test(val)) return false;
+
+        // ABA routing number validation algorithm
+        const digits = val.split("").map(Number);
+        const checksum = digits.reduce((acc, digit, idx) => {
+          const weight = [3, 7, 1, 3, 7, 1, 3, 7, 1][idx];
+          return acc + digit * weight;
+        }, 0);
+
+        return checksum % 10 === 0;
+      }, "Invalid routing number. Must be a valid 9-digit ABA routing number"),
   })
   .refine(
     (data) => {
@@ -116,19 +135,6 @@ const signupSchema = z
 
 // Infer the type from the schema
 type SignupFormData = z.infer<typeof signupSchema>;
-
-const bankOptions: SelectOption[] = [
-  { label: "Bank of America", value: "BANK_OF_AMERICA" },
-  { label: "Chase", value: "CHASE" },
-  { label: "Wells Fargo", value: "WELLS_FARGO" },
-  { label: "Citibank", value: "CITIBANK" },
-  { label: "Capital One", value: "CAPITAL_ONE" },
-  { label: "TD Bank", value: "TD_BANK" },
-  { label: "PNC Bank", value: "PNC_BANK" },
-  { label: "US Bank", value: "US_BANK" },
-  { label: "HSBC", value: "HSBC" },
-  { label: "Other", value: "OTHER" },
-];
 
 const Signup: React.FC = () => {
   const [status, setStatus] = useState<Status>("idle");
@@ -388,7 +394,7 @@ const Signup: React.FC = () => {
                     <Select
                       onValueChange={(value) => setValue("bankName", value)}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select a bank" />
                       </SelectTrigger>
                       <SelectContent>

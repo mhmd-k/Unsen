@@ -1,9 +1,12 @@
 // Authentication related types
+
+export type Role = "CUSTOMER" | "SELLER";
+
 export interface SignupData {
   username: string;
   email: string;
   password: string;
-  role?: "CUSTOMER" | "SELLER";
+  role?: Role;
   bankName?: string;
   fullName?: string;
   accountNumber?: string;
@@ -50,7 +53,7 @@ export interface AuthUser {
   id: number;
   username: string;
   email: string;
-  role: string;
+  role: Role;
   isVerified: boolean;
   accessToken: string;
 }

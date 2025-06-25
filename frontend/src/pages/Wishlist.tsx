@@ -22,7 +22,7 @@ export default function Wishlist() {
   }
 
   return (
-    <div className="products container px-2 mx-auto py-8">
+    <div className="products container px-4 mx-auto py-8">
       <h1 className="text-4xl mb-8 text-center">Your Wishlist</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {wishlist.map((e) => (

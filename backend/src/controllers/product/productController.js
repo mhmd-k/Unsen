@@ -1,30 +1,57 @@
-import { Product } from "../../models/associations.js";
+import { Product, User } from "../../models/associations.js";
+import jwt from "jsonwebtoken";
 
 class ProductController {
   createProduct = async (req, res) => {
+    const refreshToken = req.cookies.refreshToken;
+
     try {
       // Validate seller role
-      if (req.user.role !== "SELLER") {
-        return res.status(403).json({
-          message: "Only sellers can create products",
-        });
-      }
+      jwt.verify(
+        refreshToken,
+        process.env.REFRESH_SECRET,
+        async (err, decoded) => {
+          if (err)
+            return res.status(403).json({ message: "Invalid refresh token" });
+
+          const user = await User.findByPk(decoded.userId);
+          if (!user) return res.status(404).json({ message: "User not found" });
+
+          const userData = user.get({ plain: true });
+
+          if (userData.role !== "SELLER") {
+            return res.status(403).json({
+              message: "Only sellers can create products",
+            });
+          }
+        }
+      );
 
       // Get form data fields
-      const { name, description, price, category, brand } = req.body;
+      const {
+        name,
+        description,
+        price,
+        category,
+        brand,
+        stock,
+        sellerId,
+        images,
+      } = req.body;
 
-      // Handle image files
-      const images = req.files ? req.files.map((file) => file.filename) : [];
+      console.log("req.body: ", req.body);
+      console.log("req.files: ", req.files);
 
       // Create new product
       const product = await Product.create({
-        sellerId: req.user.id,
+        sellerId: sellerId,
         name,
         description,
-        images,
+        images: JSON.stringify(req.files.map((file) => file.filename)),
         price: parseFloat(price),
         category,
         brand,
+        stock,
       });
 
       res.status(201).json({

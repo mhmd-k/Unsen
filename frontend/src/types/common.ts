@@ -24,15 +24,3 @@ export interface ValidationError {
 }
 
 export type Status = "idle" | "loading" | "success" | "error";
-
-export type Product = {
-  id: number;
-  imageUrl: string;
-  title: string;
-  price: number;
-  type: string;
-};
-
-export type CartItem = Product & {
-  quantity: number;
-};

@@ -100,7 +100,7 @@ function Shop() {
         </div>
       </div>
 
-      <div className="container px-2 mx-auto">
+      <div className="container px-4 mx-auto">
         <div className="flex justify-between items-center py-3 gap-4">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import ChangePasswordModal from "../components/ChangePasswordModal";
 import { Button } from "../components/ui/button";
 import { Separator } from "../components/ui/separator";
-import { BadgeCheckIcon, Heart, Lock } from "lucide-react";
+import { BadgeCheckIcon, Heart, LayoutDashboard, Lock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const Account = () => {
@@ -13,7 +13,7 @@ const Account = () => {
   const [showPasswordModal, setShowPasswordModal] = useState(false);
 
   return (
-    <div className="container px-2 mx-auto py-8">
+    <div className="container px-4 mx-auto py-8">
       <h1 className="text-3xl my-4">Account Information</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-4">
@@ -71,6 +71,15 @@ const Account = () => {
         >
           <Lock /> Change Password
         </Button>
+        {user?.role === "SELLER" && (
+          <Button
+            variant="outline"
+            onClick={() => navigate("/seller-dashboard")}
+            className="flex items-center gap-2 border-main text-main"
+          >
+            <LayoutDashboard /> Dashboard
+          </Button>
+        )}
       </div>
 
       <ChangePasswordModal

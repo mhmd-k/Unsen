@@ -46,10 +46,6 @@ const Product = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    // IDImage: {
-    //   type: DataTypes.STRING,
-    //   allowNull: false,
-    // },
   },
   {
     timestamps: true,

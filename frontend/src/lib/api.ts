@@ -6,6 +6,7 @@ import {
   type LoginResponse,
   type VerifyEmailResponse,
   type ApiError,
+  type createProductRequestPayload,
 } from "@/types";
 import { api, apiPrivate } from "../api/axios";
 
@@ -112,6 +113,17 @@ export async function changePassword(
         },
       }
     );
+  } catch (error) {
+    handleAxiosError(error);
+  }
+}
+
+export async function createProduct(
+  data: createProductRequestPayload
+): Promise<SignupResponse> {
+  try {
+    const response = await api.post("/products/create", data);
+    return response.data;
   } catch (error) {
     handleAxiosError(error);
   }
