@@ -64,4 +64,5 @@ function useAuth() {
 
 export { AuthProvider, useAuth };
 
-// pass to test user: 123F#Ccs1
+// email: testuser_mhmd_k_2000@proton.me
+// pass: 123F#Ccs1

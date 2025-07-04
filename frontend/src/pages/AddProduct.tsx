@@ -4,8 +4,6 @@ import { z } from "zod";
 import { useState, useEffect } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
-import { Textarea } from "../components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -13,14 +11,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
-import { Loader2, X, Star } from "lucide-react";
+import { Loader2, Star, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { categories } from "@/lib/constants";
 import image from "../assets/images/add-product-image.jpg";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { useAuth } from "@/contexts/AuthContext";
+import {
+  Form,
+  FormLabel,
+  FormField,
+  FormItem,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import { cn, formatBytes } from "@/lib/utils";
 
-// Define the form data type using Zod schema
+const fileSizeLimit = 5 * 1024 * 1024; // 5MB
+
 const productSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters"),
   description: z.string().min(10, "Description must be at least 10 characters"),
@@ -32,11 +40,13 @@ const productSchema = z.object({
   category: z.string().min(1, "Category is required"),
   brand: z.string().min(1, "Brand is required"),
   stock: z.coerce.number().gte(1),
-  images: z.array(z.string()).min(1, { message: "Upload at least 1 image" }),
   primaryImageIndex: z.number(),
+  images: z.array(z.instanceof(File, { message: "required" })),
 });
 
 type ProductFormData = z.infer<typeof productSchema>;
+
+const savedForm = sessionStorage.getItem("addProductForm");
 
 const AddProduct = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -47,101 +57,43 @@ const AddProduct = () => {
   const axiosPrivate = useAxiosPrivate();
   const { user } = useAuth();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-    watch,
-    reset,
-  } = useForm<ProductFormData>({
+  const form = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
+    defaultValues: savedForm ? JSON.parse(savedForm) : {},
   });
 
-  // Watch form data
-  const watchedForm = watch();
+  const watchedForm = form.watch();
 
-  // Restore form data from session storage on mount
-  useEffect(() => {
-    const savedForm = sessionStorage.getItem("addProductForm");
-    const savedPreviews = sessionStorage.getItem("addProductImagePreviews");
-    const savedPrimaryIndex = sessionStorage.getItem(
-      "addProductPrimaryImageIndex"
-    );
-    if (savedForm) {
-      try {
-        const parsed = JSON.parse(savedForm);
-        reset(parsed);
-      } catch {
-        // ignore
-      }
-    }
-    if (savedPreviews) {
-      try {
-        setImagePreviews(JSON.parse(savedPreviews));
-      } catch {
-        /* ignore */
-      }
-    }
-    if (savedPrimaryIndex) {
-      setPrimaryImageIndex(Number(savedPrimaryIndex));
-    }
-    // Note: File objects can't be restored from sessionStorage, so user will need to re-upload images after refresh
-  }, [reset]);
+  console.log(form.formState.errors);
 
   // Save form data to session storage on change
   useEffect(() => {
     sessionStorage.setItem("addProductForm", JSON.stringify(watchedForm));
-    sessionStorage.setItem(
-      "addProductImagePreviews",
-      JSON.stringify(imagePreviews)
-    );
-    sessionStorage.setItem(
-      "addProductPrimaryImageIndex",
-      String(primaryImageIndex)
-    );
-    // Note: File objects can't be saved, so we skip imageFiles
-  }, [watchedForm, imagePreviews, primaryImageIndex]);
+  }, [watchedForm]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
+    const selectedFiles = Array.from(e.target.files || []);
+    if (selectedFiles.length === 0) return;
 
-    if (imageFiles.length + files.length > 5) {
-      toast.error("Maximum 5 images allowed");
-      return;
-    }
+    const newImageFiles = [...imageFiles, ...selectedFiles];
 
-    const newImageFiles = [...imageFiles, ...files];
+    form.setValue("images", newImageFiles);
     setImageFiles(newImageFiles);
 
     // Create preview URLs
-    const newPreviews = files.map((file) => URL.createObjectURL(file));
-    setImagePreviews([...imagePreviews, ...newPreviews]);
-
-    // Update form value
-    setValue(
-      "images",
-      newImageFiles.map((file) => file.name)
-    );
+    const newPreviews = selectedFiles.map((file) => URL.createObjectURL(file));
+    if (newPreviews) setImagePreviews([...imagePreviews, ...newPreviews]);
 
     // If this is the first image, set it as primary
     if (imageFiles.length === 0) {
       setPrimaryImageIndex(0);
-      setValue("primaryImageIndex", 0);
+      form.setValue("primaryImageIndex", 0);
     }
-    // Save previews and primary index to sessionStorage
-    sessionStorage.setItem(
-      "addProductImagePreviews",
-      JSON.stringify([...imagePreviews, ...newPreviews])
-    );
-    sessionStorage.setItem(
-      "addProductPrimaryImageIndex",
-      String(primaryImageIndex)
-    );
   };
 
   const removeImage = (index: number) => {
     const newImageFiles = imageFiles.filter((_, i) => i !== index);
+    form.setValue("images", newImageFiles);
     setImageFiles(newImageFiles);
 
     // Revoke the preview URL to avoid memory leaks
@@ -149,43 +101,51 @@ const AddProduct = () => {
     const newPreviews = imagePreviews.filter((_, i) => i !== index);
     setImagePreviews(newPreviews);
 
-    // Update form value
-    setValue(
-      "images",
-      newImageFiles.map((file) => file.name)
-    );
-
     // Handle primary image index when removing images
     if (index === primaryImageIndex) {
       // If we're removing the primary image, set the first remaining image as primary
       const newPrimaryIndex = Math.min(index, newImageFiles.length - 1);
       setPrimaryImageIndex(newPrimaryIndex);
-      setValue("primaryImageIndex", newPrimaryIndex);
+      form.setValue("primaryImageIndex", newPrimaryIndex);
     } else if (index < primaryImageIndex) {
       // If we're removing an image before the primary, adjust the primary index
       setPrimaryImageIndex(primaryImageIndex - 1);
-      setValue("primaryImageIndex", primaryImageIndex - 1);
+      form.setValue("primaryImageIndex", primaryImageIndex - 1);
     }
-    // Save previews and primary index to sessionStorage
-    sessionStorage.setItem(
-      "addProductImagePreviews",
-      JSON.stringify(newPreviews)
-    );
-    sessionStorage.setItem(
-      "addProductPrimaryImageIndex",
-      String(primaryImageIndex)
-    );
   };
 
   const setPrimaryImage = (index: number) => {
     setPrimaryImageIndex(index);
-    setValue("primaryImageIndex", index);
+    form.setValue("primaryImageIndex", index);
     toast.success("Primary image updated");
-    // Save primary index to sessionStorage
-    sessionStorage.setItem("addProductPrimaryImageIndex", String(index));
   };
 
   const onSubmit = async (data: ProductFormData) => {
+    if (imageFiles.length === 0) {
+      form.setError("images", { message: "Upload at least one image" });
+      return;
+    }
+
+    if (imageFiles.length > 5) {
+      form.setError("images", { message: "Upload at most 5 images" });
+      return;
+    }
+
+    let excededSizeLimit = false;
+
+    imageFiles.forEach((image) => {
+      if (image.size > fileSizeLimit) {
+        form.setError("images", {
+          message: "Each image should be 5MB at most",
+        });
+        excededSizeLimit = true;
+      }
+    });
+
+    if (excededSizeLimit) {
+      return;
+    }
+
     console.log("Product data:", data);
     console.log("Image files:", imageFiles);
     console.log("Primary image index:", primaryImageIndex);
@@ -239,165 +199,205 @@ const AddProduct = () => {
         {/* Form Section */}
         <div>
           <h1 className="text-3xl mb-6">Add New Product</h1>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Product Name</Label>
-              <Input
-                id="name"
-                {...register("name")}
-                placeholder="Enter product name"
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Product Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter product name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              {errors.name && (
-                <p className="text-sm text-red-500">{errors.name.message}</p>
-              )}
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                {...register("description")}
-                placeholder="Enter product description"
-                className="min-h-30"
-              />
-              {errors.description && (
-                <p className="text-sm text-red-500">
-                  {errors.description.message}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="price">Price</Label>
-              <Input
-                id="price"
-                type="number"
-                step="0.01"
-                {...register("price")}
-                placeholder="Enter price"
-              />
-              {errors.price && (
-                <p className="text-sm text-red-500">{errors.price.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="category">Category</Label>
-              <Select onValueChange={(value) => setValue("category", value)}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.category && (
-                <p className="text-sm text-red-500">
-                  {errors.category.message}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="brand">Brand</Label>
-              <Input
-                id="brand"
-                {...register("brand")}
-                placeholder="Enter brand name"
-              />
-              {errors.brand && (
-                <p className="text-sm text-red-500">{errors.brand.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="stock">Stock</Label>
-              <Input
-                id="stock"
-                type="number"
-                {...register("stock")}
-                placeholder="Enter stock quantity"
-              />
-              {errors.stock && (
-                <p className="text-sm text-red-500">{errors.stock.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="images">Product Image(s)</Label>
-              <Input
-                id="images"
-                type="file"
-                name="images"
-                accept="image/*"
-                multiple
-                onChange={handleImageChange}
-                className="cursor-pointer"
-              />
-              {errors.images && (
-                <p className="text-sm text-red-500">{errors.images.message}</p>
-              )}
-
-              {/* Image Previews */}
-              {imagePreviews.length > 0 && (
-                <div className="flex flex-wrap justify-center gap-4 mt-4">
-                  {imagePreviews.map((preview, index) => (
-                    <div key={index} className="relative group">
-                      <img
-                        src={preview}
-                        alt={`Preview ${index + 1}`}
-                        className={`w-26 h-26 object-cover rounded-lg ${
-                          index === primaryImageIndex
-                            ? "ring-3 ring-yellow-400"
-                            : ""
-                        }`}
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter product description"
+                        {...field}
                       />
-                      <div className="absolute top-2 right-2 flex gap-1">
-                        {index !== primaryImageIndex && (
-                          <Button
-                            type="button"
-                            size="icon"
-                            onClick={() => setPrimaryImage(index)}
-                            className="p-1 bg-yellow-500 text-white rounded-full w-6 h-6"
-                            title="Set as primary image"
-                          >
-                            <Star className="h-4 w-4" />
-                          </Button>
-                        )}
-                        <Button
-                          type="button"
-                          size="icon"
-                          onClick={() => removeImage(index)}
-                          className="p-1 bg-red-500 text-white rounded-full w-6 h-6"
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <Button
-              type="submit"
-              className="w-full bg-main"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Adding Product...
-                </>
-              ) : (
-                "Add Product"
-              )}
-            </Button>
-          </form>
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Price</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter price" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Category</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a category" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {categories.map((category) => (
+                          <SelectItem key={category} value={category}>
+                            {category}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="brand"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Brand</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter brand name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="stock"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Stock</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter stock quantity" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="images"
+                render={() => (
+                  <FormItem>
+                    <FormLabel>Picture(s)</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Picture(s)"
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handleImageChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+
+                    {/* Image Previews */}
+                    {imagePreviews.length > 0 && (
+                      <div className="my-4 space-y-2">
+                        {imagePreviews.map((image, index) => (
+                          <div
+                            key={index}
+                            className="flex justify-between gap-4 border-2 border-gray-200 p-4 rounded-sm"
+                          >
+                            <div className="flex gap-4">
+                              <img
+                                src={image}
+                                alt={`Preview ${index + 1}`}
+                                className={`w-22 h-22 object-cover rounded-sm ${
+                                  index === primaryImageIndex
+                                    ? "ring-4 ring-main"
+                                    : ""
+                                }`}
+                              />
+                              <div>
+                                <h4
+                                  className={cn(
+                                    "mb-2",
+                                    index === primaryImageIndex &&
+                                      "text-main font-medium"
+                                  )}
+                                >
+                                  {imageFiles[index].name}
+                                </h4>
+                                <p className="text-sm text-muted-foreground">
+                                  size: {formatBytes(imageFiles[index].size)}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="flex gap-1">
+                              {index !== primaryImageIndex && (
+                                <Button
+                                  type="button"
+                                  size="icon"
+                                  onClick={() => setPrimaryImage(index)}
+                                  className="p-1 bg-yellow-500 text-white"
+                                  title="Set as primary image"
+                                >
+                                  <Star className="size-5" />
+                                </Button>
+                              )}
+                              <Button
+                                type="button"
+                                size="icon"
+                                onClick={() => removeImage(index)}
+                                className="p-1 bg-red-500 text-white"
+                              >
+                                <Trash2 className="size-5" />
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </FormItem>
+                )}
+              />
+
+              <Button
+                type="submit"
+                className="w-full bg-main"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Adding Product...
+                  </>
+                ) : (
+                  "Add Product"
+                )}
+              </Button>
+            </form>
+          </Form>
         </div>
 
         {/* Image Section */}
