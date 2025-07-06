@@ -41,12 +41,12 @@ const MobileSidebar = ({ setShow, show, handleLogout }: MobileSidebarProps) => {
 
   const categoriesArr = categories.map((e) => (
     <NavLink
-      key={e}
-      to={`shop?collection=${e.toLowerCase().split(" ").join("-")}`}
+      key={e.value}
+      to={`shop?collection=${e.value}`}
       onClick={() => setShow(!show)}
       className="text-decoration-none"
     >
-      {e}
+      {e.label}
     </NavLink>
   ));
 

@@ -8,8 +8,6 @@ export type Product = {
   category: string;
   brand: string;
   stock: number;
-  type: string;
-  imageUrl: string;
   primaryImageIndex: number;
 };
 

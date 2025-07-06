@@ -1,6 +1,5 @@
 import { AiOutlineClose } from "react-icons/ai";
 import { useSearchParams, NavLink, useLocation, Link } from "react-router-dom";
-import { data } from "../data/data";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import ProductCard from "@/components/ProductCard";
 import { Input } from "../components/ui/input";
@@ -20,34 +19,16 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Filter } from "lucide-react";
-
-const products = data;
+import { getProducts } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
+import loadingSpinner from "../assets/icons/Infinity-1s-150px (1).svg";
 
 function Shop() {
   const [searchInput, setSearchInput] = useState("");
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const [searchParams] = useSearchParams();
-  const links = ["Home", "Shop"];
-  const collectionFilter = searchParams.get("collection");
-  if (collectionFilter) {
-    links.push(collectionFilter);
-  }
-  const productsArr = collectionFilter
-    ? products.filter((e) => e.type === collectionFilter.slice(0, -1))
-    : products;
-
-  const filteredProducts =
-    searchInput === ""
-      ? productsArr
-      : productsArr.filter(
-          (e) =>
-            e.title
-              .toLowerCase()
-              .split(" ")
-              .join("")
-              .search(searchInput.toLowerCase().split(" ").join("")) !== -1
-        );
+  const category = searchParams.get("category");
 
   const location = useLocation();
   useEffect(() => {
@@ -55,6 +36,27 @@ function Shop() {
       inputRef.current.focus();
     }
   }, [location]);
+
+  const { data: products, isLoading } = useQuery({
+    queryKey: ["products", category],
+    queryFn: () => (category ? getProducts(category) : getProducts()),
+  });
+
+  const productsArr = category
+    ? products?.filter((e) => e.category === category)
+    : products;
+
+  const filteredProducts =
+    searchInput === ""
+      ? productsArr
+      : productsArr?.filter(
+          (e) =>
+            e.name
+              .toLowerCase()
+              .split(" ")
+              .join("")
+              .search(searchInput.toLowerCase().split(" ").join("")) !== -1
+        );
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     setSearchInput(e.target.value);
@@ -79,18 +81,18 @@ function Shop() {
                 <BreadcrumbLink asChild>
                   <Link
                     to="/shop"
-                    style={{ color: collectionFilter ? "gray" : "white" }}
+                    style={{ color: category ? "gray" : "white" }}
                   >
                     Shop
                   </Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
-              {collectionFilter && (
+              {category && (
                 <>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
                     <BreadcrumbPage className="text-white">
-                      {collectionFilter}
+                      {category}
                     </BreadcrumbPage>
                   </BreadcrumbItem>
                 </>
@@ -110,16 +112,18 @@ function Shop() {
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem asChild>
-                <NavLink to="?collection=headphones">Headphones</NavLink>
+                <NavLink to="?category=headphones">Headphones</NavLink>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <NavLink to="?collection=controllers">Game Controllers</NavLink>
+                <NavLink to="?category=game-controllers">
+                  Game Controllers
+                </NavLink>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <NavLink to="?collection=speakers">Speakers</NavLink>
+                <NavLink to="?category=speakers">Speakers</NavLink>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <NavLink to="?collection=phone-cases">Phone Cases</NavLink>
+                <NavLink to="?category=phone-cases">Phone Cases</NavLink>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -141,18 +145,23 @@ function Shop() {
             )}
           </div>
         </div>
-        <div className="py-5">
-          {filteredProducts.length === 0 && (
-            <h4 className="text-muted-foreground text-center text-base font-normal">
-              Nothing Match Your Search
-            </h4>
-          )}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 products">
-            {filteredProducts.map((e) => (
-              <ProductCard key={e.id} {...e} />
-            ))}
+
+        {isLoading ? (
+          <div className="flex justify-center">
+            <img src={loadingSpinner} alt="loading spinner" />
           </div>
-        </div>
+        ) : (
+          <div className="py-5">
+            {filteredProducts?.length === 0 && (
+              <h4 className="text-muted-foreground text-center text-base font-normal">
+                Nothing Match Your Search
+              </h4>
+            )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 products">
+              {filteredProducts?.map((e) => <ProductCard key={e.id} {...e} />)}
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

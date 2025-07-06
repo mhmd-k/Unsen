@@ -107,12 +107,12 @@ function Appbar() {
                 <NavigationMenuList>
                   <NavigationMenuItem>
                     <NavigationMenuTrigger className="px-4 m-0">
-                      Collections
+                      categorys
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
                       <NavigationMenuLink asChild>
                         <NavLink
-                          to="/shop?collection=headphones"
+                          to="/shop?category=headphones"
                           className="whitespace-nowrap flex flex-row items-center gap-2"
                         >
                           <Headphones className="size-4" />
@@ -121,7 +121,7 @@ function Appbar() {
                       </NavigationMenuLink>
                       <NavigationMenuLink asChild>
                         <NavLink
-                          to="/shop?collection=phone-cases"
+                          to="/shop?category=phone-cases"
                           className="whitespace-nowrap flex flex-row items-center gap-2"
                         >
                           <Smartphone className="size-4" />
@@ -130,7 +130,7 @@ function Appbar() {
                       </NavigationMenuLink>
                       <NavigationMenuLink asChild>
                         <NavLink
-                          to="/shop?collection=speakers"
+                          to="/shop?category=speakers"
                           className="whitespace-nowrap flex flex-row items-center gap-2"
                         >
                           <Speaker className="size-4" />
@@ -139,7 +139,7 @@ function Appbar() {
                       </NavigationMenuLink>
                       <NavigationMenuLink asChild>
                         <NavLink
-                          to="/shop?collection=controllers"
+                          to="/shop?category=controllers"
                           className="whitespace-nowrap flex flex-row items-center gap-2"
                         >
                           <Gamepad2 className="size-4" />

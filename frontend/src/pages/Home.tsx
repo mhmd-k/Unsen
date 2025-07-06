@@ -30,7 +30,7 @@ const carouselItems = [
   },
   {
     title: "Accessories",
-    subtitle: "New arrivals collection",
+    subtitle: "New arrivals category",
     image: CarousalImageThree,
   },
 ];
@@ -111,7 +111,7 @@ function Home() {
         <div className="container px-4 mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <Card className="bg-white p-0">
-              <Link to="shop?collection=headphones" className="group">
+              <Link to="shop?category=headphones" className="group">
                 <div>
                   <div className="overflow-hidden rounded-lg">
                     <img
@@ -125,7 +125,7 @@ function Home() {
               </Link>
             </Card>{" "}
             <Card className="bg-white p-0">
-              <Link to="shop?collection=phone-cases" className="group">
+              <Link to="shop?category=phone-cases" className="group">
                 <div>
                   <div className="overflow-hidden rounded-lg">
                     <img
@@ -139,7 +139,7 @@ function Home() {
               </Link>{" "}
             </Card>{" "}
             <Card className="bg-white p-0">
-              <Link to="shop?collection=controllers" className="group">
+              <Link to="shop?category=controllers" className="group">
                 <div>
                   <div className="overflow-hidden rounded-lg">
                     <img
@@ -153,7 +153,7 @@ function Home() {
               </Link>
             </Card>
             <Card className="bg-white p-0">
-              <Link to="shop?collection=speakers" className="group">
+              <Link to="shop?category=speakers" className="group">
                 <div>
                   <div className="overflow-hidden rounded-lg">
                     <img

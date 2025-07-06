@@ -26,17 +26,20 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { cn, formatBytes } from "@/lib/utils";
+import { AxiosError } from "axios";
 
 const fileSizeLimit = 5 * 1024 * 1024; // 5MB
 
 const productSchema = z.object({
-  name: z.string().min(3, "Name must be at least 3 characters"),
-  description: z.string().min(10, "Description must be at least 10 characters"),
-  price: z
+  name: z.string().trim().min(3, "Name must be at least 3 characters"),
+  description: z
     .string()
-    .refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) > 0, {
-      message: "Price must be a positive number",
-    }),
+    .trim()
+    .min(10, "Description must be at least 10 characters"),
+  price: z.coerce.number({
+    required_error: "Price is required",
+    invalid_type_error: "Price must be a number",
+  }),
   category: z.string().min(1, "Category is required"),
   brand: z.string().min(1, "Brand is required"),
   stock: z.coerce.number().gte(1),
@@ -63,8 +66,6 @@ const AddProduct = () => {
   });
 
   const watchedForm = form.watch();
-
-  console.log(form.formState.errors);
 
   // Save form data to session storage on change
   useEffect(() => {
@@ -146,10 +147,6 @@ const AddProduct = () => {
       return;
     }
 
-    console.log("Product data:", data);
-    console.log("Image files:", imageFiles);
-    console.log("Primary image index:", primaryImageIndex);
-
     // Build FormData for multipart/form-data
     const formData = new FormData();
     formData.append("name", data.name);
@@ -164,29 +161,37 @@ const AddProduct = () => {
       formData.append("images[]", file);
     });
 
-    console.log("form data:", formData);
-
     try {
       setIsLoading(true);
 
-      const res = await axiosPrivate.post("/products/create", formData, {
+      await axiosPrivate.post("/products/create", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
 
-      console.log("Create Product Response:", res);
-
       toast.success("Product added successfully!");
-      // Clear session storage after successful submit
+      // Clear form and session storage after successful submit
       sessionStorage.removeItem("addProductForm");
-      sessionStorage.removeItem("addProductImagePreviews");
-      sessionStorage.removeItem("addProductPrimaryImageIndex");
+      form.reset({
+        name: "",
+        description: "",
+        price: 0,
+        category: "",
+        brand: "",
+        stock: 0,
+        primaryImageIndex: 0,
+        images: [],
+      });
+      setImageFiles([]);
+      setImagePreviews([]);
     } catch (error: unknown) {
       console.error(error);
 
       const errorMessage =
-        error instanceof Error ? error.message : "Failed to add product";
+        error instanceof AxiosError
+          ? error.response?.data.message
+          : "Failed to add product";
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -263,8 +268,11 @@ const AddProduct = () => {
                       </FormControl>
                       <SelectContent>
                         {categories.map((category) => (
-                          <SelectItem key={category} value={category}>
-                            {category}
+                          <SelectItem
+                            key={category.value}
+                            value={category.value}
+                          >
+                            {category.label}
                           </SelectItem>
                         ))}
                       </SelectContent>

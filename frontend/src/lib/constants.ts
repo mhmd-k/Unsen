@@ -15,8 +15,8 @@ export const bankOptions: SelectOption[] = [
 ];
 
 export const categories = [
-  "Headphones",
-  "Phone cases",
-  "Speakers",
-  "Phone Cases",
+  { label: "Headphones", value: "headphones" },
+  { label: "Phone cases", value: "phone-cases" },
+  { label: "Speakers", value: "speakers" },
+  { label: "Game Controllers", value: "game-controllers" },
 ];

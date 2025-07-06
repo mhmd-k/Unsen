@@ -6,7 +6,7 @@ import {
   type LoginResponse,
   type VerifyEmailResponse,
   type ApiError,
-  type createProductRequestPayload,
+  type Product,
 } from "@/types";
 import { api, apiPrivate } from "../api/axios";
 
@@ -118,12 +118,33 @@ export async function changePassword(
   }
 }
 
-export async function createProduct(
-  data: createProductRequestPayload
-): Promise<SignupResponse> {
+export async function getProducts(category?: string): Promise<Product[]> {
   try {
-    const response = await api.post("/products/create", data);
-    return response.data;
+    const response = await api.get(
+      category ? `/products/category/${category}` : "/products"
+    );
+
+    return response.data.data;
+  } catch (error) {
+    handleAxiosError(error);
+  }
+}
+
+export async function getProductsById(id: number): Promise<Product> {
+  try {
+    const response = await api.get(`/products/${id}`);
+
+    return response.data.product;
+  } catch (error) {
+    handleAxiosError(error);
+  }
+}
+
+export async function getRelatedProducts(id: number): Promise<Product[]> {
+  try {
+    const response = await api.get(`/products/${id}/related`);
+
+    return response.data.data;
   } catch (error) {
     handleAxiosError(error);
   }

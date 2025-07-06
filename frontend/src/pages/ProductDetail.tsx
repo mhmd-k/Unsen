@@ -1,42 +1,55 @@
 import { useCartConext } from "../contexts/CartContext";
 import { useWishlistContext } from "../contexts/WishListContext";
-import { formatCurrency } from "../lib/utils";
+import { cn, formatCurrency } from "../lib/utils";
 import { BsSuitHeart } from "react-icons/bs";
-import { data } from "../data/data";
 import { Button } from "../components/ui/button";
 import { Separator } from "../components/ui/separator";
-import ProductCard from "@/components/ProductCard";
 import { ShoppingBag } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-
-interface Product {
-  id: number;
-  imageUrl: string;
-  title: string;
-  type: string;
-  price: number;
-}
+import { useQuery } from "@tanstack/react-query";
+import { getProductsById } from "@/lib/api";
+import { useParams } from "react-router-dom";
+import LoadingSpinnerInfinity from "@/components/LoadingSpinnerInfinity";
+import { Badge } from "@/components/ui/badge";
+import { useEffect, useState } from "react";
+import RelatedProductsSection from "@/components/RelatedProductsSection";
 
 export default function ProductDetail() {
-  const item = localStorage.getItem("item");
+  const [primaryImage, setPrimaryImage] = useState("");
 
-  const { imageUrl, id, title, type, price } = JSON.parse(
-    item || "{}"
-  ) as Product;
+  const params = useParams();
+  const id = parseInt(params.id || "");
+
+  const {
+    data: product,
+    isLoading,
+    isSuccess,
+  } = useQuery({
+    queryFn: () => getProductsById(id),
+    queryKey: ["product", id],
+  });
+
+  useEffect(() => {
+    if (isSuccess && product?.images?.[product.primaryImageIndex]) {
+      setPrimaryImage(product.images[product.primaryImageIndex]);
+    }
+  }, [isSuccess, product]);
 
   const { user } = useAuth();
   const { addItem } = useCartConext();
   const { addToWishlist } = useWishlistContext();
 
   const handleAddToCart = () => {
-    addItem({ id, imageUrl, title, type, price, quantity: 1 });
+    if (product) addItem({ ...product, quantity: 1 });
   };
 
   const handleAddToWishlist = () => {
-    addToWishlist({ id, imageUrl, title, type, price });
+    if (product) addToWishlist(product);
   };
 
-  if (!item) {
+  if (isLoading) return <LoadingSpinnerInfinity />;
+
+  if (!product) {
     return <div>Product not found</div>;
   }
 
@@ -45,19 +58,58 @@ export default function ProductDetail() {
       <div className="container px-4 mx-auto py-8">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
           <div className="md:col-span-5">
-            <div className="relative overflow-hidden">
-              <img src={imageUrl} alt={title} className="h-96 object-contain" />
+            <div className="flex gap-4">
+              <div className="flex flex-col gap-4">
+                {product.images.map((img, i) => (
+                  <button
+                    className="h-22 w-22 rounded-md"
+                    onClick={() => setPrimaryImage(img)}
+                  >
+                    <img
+                      key={img}
+                      src={img}
+                      alt={`${product.name}-${i}`}
+                      className={cn(
+                        "object-fit transition-all duration-500",
+                        primaryImage !== img && "grayscale hover:filter-none"
+                      )}
+                    />
+                  </button>
+                ))}
+              </div>
+              <img
+                src={primaryImage}
+                alt={product.name}
+                className="w-full max-h-90 object-contain"
+              />
             </div>
           </div>
           <div className="md:col-span-7 space-y-4">
             <div>
-              <h1 className="text-2xl mb-2">{title}</h1>
-              <h2 className="text-xl text-gray-500">{formatCurrency(price)}</h2>
+              <h1 className="text-2xl mb-2">{product.name}</h1>
+              <h2 className="text-xl text-gray-500">
+                {formatCurrency(product.price)}{" "}
+                <Badge
+                  variant="outline"
+                  className={cn(
+                    "rounded-full ms-10",
+                    product.stock > 0
+                      ? "text-green-400 border-green-400"
+                      : "text-red-400 border-red-400"
+                  )}
+                >
+                  {product.stock > 0 ? "In stock" : "Out of stock"}
+                </Badge>
+              </h2>
             </div>
             <p className="text-muted-foreground">
               Cenean viverra rhoncus pede. Ut id nisl quis enim dignissim
               sagittis. Ut id nisl quis enim dignissim sagittis. Fusce ac felis
               sitpharetra condimentum...
+            </p>
+            <p className="text-muted-foreground">
+              Items currently in stock:{" "}
+              <span className="text-main">{product.stock}</span>
             </p>
             {user?.role === "CUSTOMER" && (
               <div className="space-y-4 grid">
@@ -87,16 +139,7 @@ export default function ProductDetail() {
 
       <Separator />
 
-      <div className="container px-4 mx-auto py-8">
-        <h2 className="text-3xl text-center mb-8">Related Products</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 products">
-          {data
-            .filter((product) => product.type === type && product.id !== id)
-            .map((product) => (
-              <ProductCard key={product.id} {...product} />
-            ))}
-        </div>
-      </div>
+      <RelatedProductsSection id={id} />
     </>
   );
 }

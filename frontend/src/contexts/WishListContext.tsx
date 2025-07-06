@@ -53,7 +53,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   }
 
   function inWishlist(id: number) {
-    let product = wishlist.filter((e) => e.id === id);
+    const product = wishlist.filter((e) => e.id === id);
     return product.length > 0;
   }
 

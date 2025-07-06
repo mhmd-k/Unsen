@@ -7,27 +7,22 @@ import { useNavigate } from "react-router-dom";
 import type { Product } from "@/types";
 import { Button } from "./ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { Eye, ShoppingBasket } from "lucide-react";
 
-const ProductCard = ({ id, imageUrl, title, price, type }: Product) => {
+const ProductCard = (props: Product) => {
   const { inWishlist, addToWishlist, removeFromWishlist } =
     useWishlistContext();
 
   const { user } = useAuth();
 
-  const [heartClicked, setHeartClicked] = useState(inWishlist(id));
+  const [heartClicked, setHeartClicked] = useState(inWishlist(props.id));
   const { addItem } = useCartConext();
 
-  const exists = inWishlist(id);
+  const exists = inWishlist(props.id);
 
   const navigate = useNavigate();
 
-  function handleView() {
-    localStorage.setItem(
-      "item",
-      JSON.stringify({ id, imageUrl, title, price, type })
-    );
-    navigate(`/shop/${id}`, { state: { isLoading: true } });
-  }
+  const handleView = () => navigate(`/shop/${props.id}`);
 
   function handleClick(item: Product) {
     if (heartClicked) {
@@ -50,9 +45,9 @@ const ProductCard = ({ id, imageUrl, title, price, type }: Product) => {
           }}
           variant="ghost"
           size="icon"
-          onClick={() => handleClick({ id, imageUrl, title, price, type })}
+          onClick={() => handleClick(props)}
         >
-          {inWishlist(id) ? (
+          {inWishlist(props.id) ? (
             <BsFillHeartFill className="size-3" />
           ) : (
             <BsSuitHeart className="size-3" />
@@ -60,20 +55,24 @@ const ProductCard = ({ id, imageUrl, title, price, type }: Product) => {
         </Button>
       )}
       <div className="image">
-        <img src={imageUrl} alt="..." />
+        <img src={props.images[props.primaryImageIndex]} alt={props.name} />
         <div className="buttons">
-          <Button className="view" variant="ghost" onClick={handleView}>
-            Quick View
+          <Button
+            className="rounded-full"
+            size="sm"
+            variant="ghost"
+            onClick={handleView}
+          >
+            Quick View <Eye />
           </Button>
           {user?.role === "CUSTOMER" && (
             <Button
-              className="add-top-cart"
+              className="add-to-cart"
+              size="sm"
               variant="ghost"
-              onClick={() =>
-                addItem({ id, imageUrl, title, price, type, quantity: 1 })
-              }
+              onClick={() => addItem({ ...props, quantity: 1 })}
             >
-              Add To Cart
+              Add To Cart <ShoppingBasket />
             </Button>
           )}
         </div>
@@ -92,16 +91,14 @@ const ProductCard = ({ id, imageUrl, title, price, type }: Product) => {
           <Button
             className="border-l-1 rounded-none flex-1 group hover:bg-gray-50"
             variant="link"
-            onClick={() =>
-              addItem({ id, imageUrl, title, price, type, quantity: 1 })
-            }
+            onClick={() => addItem({ ...props, quantity: 1 })}
           >
             <BsCart2 className="group-hover:scale-150 transition-all duration-300 ease-in-out" />
           </Button>
         )}
       </div>
-      <h3>{title}</h3>
-      <p className="text-muted-foreground">{formatCurrency(price)}</p>
+      <h3>{props.name}</h3>
+      <p className="text-muted-foreground">{formatCurrency(props.price)}</p>
     </div>
   );
 };
