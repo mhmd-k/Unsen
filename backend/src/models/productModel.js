@@ -30,6 +30,11 @@ const Product = sequelize.define(
       allowNull: true,
       defaultValue: [],
     },
+    primaryImageIndex: {
+      type: DataTypes.NUMBER,
+      allowNull: false,
+      defaultValue: 0,
+    },
     price: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,

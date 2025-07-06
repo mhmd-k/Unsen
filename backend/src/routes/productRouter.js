@@ -5,6 +5,8 @@ import validateRequest from "../middleware/validateRequest.js";
 import multer from "multer";
 import path from "path";
 import verifyJWTMiddleware from "../middleware/auth.js";
+import paginationMiddleware from "../middleware/pagination.js";
+import { Product } from "../models/associations.js";
 
 const router = express.Router();
 
@@ -53,8 +55,19 @@ router.post(
   productController.createProduct
 );
 
+router.get("/", paginationMiddleware(Product), productController.getProducts);
+
+router.get(
+  "/category/:category",
+  paginationMiddleware(Product),
+  productController.getProductsByCategory
+);
+
+router.get("/:id", productController.getProductById);
+
+router.get("/:id/related", productController.getRelatedProducts);
+
 // Future routes can be added here:
-// router.get("/", productController.getProducts);
 // router.get("/:id", productController.getProductById);
 // router.put("/:id", authenticateToken, productController.updateProduct);
 // router.delete("/:id", authenticateToken, productController.deleteProduct);
