@@ -1,11 +1,14 @@
 // User related types
 export type UserRole = "ADMIN" | "CUSTOMER" | "SELLER";
 
+export type Gender = "MALE" | "FEMALE";
+
 export interface User {
   id: number;
   username: string;
   email: string;
   role: UserRole;
+  gender: Gender;
   isVerified: boolean;
   createdAt: string;
   updatedAt: string;

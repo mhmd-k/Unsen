@@ -111,40 +111,40 @@ function Appbar() {
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
                       <NavigationMenuLink asChild>
-                        <NavLink
+                        <Link
                           to="/shop?category=headphones"
                           className="whitespace-nowrap flex flex-row items-center gap-2"
                         >
-                          <Headphones className="size-4" />
+                          <Headphones className="size-5 text-inherit" />
                           Headphones
-                        </NavLink>
+                        </Link>
                       </NavigationMenuLink>
                       <NavigationMenuLink asChild>
-                        <NavLink
+                        <Link
                           to="/shop?category=phone-cases"
                           className="whitespace-nowrap flex flex-row items-center gap-2"
                         >
-                          <Smartphone className="size-4" />
+                          <Smartphone className="size-5 text-inherit" />
                           Phone cases
-                        </NavLink>
+                        </Link>
                       </NavigationMenuLink>
                       <NavigationMenuLink asChild>
-                        <NavLink
+                        <Link
                           to="/shop?category=speakers"
                           className="whitespace-nowrap flex flex-row items-center gap-2"
                         >
-                          <Speaker className="size-4" />
+                          <Speaker className="size-5 text-inherit" />
                           Speakers
-                        </NavLink>
+                        </Link>
                       </NavigationMenuLink>
                       <NavigationMenuLink asChild>
-                        <NavLink
-                          to="/shop?category=controllers"
+                        <Link
+                          to="/shop?category=game-controllers"
                           className="whitespace-nowrap flex flex-row items-center gap-2"
                         >
-                          <Gamepad2 className="size-4" />
+                          <Gamepad2 className="size-5 text-inherit" />
                           Game Controllers
-                        </NavLink>
+                        </Link>
                       </NavigationMenuLink>
                     </NavigationMenuContent>
                   </NavigationMenuItem>

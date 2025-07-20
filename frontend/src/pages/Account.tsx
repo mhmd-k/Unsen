@@ -56,18 +56,20 @@ const Account = () => {
 
       <Separator className="my-6" />
 
-      <div className="flex gap-3">
-        <Button
-          variant="outline"
-          onClick={() => navigate("/wishlist")}
-          className="flex items-center gap-2 border-pink-500 text-pink-500"
-        >
-          <Heart /> Wishlist
-        </Button>
+      <div className="flex flex-col md:flex-row gap-3 w-[400px] max-w-full">
+        {user?.role === "CUSTOMER" && (
+          <Button
+            variant="outline"
+            onClick={() => navigate("/wishlist")}
+            className="flex-1 flex items-center gap-2 border-pink-500 text-pink-500"
+          >
+            <Heart /> Wishlist
+          </Button>
+        )}
         <Button
           variant="outline"
           onClick={() => setShowPasswordModal(true)}
-          className="flex items-center gap-2 border-black-btn text-black-btn"
+          className="flex-1 flex items-center gap-2 border-black-btn text-black-btn"
         >
           <Lock /> Change Password
         </Button>
@@ -75,7 +77,7 @@ const Account = () => {
           <Button
             variant="outline"
             onClick={() => navigate("/seller-dashboard")}
-            className="flex items-center gap-2 border-main text-main"
+            className="flex-1 flex items-center gap-2 border-main text-main"
           >
             <LayoutDashboard /> Dashboard
           </Button>

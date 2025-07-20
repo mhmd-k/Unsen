@@ -15,7 +15,6 @@ import {
 } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 import {
   Select,
@@ -27,6 +26,14 @@ import {
 import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
 import { AxiosError } from "axios";
 import { bankOptions } from "@/lib/constants";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 
 // Define the form data type using Zod schema
 const signupSchema = z
@@ -42,6 +49,7 @@ const signupSchema = z
       ),
     confirmPassword: z.string(),
     role: z.enum(["CUSTOMER", "SELLER"]),
+    gender: z.enum(["MALE", "FEMALE"]),
     // Seller specific fields
     bankName: z.string().optional(),
     accountHolderName: z.string().optional(),
@@ -147,14 +155,7 @@ const Signup: React.FC = () => {
 
   console.log("showResendEmailBtn:", showResendEmailBtn);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    watch,
-    getValues,
-    setValue,
-  } = useForm<SignupFormData>({
+  const form = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
       role: "CUSTOMER",
@@ -206,7 +207,7 @@ const Signup: React.FC = () => {
     try {
       setResendEmailStatus("loading");
 
-      await resendVerificationEmail(getValues("email"));
+      await resendVerificationEmail(form.getValues("email"));
 
       setResendEmailStatus("success");
       setShowVerifyEmail(true);
@@ -228,10 +229,10 @@ const Signup: React.FC = () => {
     }
   };
 
-  const role = watch("role");
+  const role = form.watch("role");
 
   return (
-    <Card className="w-[400px] max-w-full mx-auto">
+    <Card className="w-[500px] max-w-full mx-auto">
       <CardHeader>
         <div className="flex border-b">
           <Button
@@ -279,190 +280,242 @@ const Signup: React.FC = () => {
             </p>
           </div>
         ) : (
-          <>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Username</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  {...register("name")}
-                  className={errors.name ? "border-red-500" : ""}
-                />
-                {errors.name && (
-                  <p className="text-sm text-red-500">{errors.name.message}</p>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
-              </div>
+              />
 
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  {...register("email")}
-                  className={errors.email ? "border-red-500" : ""}
-                />
-                {errors.email && (
-                  <p className="text-sm text-red-500">{errors.email.message}</p>
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
-              </div>
+              />
 
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    {...register("password")}
-                    className={errors.password ? "border-red-500" : ""}
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-                {errors.password && (
-                  <p className="text-sm text-red-500">
-                    {errors.password.message}
-                  </p>
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          {...field}
+                          type={showPassword ? "text" : "password"}
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
-              </div>
+              />
 
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <div className="relative">
-                  <Input
-                    id="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    {...register("confirmPassword")}
-                    className={errors.confirmPassword ? "border-red-500" : ""}
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-                {errors.confirmPassword && (
-                  <p className="text-sm text-red-500">
-                    {errors.confirmPassword.message}
-                  </p>
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm Password</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input
+                          {...field}
+                          type={showConfirmPassword ? "text" : "password"}
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                          onClick={() =>
+                            setShowConfirmPassword(!showConfirmPassword)
+                          }
+                        >
+                          {showConfirmPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
-              </div>
+              />
 
-              <div className="space-y-2">
-                <Label>Role</Label>
-                <RadioGroup
-                  defaultValue="CUSTOMER"
-                  onValueChange={(value) =>
-                    setValue("role", value as "CUSTOMER" | "SELLER")
-                  }
-                  className="flex gap-4"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="CUSTOMER" id="customer" />
-                    <Label htmlFor="customer">Customer</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="SELLER" id="seller" />
-                    <Label htmlFor="seller">Seller</Label>
-                  </div>
-                </RadioGroup>
-              </div>
+              <FormField
+                control={form.control}
+                name="gender"
+                defaultValue="MALE"
+                render={({ field }) => (
+                  <FormItem className="space-y-1">
+                    <FormLabel>Gender</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex"
+                      >
+                        <FormItem className="flex items-center gap-3">
+                          <FormControl>
+                            <RadioGroupItem value="MALE" />
+                          </FormControl>
+                          <FormLabel className="font-normal">Male</FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center gap-3">
+                          <FormControl>
+                            <RadioGroupItem value="FEMALE" />
+                          </FormControl>
+                          <FormLabel className="font-normal">Female</FormLabel>
+                        </FormItem>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                defaultValue="CUSTOMER"
+                name="role"
+                render={({ field }) => (
+                  <FormItem className="space-y-1">
+                    <FormLabel>Role</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex"
+                      >
+                        <FormItem className="flex items-center gap-3">
+                          <FormControl>
+                            <RadioGroupItem value="CUSTOMER" />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            Customer
+                          </FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center gap-3">
+                          <FormControl>
+                            <RadioGroupItem value="SELLER" />
+                          </FormControl>
+                          <FormLabel className="font-normal">Seller</FormLabel>
+                        </FormItem>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               {role === "SELLER" && (
                 <div className="space-y-4 border-t pt-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="bankName">Bank Name</Label>
-                    <Select
-                      onValueChange={(value) => setValue("bankName", value)}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select a bank" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {bankOptions.map((option) => (
-                          <SelectItem
-                            key={option.value}
-                            value={option.value.toString()}
-                          >
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {errors.bankName && (
-                      <p className="text-sm text-red-500">
-                        {errors.bankName.message}
-                      </p>
+                  <FormField
+                    control={form.control}
+                    name="bankName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Bank Name</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select a bank" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {bankOptions.map((option) => (
+                              <SelectItem
+                                key={option.value}
+                                value={option.value.toString()}
+                              >
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
                     )}
-                  </div>
+                  />
 
-                  <div className="space-y-2">
-                    <Label htmlFor="accountHolderName">
-                      Account Holder Name
-                    </Label>
-                    <Input
-                      id="accountHolderName"
-                      type="text"
-                      {...register("accountHolderName")}
-                      className={
-                        errors.accountHolderName ? "border-red-500" : ""
-                      }
-                    />
-                    {errors.accountHolderName && (
-                      <p className="text-sm text-red-500">
-                        {errors.accountHolderName.message}
-                      </p>
+                  <FormField
+                    control={form.control}
+                    name="accountHolderName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Account Holder Name</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
                     )}
-                  </div>
+                  />
 
-                  <div className="space-y-2">
-                    <Label htmlFor="accountNumber">Account Number</Label>
-                    <Input
-                      id="accountNumber"
-                      type="text"
-                      {...register("accountNumber")}
-                      className={errors.accountNumber ? "border-red-500" : ""}
-                    />
-                    {errors.accountNumber && (
-                      <p className="text-sm text-red-500">
-                        {errors.accountNumber.message}
-                      </p>
+                  <FormField
+                    control={form.control}
+                    name="accountNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Account Number</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
                     )}
-                  </div>
+                  />
 
-                  <div className="space-y-2">
-                    <Label htmlFor="routingNumber">Routing Number</Label>
-                    <Input
-                      id="routingNumber"
-                      type="text"
-                      {...register("routingNumber")}
-                      className={errors.routingNumber ? "border-red-500" : ""}
-                    />
-                    {errors.routingNumber && (
-                      <p className="text-sm text-red-500">
-                        {errors.routingNumber.message}
-                      </p>
+                  <FormField
+                    control={form.control}
+                    name="routingNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Routing Number</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
                     )}
-                  </div>
+                  />
                 </div>
               )}
 
@@ -478,7 +531,7 @@ const Signup: React.FC = () => {
                 )}
               </Button>
             </form>
-          </>
+          </Form>
         )}
       </CardContent>
       <CardFooter className="flex justify-center">

@@ -22,6 +22,8 @@ import { Filter } from "lucide-react";
 import { getProducts } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import loadingSpinner from "../assets/icons/Infinity-1s-150px (1).svg";
+import { FaBoxOpen } from "react-icons/fa";
+import { categories } from "@/lib/constants";
 
 function Shop() {
   const [searchInput, setSearchInput] = useState("");
@@ -92,7 +94,7 @@ function Shop() {
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
                     <BreadcrumbPage className="text-white">
-                      {category}
+                      {categories.find((e) => e.value === category)?.label}
                     </BreadcrumbPage>
                   </BreadcrumbItem>
                 </>
@@ -153,8 +155,8 @@ function Shop() {
         ) : (
           <div className="py-5">
             {filteredProducts?.length === 0 && (
-              <h4 className="text-muted-foreground text-center text-base font-normal">
-                Nothing Match Your Search
+              <h4 className="text-gray-400 flex flex-col gap-2 w-full justify-center items-center">
+                <FaBoxOpen size={50} className="text-gray-300" /> Nothing found
               </h4>
             )}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 products">

@@ -43,6 +43,13 @@ const productSchema = z.object({
   category: z.string().min(1, "Category is required"),
   brand: z.string().min(1, "Brand is required"),
   stock: z.coerce.number().gte(1),
+  discount: z.coerce
+    .number({
+      required_error: "Discount is required",
+      invalid_type_error: "Discount must be a number",
+    })
+    .gte(0)
+    .lte(100),
   primaryImageIndex: z.number(),
   images: z.array(z.instanceof(File, { message: "required" })),
 });
@@ -155,6 +162,7 @@ const AddProduct = () => {
     formData.append("category", data.category);
     formData.append("brand", data.brand);
     formData.append("stock", String(data.stock));
+    formData.append("discount", String(data.discount));
     formData.append("primaryImageIndex", String(primaryImageIndex));
     if (user?.id) formData.append("sellerId", `${user.id}`);
     imageFiles.forEach((file) => {
@@ -181,6 +189,7 @@ const AddProduct = () => {
         brand: "",
         stock: 0,
         primaryImageIndex: 0,
+        discount: 0,
         images: [],
       });
       setImageFiles([]);
@@ -304,6 +313,20 @@ const AddProduct = () => {
                     <FormLabel>Stock</FormLabel>
                     <FormControl>
                       <Input placeholder="Enter stock quantity" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="discount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Discount</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter discount" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

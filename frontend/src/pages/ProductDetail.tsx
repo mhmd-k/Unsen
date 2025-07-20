@@ -102,11 +102,7 @@ export default function ProductDetail() {
                 </Badge>
               </h2>
             </div>
-            <p className="text-muted-foreground">
-              Cenean viverra rhoncus pede. Ut id nisl quis enim dignissim
-              sagittis. Ut id nisl quis enim dignissim sagittis. Fusce ac felis
-              sitpharetra condimentum...
-            </p>
+            <p className="text-muted-foreground">{product.description}</p>
             <p className="text-muted-foreground">
               Items currently in stock:{" "}
               <span className="text-main">{product.stock}</span>

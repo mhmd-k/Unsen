@@ -69,7 +69,7 @@ function Home() {
                     {item.subtitle}
                   </p>
                   <div className="flex flex-col gap-4">
-                    {user?.role === "CUSTOMER" && (
+                    {!user && (
                       <Button
                         onClick={() => navigate("/signup")}
                         size="lg"

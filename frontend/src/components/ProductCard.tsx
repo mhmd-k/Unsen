@@ -8,6 +8,7 @@ import type { Product } from "@/types";
 import { Button } from "./ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { Eye, ShoppingBasket } from "lucide-react";
+import { Badge } from "./ui/badge";
 
 const ProductCard = (props: Product) => {
   const { inWishlist, addToWishlist, removeFromWishlist } =
@@ -35,6 +36,15 @@ const ProductCard = (props: Product) => {
 
   return (
     <div className="shop-card relative">
+      {props.discount > 0 && (
+        <Badge
+          className="absolute top-2 right-2 rounded-full text-xs border-red-400 text-red-400"
+          variant="outline"
+        >
+          {props.discount}% off
+        </Badge>
+      )}
+
       {user?.role === "CUSTOMER" && (
         <Button
           className="btn wishlist"
@@ -98,7 +108,20 @@ const ProductCard = (props: Product) => {
         )}
       </div>
       <h3>{props.name}</h3>
-      <p className="text-muted-foreground">{formatCurrency(props.price)}</p>
+      <p className="text-muted-foreground flex gap-2 items-center">
+        {props.discount > 0 ? (
+          <span className="line-through text-xs">
+            {formatCurrency(props.price)}
+          </span>
+        ) : (
+          formatCurrency(props.price)
+        )}
+        {props.discount > 0 && (
+          <span className="text-red-400">
+            {formatCurrency(props.price - (props.discount * props.price) / 100)}
+          </span>
+        )}
+      </p>
     </div>
   );
 };
