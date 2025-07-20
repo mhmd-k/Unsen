@@ -38,7 +38,7 @@ const ProductCard = (props: Product) => {
     <div className="shop-card relative">
       {props.discount > 0 && (
         <Badge
-          className="absolute top-2 right-2 rounded-full text-xs border-red-400 text-red-400"
+          className="absolute top-2 right-2 rounded-full text-xs border-red-400 text-red-400 z-10"
           variant="outline"
         >
           {props.discount}% off
