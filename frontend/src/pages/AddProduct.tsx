@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "../components/ui/select";
 import { Loader2, Star, Trash2 } from "lucide-react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { categories } from "@/lib/constants";
 import image from "../assets/images/add-product-image.jpg";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";

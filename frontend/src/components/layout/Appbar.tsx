@@ -180,7 +180,7 @@ function Appbar() {
                   <DropdownMenuTrigger>
                     <CircleUserRound
                       strokeWidth={1}
-                      className="cursor-pointer hover:text-main hover:scale-115 ease-in-out duration-300 transition-all"
+                      className="size-5 cursor-pointer hover:text-main hover:scale-125 ease-in-out duration-600 transition-all"
                     />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start">

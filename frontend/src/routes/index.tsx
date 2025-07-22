@@ -15,6 +15,7 @@ import { ProtectedRoute } from "../components/ProtectedRoute";
 import Account from "../pages/Account";
 import { RoleGuard } from "@/components/guard";
 import AddProduct from "@/pages/AddProduct";
+import Checkout from "@/pages/Checkout";
 
 const AppRoutes = () => {
   return (
@@ -38,6 +39,14 @@ const AppRoutes = () => {
             element={
               <RoleGuard requiredRoles={["SELLER"]}>
                 <AddProduct />
+              </RoleGuard>
+            }
+          />
+          <Route
+            path="/checkout"
+            element={
+              <RoleGuard requiredRoles={["CUSTOMER"]}>
+                <Checkout />
               </RoleGuard>
             }
           />

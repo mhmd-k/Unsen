@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { verifyEmail } from "../lib/api";
 import { useAuth } from "../contexts/AuthContext";
 import type { Status } from "../types/common";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
 import { Loader2 } from "lucide-react";
 

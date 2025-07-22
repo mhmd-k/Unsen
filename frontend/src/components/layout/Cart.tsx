@@ -1,15 +1,28 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { formatCurrency } from "@/lib/utils";
 import { useCartConext } from "@/contexts/CartContext";
 import CartProductCard from "./CartProductCard";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 export default function Cart({ setCartShow }: { setCartShow: () => void }) {
   const { cart, total } = useCartConext();
+  const { user } = useAuth();
   const navigate = useNavigate();
+
   function ReturnToShop() {
     setCartShow();
     navigate("shop");
+  }
+
+  function handleCheckout() {
+    if (user) {
+      navigate("/checkout");
+      return;
+    }
+
+    toast.warning("You need to be logged in to do this action!");
   }
 
   if (cart.length === 0) {
@@ -37,15 +50,15 @@ export default function Cart({ setCartShow }: { setCartShow: () => void }) {
       </div>
       <div className="bottom-cart-total p-3">
         <div className="flex">
-          <div className="font-medium text-xl">Subtotal: </div>
+          <div className="font-medium text-xl">Total: </div>
           <span className="text-danger ms-auto font-semibold text-xl">
             {formatCurrency(total)}
           </span>
         </div>
         <div className="my-5 text-center">
-          <Link to="#" className="main-btn py-3 px-5">
+          <Button onClick={handleCheckout} className="main-btn py-3 px-5">
             CHECK OUT
-          </Link>
+          </Button>
         </div>
       </div>
     </div>

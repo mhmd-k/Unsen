@@ -69,15 +69,16 @@ function Home() {
                     {item.subtitle}
                   </p>
                   <div className="flex flex-col gap-4">
-                    {!user && (
-                      <Button
-                        onClick={() => navigate("/signup")}
-                        size="lg"
-                        className="landing-btn"
-                      >
-                        SHOP NOW <BsFillArrowRightCircleFill />
-                      </Button>
-                    )}
+                    {!user ||
+                      (user.role === "CUSTOMER" && (
+                        <Button
+                          onClick={() => navigate("/shop")}
+                          size="lg"
+                          className="landing-btn"
+                        >
+                          SHOP NOW <BsFillArrowRightCircleFill />
+                        </Button>
+                      ))}
 
                     {user?.role === "SELLER" && (
                       <Button

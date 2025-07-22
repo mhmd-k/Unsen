@@ -7,6 +7,7 @@ import {
   type VerifyEmailResponse,
   type ApiError,
   type Product,
+  type GetProductByIdResponse,
 } from "@/types";
 import { api, apiPrivate } from "../api/axios";
 
@@ -130,11 +131,13 @@ export async function getProducts(category?: string): Promise<Product[]> {
   }
 }
 
-export async function getProductsById(id: number): Promise<Product> {
+export async function getProductsById(
+  id: number
+): Promise<GetProductByIdResponse> {
   try {
     const response = await api.get(`/products/${id}`);
 
-    return response.data.product;
+    return response.data;
   } catch (error) {
     handleAxiosError(error);
   }

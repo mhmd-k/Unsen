@@ -6,7 +6,6 @@ import { resendVerificationEmail, signup } from "../lib/api";
 import { useState } from "react";
 import type { SignupData, Status } from "../types";
 import { BsCheck } from "react-icons/bs";
-import toast from "react-hot-toast";
 import {
   Card,
   CardContent,
@@ -34,6 +33,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { toast } from "sonner";
 
 // Define the form data type using Zod schema
 const signupSchema = z
@@ -171,6 +171,7 @@ const Signup: React.FC = () => {
         username: formData.name,
         email: formData.email,
         password: formData.password,
+        gender: formData.gender,
         role: formData.role,
         ...(formData.role === "SELLER" && {
           bankName: formData.bankName,

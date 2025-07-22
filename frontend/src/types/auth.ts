@@ -1,11 +1,11 @@
 // Authentication related types
-
-export type Role = "CUSTOMER" | "SELLER";
+import type { Gender, Role, User } from "./user";
 
 export interface SignupData {
   username: string;
   email: string;
   password: string;
+  gender: Gender;
   role?: Role;
   bankName?: string;
   fullName?: string;
@@ -27,40 +27,18 @@ export interface LoginData {
 }
 
 export interface LoginResponse {
-  user: {
-    id: number;
-    username: string;
-    email: string;
-    role: string;
-    isVerified: boolean;
-    accessToken: string;
-  };
+  message: string;
+  user: User;
 }
 
 export interface VerifyEmailResponse {
   message: string;
-  user: {
-    id: number;
-    username: string;
-    email: string;
-    role: string;
-    isVerified: boolean;
-    accessToken: string;
-  };
-}
-
-export interface AuthUser {
-  id: number;
-  username: string;
-  email: string;
-  role: Role;
-  isVerified: boolean;
-  accessToken: string;
+  user: User;
 }
 
 export interface AuthContextType {
-  user: AuthUser | null;
+  user: User | null;
   loading: boolean;
   isAuthenticated: boolean;
-  updateUser: (user: AuthUser | null) => void;
+  updateUser: (user: User | null) => void;
 }

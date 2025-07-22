@@ -295,7 +295,7 @@ input:focus {
   -ms-transition: var(--main-transition);
   -o-transition: var(--main-transition);
   position: absolute;
-  right: 10px;
+  left: 10px;
   top: 10px;
   z-index: 2;
   background-color: white;

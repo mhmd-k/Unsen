@@ -6,7 +6,7 @@ import {
   useEffect,
   type ReactNode,
 } from "react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { FiAlertTriangle } from "react-icons/fi";
 
 type WishlistContextType = {

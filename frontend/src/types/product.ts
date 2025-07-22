@@ -1,3 +1,5 @@
+import type { User } from "./user";
+
 export type Product = {
   id: number;
   sellerId: number;
@@ -14,4 +16,10 @@ export type Product = {
 
 export type CartItem = Product & {
   quantity: number;
+};
+
+export type GetProductByIdResponse = {
+  product: Product;
+  owner: User;
+  message: string;
 };

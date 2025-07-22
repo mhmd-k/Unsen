@@ -6,7 +6,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { FiAlertTriangle } from "react-icons/fi";
 
 interface CartContextType {
@@ -25,20 +25,9 @@ export default function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>(
     JSON.parse(sessionStorage.getItem("cart") || "[]")
   );
-  const [total, setTotal] = useState<number>(0);
 
   useEffect(() => {
     sessionStorage.setItem("cart", JSON.stringify(cart));
-
-    function calculateTotal(arr: CartItem[]): number {
-      let t = 0;
-      arr.forEach((e) => {
-        t += e.quantity * e.price;
-      });
-      return t;
-    }
-
-    setTotal(() => calculateTotal(cart));
   }, [cart]);
 
   function addItem(item: CartItem): void {
@@ -96,6 +85,11 @@ export default function CartProvider({ children }: { children: ReactNode }) {
       prevCart.map((e) => (e.id === id ? { ...e, quantity: value } : e))
     );
   }
+
+  const total = cart.reduce((sum, item) => {
+    const discountedPrice = item.price - (item.discount * item.price) / 100;
+    return sum + discountedPrice * item.quantity;
+  }, 0);
 
   return (
     <CartContext.Provider

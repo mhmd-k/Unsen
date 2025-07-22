@@ -8,7 +8,7 @@ import { ShoppingBag } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { getProductsById } from "@/lib/api";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import LoadingSpinnerInfinity from "@/components/LoadingSpinnerInfinity";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
@@ -20,92 +20,92 @@ export default function ProductDetail() {
   const params = useParams();
   const id = parseInt(params.id || "");
 
-  const {
-    data: product,
-    isLoading,
-    isSuccess,
-  } = useQuery({
+  const { data, isLoading, isSuccess } = useQuery({
     queryFn: () => getProductsById(id),
     queryKey: ["product", id],
   });
 
   useEffect(() => {
-    if (isSuccess && product?.images?.[product.primaryImageIndex]) {
-      setPrimaryImage(product.images[product.primaryImageIndex]);
+    if (isSuccess && data.product?.images?.[data.product.primaryImageIndex]) {
+      setPrimaryImage(data.product.images[data.product.primaryImageIndex]);
     }
-  }, [isSuccess, product]);
+  }, [isSuccess, data]);
 
   const { user } = useAuth();
   const { addItem } = useCartConext();
   const { addToWishlist } = useWishlistContext();
 
+  if (isLoading) return <LoadingSpinnerInfinity />;
+
+  if (!data) {
+    return <div>Product not found</div>;
+  }
+
   const handleAddToCart = () => {
-    if (product) addItem({ ...product, quantity: 1 });
+    if (data.product) addItem({ ...data.product, quantity: 1 });
   };
 
   const handleAddToWishlist = () => {
-    if (product) addToWishlist(product);
+    if (data.product) addToWishlist(data.product);
   };
-
-  if (isLoading) return <LoadingSpinnerInfinity />;
-
-  if (!product) {
-    return <div>Product not found</div>;
-  }
 
   return (
     <>
       <div className="container px-4 mx-auto py-8">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
           <div className="md:col-span-5">
-            <div className="flex gap-4">
-              <div className="flex flex-col gap-4">
-                {product.images.map((img, i) => (
-                  <button
-                    className="h-22 w-22 rounded-md"
-                    onClick={() => setPrimaryImage(img)}
-                  >
-                    <img
-                      key={img}
-                      src={img}
-                      alt={`${product.name}-${i}`}
-                      className={cn(
-                        "object-fit transition-all duration-500",
-                        primaryImage !== img && "grayscale hover:filter-none"
-                      )}
-                    />
-                  </button>
-                ))}
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex md:flex-col gap-4 justify-center">
+                {data.product.images.length > 1 &&
+                  data.product.images.map((img, i) => (
+                    <button
+                      className="h-22 w-22 rounded-md cursor-pointer"
+                      onClick={() => setPrimaryImage(img)}
+                    >
+                      <img
+                        key={img}
+                        src={img}
+                        alt={`${data.product.name}-${i}`}
+                        className={cn(
+                          "object-fit transition-all duration-500",
+                          primaryImage !== img && "grayscale hover:filter-none"
+                        )}
+                      />
+                    </button>
+                  ))}
               </div>
-              <img
-                src={primaryImage}
-                alt={product.name}
-                className="w-full max-h-90 object-contain"
-              />
+              <div>
+                <img
+                  src={primaryImage}
+                  alt={data.product.name}
+                  className="w-full max-h-90 object-contain"
+                />
+              </div>
             </div>
           </div>
           <div className="md:col-span-7 space-y-4">
             <div>
-              <h1 className="text-2xl mb-2">{product.name}</h1>
+              <h1 className="text-2xl mb-2">{data.product.name}</h1>
               <h2 className="text-xl text-gray-500">
-                {formatCurrency(product.price)}{" "}
+                {formatCurrency(data.product.price)}{" "}
                 <Badge
                   variant="outline"
                   className={cn(
                     "rounded-full ms-10",
-                    product.stock > 0
+                    data.product.stock > 0
                       ? "text-green-400 border-green-400"
                       : "text-red-400 border-red-400"
                   )}
                 >
-                  {product.stock > 0 ? "In stock" : "Out of stock"}
+                  {data.product.stock > 0 ? "In stock" : "Out of stock"}
                 </Badge>
               </h2>
             </div>
-            <p className="text-muted-foreground">{product.description}</p>
+            <p className="text-muted-foreground">{data.product.description}</p>
+
             <p className="text-muted-foreground">
               Items currently in stock:{" "}
-              <span className="text-main">{product.stock}</span>
+              <span className="text-main">{data.product.stock}</span>
             </p>
             {user?.role === "CUSTOMER" && (
               <div className="space-y-4 grid">
@@ -114,7 +114,7 @@ export default function ProductDetail() {
                   className="w-full h-[50px] md:max-w-[250px] bg-black-btn rounded-none hover:bg-main"
                   onClick={handleAddToCart}
                 >
-                  ADD TO CART <ShoppingBag />
+                  ADD TO CART <ShoppingBag className="size-5" />
                 </Button>
                 <Button
                   variant="ghost"
@@ -129,6 +129,13 @@ export default function ProductDetail() {
                 </Button>
               </div>
             )}
+
+            <Link
+              className="block !text-main text-xs text-end !underline italic font-semibold"
+              to={`/users/${data.owner.id}`}
+            >
+              Owner: {data.owner.username}
+            </Link>
           </div>
         </div>
       </div>

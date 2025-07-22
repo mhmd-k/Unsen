@@ -6,13 +6,13 @@ import {
   useLayoutEffect,
 } from "react";
 import loadingSpinner from "../assets/icons/Infinity-1s-150px (1).svg";
-import type { AuthContextType, AuthUser } from "@/types";
+import type { AuthContextType, User } from "@/types";
 import { apiPrivate } from "@/api/axios";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   console.log(user);
@@ -33,7 +33,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
     checkAuth();
   }, []);
 
-  const updateUser = (userData: AuthUser | null) => {
+  const updateUser = (userData: User | null) => {
     setUser(userData);
   };
 
