@@ -25,11 +25,14 @@ class AuthController {
       if (!isPasswordValid)
         return res.status(401).json({ message: "Invalid credentials" });
 
-      const sellerBankAccount = await SellerBankAccount.findOne({
-        where: {
-          userId: user.dataValues.id,
-        },
-      });
+      let sellerBankAccount = {};
+      if (user.role === "SELLER") {
+        sellerBankAccount = await SellerBankAccount.findOne({
+          where: {
+            userId: user.dataValues.id,
+          },
+        });
+      }
 
       // Generate tokens
       const accessToken = generateAccessToken(user.id, user.email);
@@ -38,7 +41,11 @@ class AuthController {
       storeRefreshTokenInCookie(res, refreshToken);
 
       const userData = user.get({ plain: true });
-      const sellerBankAccountData = sellerBankAccount.get({ plain: true });
+      let sellerBankAccountData = {};
+      if (user.role === "SELLER") {
+        sellerBankAccountData = sellerBankAccount.get({ plain: true });
+      }
+
       res.json({
         user: {
           ...userData,
@@ -78,7 +85,10 @@ class AuthController {
           });
 
           const userData = user.get({ plain: true });
-          const sellerBankAccountData = sellerBankAccount.get({ plain: true });
+          let sellerBankAccountData = {};
+          if (userData.role === "SELLER") {
+            sellerBankAccountData = sellerBankAccount.get({ plain: true });
+          }
 
           const newAccessToken = generateAccessToken(
             userData.id,

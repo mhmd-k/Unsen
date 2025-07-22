@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import corsOptions from "./config/corsOptions.js";
 import authRoutes from "./routes/authRouter.js";
 import productRoutes from "./routes/productRouter.js";
+import orderRoutes from "./routes/orderRouter.js";
 import "dotenv/config";
 import { connectDB } from "./config/db.js";
 import path from "path";
@@ -52,6 +53,7 @@ app.get("/api", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/orders", orderRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

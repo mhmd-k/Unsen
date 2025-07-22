@@ -105,14 +105,13 @@ class ProductController {
   getProductById = async (req, res) => {
     const { id } = req.params;
     try {
-      const product = await Product.findOne({
-        where: {
-          id: id,
-        },
-      });
+      const product = await Product.findByPk(id);
+
+      const owner = await User.findByPk(product.sellerId);
 
       res.status(200).json({
         product: { ...product.dataValues, images: JSON.parse(product.images) },
+        owner,
         message: "fetched product by id successfully",
       });
     } catch (error) {
