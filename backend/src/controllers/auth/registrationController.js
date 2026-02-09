@@ -118,16 +118,17 @@ class RegistrationController {
 
       // Generate tokens after successful verification
       const userData = user.get({ plain: true });
+      const bankAccountData = user.role === "SELLER" ? sellerBankAccount.get({ plain: true }) : {};
+
       const accessToken = generateAccessToken(userData.id, userData.email);
       const refreshToken = generateRefreshToken(userData.id, userData.email);
-
       storeRefreshTokenInCookie(res, refreshToken);
 
       res.json({
         message: "Email verified successfully",
         user: {
           ...userData,
-          ...sellerBankAccount.get({ plain: true }),
+          ...bankAccountData,
           password: undefined,
           accessToken,
         },
