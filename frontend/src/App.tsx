@@ -17,7 +17,7 @@ function App() {
             <WishlistProvider>
               <AppRoutes />
 
-              <Toaster duration={10000} closeButton position="top-left" />
+              <Toaster duration={10000} closeButton position="bottom-right" />
             </WishlistProvider>
           </CartProvider>
         </AuthProvider>

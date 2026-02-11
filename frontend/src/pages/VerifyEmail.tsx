@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { verifyEmail } from "../lib/api";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import type { Status } from "../types/common";
 import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";

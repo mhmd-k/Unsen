@@ -3,7 +3,7 @@ import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { BsSuitHeart, BsSearch } from "react-icons/bs";
 import { useCartConext } from "@/contexts/CartContext";
 import { formatCurrency } from "@/lib/utils";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -38,10 +38,11 @@ import {
   UserCog,
   CircleUserRound,
 } from "lucide-react";
-import toast from "react-hot-toast";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { AxiosError } from "axios";
 import MobileSidebar from "./MobileSidebar";
+import { toast } from "sonner";
+import { RoleComponentGuard } from "../guard";
 
 const navLinks = [
   { path: "/", label: "Home" },
@@ -158,22 +159,23 @@ function Appbar() {
                   Login
                 </Link>
               )}
-              {isAuthenticated &&
-                user?.role === "SELLER" &&
-                !location.pathname.includes("add-product") && (
-                  <Link to="/add-product" className="main-btn">
-                    Sell a product
-                  </Link>
-                )}
+              <RoleComponentGuard requiredRoles={['SELLER']}>
+                {isAuthenticated &&
+                  !location.pathname.includes("add-product") && (
+                    <Link to="/add-product" className="main-btn">
+                      Sell a product
+                    </Link>
+                  )}
+              </RoleComponentGuard>
               <Link to="shop" state={{ search: true }}>
                 <BsSearch />
               </Link>
 
-              {user?.role === "CUSTOMER" && (
+              <RoleComponentGuard requiredRoles={['CUSTOMER']}>
                 <NavLink to="wishlist">
                   <BsSuitHeart />
                 </NavLink>
-              )}
+              </RoleComponentGuard>
 
               {isAuthenticated && (
                 <DropdownMenu>
@@ -247,11 +249,11 @@ function Appbar() {
               <BsSearch />
             </Link>
 
-            {user?.role === "CUSTOMER" && (
+            <RoleComponentGuard requiredRoles={['CUSTOMER']}>
               <NavLink to="wishlist">
                 <BsSuitHeart />
               </NavLink>
-            )}
+            </RoleComponentGuard>
 
             {user?.role !== "SELLER" && (
               <Sheet>

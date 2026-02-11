@@ -6,7 +6,7 @@ import { memo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Product } from "@/types";
 import { Button } from "./ui/button";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { Eye, ShoppingBasket } from "lucide-react";
 import { Badge } from "./ui/badge";
 
@@ -36,13 +36,24 @@ const ProductCard = (props: Product) => {
 
   return (
     <div className="shop-card relative">
-      {props.discount > 0 && (
+      {props.stock === 0 ? (
         <Badge
-          className="absolute top-2 right-2 rounded-full text-xs border-red-400 text-red-400 z-10"
-          variant="outline"
+          className="absolute top-2 right-2 rounded-full text-xs z-10"
+          variant="destructive"
         >
-          {props.discount}% off
+          Out of stock
         </Badge>
+      ) : (
+        <>
+          {props.discount > 0 && (
+            <Badge
+              className="absolute top-2 right-2 rounded-full text-xs border-red-400 text-red-400 z-10"
+              variant="outline"
+            >
+              {props.discount}% off
+            </Badge>
+          )}
+        </>
       )}
 
       {user?.role === "CUSTOMER" && (
@@ -75,7 +86,7 @@ const ProductCard = (props: Product) => {
           >
             Quick View <Eye />
           </Button>
-          {user?.role === "CUSTOMER" && (
+          {user?.role === "CUSTOMER" && props.stock > 0 && (
             <Button
               className="add-to-cart"
               size="sm"

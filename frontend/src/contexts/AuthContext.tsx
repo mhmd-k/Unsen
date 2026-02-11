@@ -1,6 +1,5 @@
 import {
   createContext,
-  useContext,
   useState,
   type ReactNode,
   useLayoutEffect,
@@ -54,15 +53,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-function useAuth() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-}
-
-export { AuthProvider, useAuth };
+export { AuthContext, AuthProvider }
 
 // email: testuser_mhmd_k_2000@proton.me
 // pass: 123F#Ccs1

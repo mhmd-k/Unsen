@@ -6,7 +6,7 @@ import { useState } from "react";
 import type { Status } from "../types";
 import { login } from "../lib/api";
 import { toast } from "sonner";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import {
   Card,
   CardContent,
@@ -144,7 +144,7 @@ const Login: React.FC = () => {
             />
 
             <Button asChild variant="link" className="p-0">
-              <Link to="/forgot-password">Forgot your password?</Link>
+              <Link to="/forgot-password" className='underline!'>Forgot your password?</Link>
             </Button>
 
             <Button
@@ -165,7 +165,7 @@ const Login: React.FC = () => {
         <p className="text-center text-sm text-muted-foreground">
           Don't have an account?{" "}
           <Button asChild variant="link" className="p-0">
-            <Link to="/signup">Sign Up</Link>
+            <Link to="/signup" className='underline!'>Sign Up</Link>
           </Button>
         </p>
       </CardFooter>

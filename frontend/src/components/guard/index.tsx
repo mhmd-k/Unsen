@@ -1,4 +1,4 @@
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import type { Role } from "@/types";
 import type { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
@@ -8,7 +8,7 @@ interface RoleGuardProps {
   children: ReactNode;
 }
 
-export const RoleGuard = ({ requiredRoles, children }: RoleGuardProps) => {
+export const RolePageGuard = ({ requiredRoles, children }: RoleGuardProps) => {
   const { user } = useAuth();
 
   if (user?.role && !requiredRoles.includes(user.role)) {
@@ -17,3 +17,13 @@ export const RoleGuard = ({ requiredRoles, children }: RoleGuardProps) => {
 
   return children;
 };
+
+export const RoleComponentGuard = ({ requiredRoles, children }: RoleGuardProps) => {
+  const { user } = useAuth();
+
+  if (user?.role && !requiredRoles.includes(user.role)) {
+    return null;
+  }
+
+  return children;
+}; 

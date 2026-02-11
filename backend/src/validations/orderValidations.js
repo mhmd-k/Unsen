@@ -47,7 +47,7 @@ export const placeOrderValidation = [
     .isString({ min: 3 })
     .withMessage("City must be of type string"),
 
-  body("state").isString().withMessage("City must be of type string"),
+  body("state").optional().isString().withMessage("state must be of type string"),
 
   body("zipCode")
     .notEmpty()

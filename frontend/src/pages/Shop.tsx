@@ -52,13 +52,12 @@ function Shop() {
     searchInput === ""
       ? productsArr
       : productsArr?.filter(
-          (e) =>
-            e.name
-              .toLowerCase()
-              .split(" ")
-              .join("")
-              .search(searchInput.toLowerCase().split(" ").join("")) !== -1
-        );
+        (e) =>
+          e.name
+            .toLowerCase()
+            .trim()
+            .search(searchInput.toLowerCase().trim()) !== -1
+      );
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     setSearchInput(e.target.value);

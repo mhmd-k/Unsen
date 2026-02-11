@@ -1,10 +1,16 @@
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ChangePasswordModal from "../components/ChangePasswordModal";
 import { Button } from "../components/ui/button";
 import { Separator } from "../components/ui/separator";
-import { BadgeCheckIcon, Heart, LayoutDashboard, Lock } from "lucide-react";
+import {
+  BadgeCheckIcon,
+  Heart,
+  LayoutDashboard,
+  Lock,
+  PackageSearch,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const Account = () => {
@@ -56,30 +62,43 @@ const Account = () => {
 
       <Separator className="my-6" />
 
-      <div className="flex flex-col md:flex-row gap-3 w-[400px] max-w-full">
+      <div className="flex flex-wrap gap-3">
         {user?.role === "CUSTOMER" && (
           <Button
             variant="outline"
             onClick={() => navigate("/wishlist")}
-            className="flex-1 flex items-center gap-2 border-pink-500 text-pink-500"
+            className="flex-1 md:max-w-[200px] flex items-center gap-2 border-pink-500 text-pink-500"
+            size="lg"
           >
-            <Heart /> Wishlist
+            <Heart className="size-5" /> Wishlist
           </Button>
         )}
         <Button
           variant="outline"
           onClick={() => setShowPasswordModal(true)}
-          className="flex-1 flex items-center gap-2 border-black-btn text-black-btn"
+          className="flex-1 md:max-w-[200px] flex items-center gap-2 border-black-btn text-black-btn"
+          size="lg"
         >
-          <Lock /> Change Password
+          <Lock className="size-5" /> Change Password
         </Button>
         {user?.role === "SELLER" && (
           <Button
             variant="outline"
             onClick={() => navigate("/seller-dashboard")}
-            className="flex-1 flex items-center gap-2 border-main text-main"
+            className="flex-1 md:max-w-[200px] flex items-center gap-2 border-main text-main"
+            size="lg"
           >
-            <LayoutDashboard /> Dashboard
+            <LayoutDashboard className="size-5" /> Dashboard
+          </Button>
+        )}
+        {user?.role === "CUSTOMER" && (
+          <Button
+            variant="outline"
+            onClick={() => navigate("/orders")}
+            className="flex-1 md:max-w-[200px] flex items-center gap-2 border-main text-main"
+            size="lg"
+          >
+            <PackageSearch className="size-5" /> Your Orders
           </Button>
         )}
       </div>

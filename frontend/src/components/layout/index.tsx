@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Appbar from "./Appbar";
 import Footer from "./Footer";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { Alert } from "@/components/ui/alert";
 
 function Layout() {

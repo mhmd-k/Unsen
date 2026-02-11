@@ -13,9 +13,11 @@ import AuthLayout from "../components/AuthLayout";
 import NotFound from "../pages/NotFound";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import Account from "../pages/Account";
-import { RoleGuard } from "@/components/guard";
+import { RolePageGuard } from "@/components/guard";
 import AddProduct from "@/pages/AddProduct";
 import Checkout from "@/pages/Checkout";
+import Orders from "@/pages/Orders";
+import OrderDetails from "@/pages/OrderDetails";
 
 const AppRoutes = () => {
   return (
@@ -37,17 +39,33 @@ const AppRoutes = () => {
           <Route
             path="/add-product"
             element={
-              <RoleGuard requiredRoles={["SELLER"]}>
+              <RolePageGuard requiredRoles={["SELLER"]}>
                 <AddProduct />
-              </RoleGuard>
+              </RolePageGuard>
             }
           />
           <Route
             path="/checkout"
             element={
-              <RoleGuard requiredRoles={["CUSTOMER"]}>
+              <RolePageGuard requiredRoles={["CUSTOMER"]}>
                 <Checkout />
-              </RoleGuard>
+              </RolePageGuard>
+            }
+          />
+          <Route
+            path="/orders"
+            element={
+              <RolePageGuard requiredRoles={["CUSTOMER"]}>
+                <Orders />
+              </RolePageGuard>
+            }
+          />
+          <Route
+            path="/orders/:id"
+            element={
+              <RolePageGuard requiredRoles={["CUSTOMER"]}>
+                <OrderDetails />
+              </RolePageGuard>
             }
           />
         </Route>
@@ -59,9 +77,9 @@ const AppRoutes = () => {
         <Route
           path="wishlist"
           element={
-            <RoleGuard requiredRoles={["CUSTOMER"]}>
+            <RolePageGuard requiredRoles={["CUSTOMER"]}>
               <Wishlist />
-            </RoleGuard>
+            </RolePageGuard>
           }
         />
 

@@ -16,7 +16,7 @@ import { toast } from "sonner";
 import { categories } from "@/lib/constants";
 import image from "../assets/images/add-product-image.jpg";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import {
   Form,
   FormLabel,
@@ -362,18 +362,17 @@ const AddProduct = () => {
                               <img
                                 src={image}
                                 alt={`Preview ${index + 1}`}
-                                className={`w-22 h-22 object-cover rounded-sm ${
-                                  index === primaryImageIndex
+                                className={`w-22 h-22 object-cover rounded-sm ${index === primaryImageIndex
                                     ? "ring-4 ring-main"
                                     : ""
-                                }`}
+                                  }`}
                               />
                               <div>
                                 <h4
                                   className={cn(
                                     "mb-2",
                                     index === primaryImageIndex &&
-                                      "text-main font-medium"
+                                    "text-main font-medium"
                                   )}
                                 >
                                   {imageFiles[index].name}

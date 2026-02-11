@@ -3,7 +3,7 @@ import { formatCurrency } from "@/lib/utils";
 import { useCartConext } from "@/contexts/CartContext";
 import CartProductCard from "./CartProductCard";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
 export default function Cart({ setCartShow }: { setCartShow: () => void }) {

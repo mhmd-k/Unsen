@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import spinner from "../assets/icons/Infinity-1s-150px (1).svg";
 
 export const ProtectedRoute = () => {

@@ -1,5 +1,5 @@
 import { apiPrivate } from "../api/axios";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 
 const useRefreshToken = () => {
   const { updateUser } = useAuth();

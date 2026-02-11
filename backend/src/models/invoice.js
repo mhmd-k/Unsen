@@ -27,7 +27,7 @@ const Invoice = sequelize.define(
       allowNull: false,
     },
     status: {
-      type: DataTypes.ENUM("GENERATED", "PAID"),
+      type: DataTypes.ENUM("GENERATED", "PAID", "CANCELED"),
       allowNull: false,
       defaultValue: "GENERATED",
     },

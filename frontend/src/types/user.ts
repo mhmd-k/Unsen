@@ -24,4 +24,5 @@ export interface User {
   createdAt: string;
   updatedAt: string;
   bankAccount?: SellerBankAccount;
+  accessToken?: string;
 }

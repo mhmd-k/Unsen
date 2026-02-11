@@ -15,7 +15,7 @@ import { Button } from "./ui/button";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { useCartConext } from "@/contexts/CartContext";
 import { type PlaceOrderResponse } from "@/types/order";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 import { useState } from "react";
@@ -40,7 +40,7 @@ const CheckoutForm = () => {
     resolver: zodResolver(checkoutSchema),
   });
   const { user } = useAuth();
-  const { cart } = useCartConext();
+  const { cart, clearCart } = useCartConext();
   const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
 
@@ -55,6 +55,7 @@ const CheckoutForm = () => {
       });
 
       toast.success("Order submitted successfully");
+      clearCart();
       navigate("/pay", {
         replace: true,
         state: {
@@ -76,7 +77,7 @@ const CheckoutForm = () => {
   };
 
   return (
-    <Card className="flex-1 my-auto">
+    <Card className="flex-1 h-fit">
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">

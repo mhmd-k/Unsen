@@ -17,6 +17,7 @@ interface CartContextType {
   addItem: (item: CartItem) => void;
   removeItem: (id: string | number) => void;
   setQuantity: (id: string | number, value: number) => void;
+  clearCart: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -86,6 +87,10 @@ export default function CartProvider({ children }: { children: ReactNode }) {
     );
   }
 
+  function clearCart() {
+    setCart([]);
+  }
+
   const total = cart.reduce((sum, item) => {
     const discountedPrice = item.price - (item.discount * item.price) / 100;
     return sum + discountedPrice * item.quantity;
@@ -101,6 +106,7 @@ export default function CartProvider({ children }: { children: ReactNode }) {
         addItem,
         removeItem,
         setQuantity,
+        clearCart,
       }}
     >
       {children}

@@ -4,7 +4,7 @@ import imageTwo from "../assets/images/catigories/cate2.png";
 import imageThree from "../assets/images/catigories/cate3.png";
 import imageFour from "../assets/images/catigories/cate4.png";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import { Button } from "../components/ui/button";
 import {
   Carousel,

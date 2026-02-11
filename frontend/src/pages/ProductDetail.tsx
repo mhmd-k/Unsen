@@ -5,7 +5,7 @@ import { BsSuitHeart } from "react-icons/bs";
 import { Button } from "../components/ui/button";
 import { Separator } from "../components/ui/separator";
 import { ShoppingBag } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { getProductsById } from "@/lib/api";
 import { Link, useParams } from "react-router-dom";
@@ -109,13 +109,15 @@ export default function ProductDetail() {
             </p>
             {user?.role === "CUSTOMER" && (
               <div className="space-y-4 grid">
-                <Button
-                  size="lg"
-                  className="w-full h-[50px] md:max-w-[250px] bg-black-btn rounded-none hover:bg-main"
-                  onClick={handleAddToCart}
-                >
-                  ADD TO CART <ShoppingBag className="size-5" />
-                </Button>
+                {data.product.stock > 0 && (
+                  <Button
+                    size="lg"
+                    className="w-full h-[50px] md:max-w-[250px] bg-black-btn rounded-none hover:bg-main"
+                    onClick={handleAddToCart}
+                  >
+                    ADD TO CART <ShoppingBag className="size-5" />
+                  </Button>
+                )}
                 <Button
                   variant="ghost"
                   size="lg"

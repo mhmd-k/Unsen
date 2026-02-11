@@ -1,4 +1,5 @@
 import type { Invoice } from "./invoice";
+import type { Product } from "./product";
 
 export type OrderStatus = "WAITING_FOR_PAYMENT" | "CANCELED" | "DONE";
 
@@ -33,4 +34,14 @@ export type PlaceOrderResponse = {
   order: Order;
   invoice: Invoice;
   message: string;
+};
+
+export type GetUserOrdersResponse = {
+  orders: Array<{ invoice: Invoice; products: Product[] } & Order>;
+  message: string;
+};
+
+export type GetOrderResponse = {
+  message: string;
+  order: Order & { products: Product[]; invoice: Invoice };
 };

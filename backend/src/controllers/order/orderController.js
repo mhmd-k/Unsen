@@ -27,8 +27,6 @@ class OrderController {
           });
         }
 
-        console.log("product: ", product);
-
         if (product.stock === 0) {
           return res.status(409).json({
             message: `Product "${product.name}" is out of stock or doesn't have enough quantity.`,
@@ -47,7 +45,15 @@ class OrderController {
         });
 
         // Reduce stock
-        product.stock -= item.quantity;
+        let newStock = product.stock - item.quantity;
+        if (newStock < 0) {
+          return res.status(409).json({
+            message: `Product "${product.name}" is out of stock or doesn't have enough quantity.`,
+          });
+        }
+
+        product.stock = newStock;
+
         await product.save({ transaction: t });
       }
 
@@ -103,6 +109,154 @@ class OrderController {
       return res
         .status(error.status || 500)
         .json({ message: error.message || "Failed to place order" });
+    }
+  };
+
+  getUserOrders = async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+      const userOrders = await Order.findAll({
+        where: {
+          userId,
+        },
+      });
+
+      if (userOrders.length === 0) {
+        return res.status(404).json({ message: "You don't have any orders!" });
+      }
+
+      const orders = await Promise.all(
+        userOrders.map(async (order) => {
+          const items = await OrderItem.findAll({
+            where: { orderId: order.id },
+          });
+
+          const invoice = await Invoice.findOne({
+            where: { orderId: order.id },
+          });
+
+          const products = await Promise.all(
+            items.map(async (item) => {
+              return await Product.findByPk(item.productId);
+            })
+          );
+
+          return {
+            ...order.toJSON(),
+            products,
+            invoice,
+          };
+        })
+      );
+
+      return res
+        .status(200)
+        .json({ message: "Orders retrived successfully", orders });
+    } catch (error) {
+      console.error(error);
+      return res
+        .status(error.status || 500)
+        .json({ message: error.message || "Failed to place order" });
+    }
+  };
+
+  cancelOrder = async (req, res) => {
+    const { orderId } = req.params;
+
+    const t = await sequelize.transaction();
+
+    try {
+      const order = await Order.findByPk(orderId, { transaction: t });
+      if (!order) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+
+      if (order.status === "CANCELED" || order.status === "DONE") {
+        return res.status(400).json({
+          message: `Order cannot be canceled — status is already "${order.status}"`,
+        });
+      }
+
+      const orderItems = await OrderItem.findAll({
+        where: { orderId },
+        transaction: t,
+      });
+
+      // Revert stock for each product
+      await Promise.all(
+        orderItems.map(async (item) => {
+          const product = await Product.findByPk(item.productId, {
+            transaction: t,
+          });
+          if (product) {
+            product.stock += item.quantity;
+            await product.save({ transaction: t });
+          }
+        })
+      );
+
+      // Update order status and cancellation timestamp
+      order.status = "CANCELED";
+      order.canceledAt = new Date();
+      await order.save({ transaction: t });
+
+      // Update invoice status (optional)
+      await Invoice.update(
+        { status: "CANCELED" },
+        { where: { orderId }, transaction: t }
+      );
+
+      await t.commit();
+      return res
+        .status(200)
+        .json({ message: "Order canceled successfully", order });
+    } catch (error) {
+      await t.rollback();
+      console.error(error);
+      return res
+        .status(error.status || 500)
+        .json({ message: error.message || "Failed to cancel order" });
+    }
+  };
+
+  getOrderById = async (req, res) => {
+    const { orderId } = req.params;
+
+    try {
+      const order = await Order.findByPk(orderId);
+      if (!order) {
+        return res.status(404).json({ message: "Order not found" });
+      }
+
+      const orderItems = await OrderItem.findAll({
+        where: { orderId },
+      });
+
+      const products = await Promise.all(
+        orderItems.map(async (item) => {
+          const product = await Product.findByPk(item.productId);
+          return product;
+        })
+      );
+
+      const invoice = await Invoice.findOne({
+        where: { orderId },
+      });
+
+      return res.status(200).json({
+        message: "Order fetched successfully",
+        order: {
+          ...order.toJSON(),
+          products,
+          invoice,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      return res
+        .status(error.status || 500)
+        .json({ message: error.message || "Failed to fetch order" });
     }
   };
 }

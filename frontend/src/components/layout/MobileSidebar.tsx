@@ -16,7 +16,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import type { Dispatch, SetStateAction } from "react";
 import { BsTextLeft } from "react-icons/bs";
 import { NavLink, useNavigate } from "react-router-dom";

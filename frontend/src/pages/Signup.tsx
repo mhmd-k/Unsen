@@ -214,14 +214,7 @@ const Signup: React.FC = () => {
       setShowVerifyEmail(true);
       toast.success("Check your email");
     } catch (error: unknown) {
-      console.log(error);
-
       setResendEmailStatus("error");
-      toast.error(
-        error instanceof AxiosError
-          ? error.message
-          : "An error occurred during resending verification email"
-      );
       toast.error(
         error instanceof AxiosError
           ? error.message
@@ -539,7 +532,7 @@ const Signup: React.FC = () => {
         <p className="text-center text-sm text-muted-foreground">
           Already have an account?{" "}
           <Button asChild variant="link" className="p-0">
-            <Link to="/login">Login</Link>
+            <Link to="/login" className="underline!">Login</Link>
           </Button>
         </p>
       </CardFooter>

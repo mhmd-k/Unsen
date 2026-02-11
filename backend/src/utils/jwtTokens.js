@@ -17,6 +17,6 @@ export const storeRefreshTokenInCookie = (res, token) => {
     httpOnly: true,
     secure: true,
     sameSite: "strict",
-    maxAge: 24 * 60 * 60 * 1000 * 14, // 14 day
+    maxAge: 14 * 24 * 60 * 60 * 1000 , // 14 day
   });
 };
