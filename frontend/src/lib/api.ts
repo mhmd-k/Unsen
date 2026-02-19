@@ -152,3 +152,4 @@ export async function getRelatedProducts(id: number): Promise<Product[]> {
     handleAxiosError(error);
   }
 }
+

@@ -1,7 +1,4 @@
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import useAxiosPrivate from "@/hooks/useAxiosPrivate";
-import { type Product, type GetOrderResponse } from "@/types";
 import {
   Card,
   CardHeader,
@@ -9,31 +6,14 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from "@/components/ui/table";
-import { formatCurrency } from "@/lib/utils";
 import OrderStatusBadge from "@/components/OrderStatusBadge";
+import { useGetOrderById } from "@/hooks/useGetOrderById";
+import OrderProductsTable from "@/components/OrderProductsTable";
 
 const OrderDetails = () => {
   const { id } = useParams();
-  const axiosPrivate = useAxiosPrivate();
 
-  console.log(id);
-
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["order-details", id],
-    queryFn: async () => {
-      const res = await axiosPrivate.get<GetOrderResponse>(`/orders/${id}`);
-      return res.data.order;
-    },
-    enabled: !!id,
-  });
+  const { data, isLoading, error } = useGetOrderById(Number(id));
 
   if (isLoading)
     return <div className="text-center p-6">Loading order details...</div>;
@@ -58,6 +38,8 @@ const OrderDetails = () => {
     invoice,
     products,
   } = data;
+
+  console.log(products);
 
   return (
     <div className="py-10 px-4 container mx-auto">
@@ -86,42 +68,7 @@ const OrderDetails = () => {
             </p>
           </div>
 
-          <div className="space-y-2">
-            <h3 className="font-semibold text-base">Ordered Products</h3>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Product</TableHead>
-                  <TableHead>Brand</TableHead>
-                  <TableHead>Discount</TableHead>
-                  <TableHead>Original Price</TableHead>
-                  <TableHead>Disounted Price</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {products.map((product: Product) => (
-                  <TableRow key={product.id}>
-                    <TableCell>{product.name}</TableCell>
-                    <TableCell>{product.brand}</TableCell>
-                    <TableCell>
-                      {" "}
-                      {Number(product.discount) ? `%${product.discount}` : "_"}
-                    </TableCell>
-                    <TableCell>{formatCurrency(product.price)}</TableCell>
-                    <TableCell>
-                      {formatCurrency(
-                        product.price - (product.discount * product.price) / 100
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-
-          <div className="text-right text-lg font-medium">
-            Total: €{totalPrice.toFixed(2)}
-          </div>
+          <OrderProductsTable products={products} totalPrice={totalPrice} />
         </CardContent>
       </Card>
     </div>

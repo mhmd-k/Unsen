@@ -9,16 +9,23 @@ const OrderStatusBadge = (status: OrderStatus) => {
       </Badge>
     );
 
-  if (status === "CANCELED")
+  if (status === "CANCELLED")
     return (
       <Badge variant="secondary" className="bg-red-400 text-white">
         Canceled
       </Badge>
     );
 
+  if (status === "REFUNDED")
+    return (
+      <Badge variant="secondary" className="bg-blue-400 text-white">
+        REFUNDED
+      </Badge>
+    );
+
   return (
     <Badge variant="secondary" className="bg-green-400 text-white">
-      Done
+      Paid
     </Badge>
   );
 };

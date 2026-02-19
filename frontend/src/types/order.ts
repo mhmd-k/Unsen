@@ -1,7 +1,11 @@
 import type { Invoice } from "./invoice";
 import type { Product } from "./product";
 
-export type OrderStatus = "WAITING_FOR_PAYMENT" | "CANCELED" | "DONE";
+export type OrderStatus =
+  "WAITING_FOR_PAYMENT" |
+  "PAID" |
+  "CANCELLED" |
+  "REFUNDED"
 
 export type Order = {
   id: number;
@@ -31,8 +35,8 @@ export type PlaceOrderData = {
 };
 
 export type PlaceOrderResponse = {
-  order: Order;
-  invoice: Invoice;
+  orderId: Order;
+  amount: number;
   message: string;
 };
 

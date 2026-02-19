@@ -5,8 +5,9 @@ import Product from "./product.js";
 import OrderItem from "./orderItem.js";
 import Order from "./order.js";
 import Invoice from "./invoice.js";
+import Payment from "./payment.js";
 
-// Define the one-to-one relationship between User and SellerBankAccount
+// one-to-one relationship between User and SellerBankAccount
 User.hasOne(SellerBankAccount, {
   foreignKey: "userId",
   as: "bankAccount",
@@ -16,11 +17,11 @@ SellerBankAccount.belongsTo(User, {
   as: "user",
 });
 
-// Define the one-to-many relationship between User and EmailLog
+// one-to-many relationship between User and EmailLog
 User.hasMany(EmailLog, { foreignKey: "userId" });
 EmailLog.belongsTo(User, { foreignKey: "userId" });
 
-// Define the one-to-many relationship between User and Product
+// one-to-many relationship between User and Product
 User.hasMany(Product, {
   foreignKey: "sellerId",
   as: "products",
@@ -30,13 +31,12 @@ Product.belongsTo(User, {
   as: "seller",
 });
 
-// Define the many-to-many relationship between Product and Order
+// many-to-many relationship between Product and Order
 Product.belongsToMany(Order, {
   through: OrderItem,
   foreignKey: "productId",
   otherKey: "orderId",
 });
-
 Order.belongsToMany(Product, {
   through: OrderItem,
   foreignKey: "orderId",
@@ -59,6 +59,16 @@ Invoice.belongsTo(Order, {
   as: "order",
 });
 
+// One-to-Many relationship between Order and Payment
+Order.hasMany(Payment, {
+  foreignKey: "orderId",
+  as: "payments",
+});
+Payment.belongsTo(Order, {
+  foreignKey: "orderId",
+  as: "order",
+});
+
 export {
   User,
   SellerBankAccount,
@@ -67,4 +77,5 @@ export {
   Invoice,
   Order,
   OrderItem,
+  Payment,
 };

@@ -56,10 +56,10 @@ const CheckoutForm = () => {
 
       toast.success("Order submitted successfully");
       clearCart();
-      navigate("/pay", {
+      navigate(`/checkout/payment/${res.data.orderId}`, {
         replace: true,
         state: {
-          invoice: res.data.invoice,
+          ...res.data,
         },
       });
     } catch (error) {

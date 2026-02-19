@@ -11,19 +11,15 @@ router.post(
   verifyJWTMiddleware,
   placeOrderValidation,
   validateRequest,
-  orderController.placeOrder
+  orderController.placeOrder,
 );
 
-router.get(
-  "/by-user/:userId",
-  verifyJWTMiddleware,
-  orderController.getUserOrders
-);
+router.get("/", verifyJWTMiddleware, orderController.getUserOrders);
 
 router.put(
   "/cancel/:orderId",
   verifyJWTMiddleware,
-  orderController.cancelOrder
+  orderController.cancelOrder,
 );
 
 router.get("/:orderId", verifyJWTMiddleware, orderController.getOrderById);

@@ -18,6 +18,7 @@ import AddProduct from "@/pages/AddProduct";
 import Checkout from "@/pages/Checkout";
 import Orders from "@/pages/Orders";
 import OrderDetails from "@/pages/OrderDetails";
+import Payment from "@/pages/payment";
 
 const AppRoutes = () => {
   return (
@@ -49,6 +50,14 @@ const AppRoutes = () => {
             element={
               <RolePageGuard requiredRoles={["CUSTOMER"]}>
                 <Checkout />
+              </RolePageGuard>
+            }
+          />
+          <Route
+            path="/checkout/payment/:orderId"
+            element={
+              <RolePageGuard requiredRoles={["CUSTOMER"]}>
+                <Payment />
               </RolePageGuard>
             }
           />

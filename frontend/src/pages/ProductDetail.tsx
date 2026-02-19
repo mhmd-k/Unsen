@@ -68,7 +68,7 @@ export default function ProductDetail() {
                         alt={`${data.product.name}-${i}`}
                         className={cn(
                           "object-fit transition-all duration-500",
-                          primaryImage !== img && "grayscale hover:filter-none"
+                          primaryImage !== img && "grayscale hover:filter-none",
                         )}
                       />
                     </button>
@@ -94,7 +94,7 @@ export default function ProductDetail() {
                     "rounded-full ms-10",
                     data.product.stock > 0
                       ? "text-green-400 border-green-400"
-                      : "text-red-400 border-red-400"
+                      : "text-red-400 border-red-400",
                   )}
                 >
                   {data.product.stock > 0 ? "In stock" : "Out of stock"}
@@ -133,7 +133,7 @@ export default function ProductDetail() {
             )}
 
             <Link
-              className="block !text-main text-xs text-end !underline italic font-semibold"
+              className="ms-auto w-fit block !text-main text-xs text-end !underline italic font-semibold"
               to={`/users/${data.owner.id}`}
             >
               Owner: {data.owner.username}

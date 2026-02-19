@@ -22,7 +22,12 @@ const Order = sequelize.define(
       allowNull: false,
     },
     status: {
-      type: DataTypes.ENUM("WAITING_FOR_PAYMENT", "CANCELED", "DONE"),
+      type: DataTypes.ENUM(
+        "WAITING_FOR_PAYMENT",
+        "PAID",
+        "CANCELLED",
+        "REFUNDED",
+      ),
       allowNull: false,
       defaultValue: "WAITING_FOR_PAYMENT",
     },
@@ -51,7 +56,7 @@ const Order = sequelize.define(
       allowNull: false,
       defaultValue: "00000",
     },
-    deliveredAt: {
+    paidAt: {
       type: DataTypes.DATE,
       allowNull: true,
     },
@@ -62,7 +67,7 @@ const Order = sequelize.define(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export default Order;

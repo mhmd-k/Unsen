@@ -31,7 +31,7 @@ const Product = sequelize.define(
       defaultValue: [],
     },
     primaryImageIndex: {
-      type: DataTypes.NUMBER,
+      type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,
     },
@@ -63,7 +63,7 @@ const Product = sequelize.define(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export default Product;

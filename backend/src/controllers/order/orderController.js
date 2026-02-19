@@ -1,10 +1,5 @@
 import { sequelize } from "../../config/db.js";
-import {
-  Order,
-  OrderItem,
-  Product,
-  Invoice,
-} from "../../models/associations.js";
+import { Order, OrderItem, Product } from "../../models/associations.js";
 
 class OrderController {
   placeOrder = async (req, res) => {
@@ -69,7 +64,7 @@ class OrderController {
           state,
           zipCode,
         },
-        { transaction: t }
+        { transaction: t },
       );
 
       await Promise.all(
@@ -81,27 +76,17 @@ class OrderController {
               quantity: item.quantity,
               unitPrice: item.unitPrice,
             },
-            { transaction: t }
-          )
-        )
-      );
-
-      const invoice = await Invoice.create(
-        {
-          orderId: order.id,
-          issuedDate: new Date(),
-          amount: totalPrice,
-          status: "GENERATED",
-        },
-        { transaction: t }
+            { transaction: t },
+          ),
+        ),
       );
 
       await t.commit();
 
       return res.status(201).json({
         message: "Order placed successfully",
-        order,
-        invoice,
+        orderId: order.id,
+        amount: order.totalPrice,
       });
     } catch (error) {
       await t.rollback();
@@ -113,7 +98,7 @@ class OrderController {
   };
 
   getUserOrders = async (req, res) => {
-    const { userId } = req.params;
+    const userId = req.user.userId;
 
     try {
       const userOrders = await Order.findAll({
@@ -122,32 +107,23 @@ class OrderController {
         },
       });
 
-      if (userOrders.length === 0) {
-        return res.status(404).json({ message: "You don't have any orders!" });
-      }
-
       const orders = await Promise.all(
         userOrders.map(async (order) => {
           const items = await OrderItem.findAll({
             where: { orderId: order.id },
           });
 
-          const invoice = await Invoice.findOne({
-            where: { orderId: order.id },
-          });
-
           const products = await Promise.all(
             items.map(async (item) => {
               return await Product.findByPk(item.productId);
-            })
+            }),
           );
 
           return {
             ...order.toJSON(),
             products,
-            invoice,
           };
-        })
+        }),
       );
 
       return res
@@ -172,9 +148,9 @@ class OrderController {
         return res.status(404).json({ message: "Order not found" });
       }
 
-      if (order.status === "CANCELED" || order.status === "DONE") {
+      if (order.status === "CANCELED" || order.status === "PAID") {
         return res.status(400).json({
-          message: `Order cannot be canceled — status is already "${order.status}"`,
+          message: `Order cannot be canceled — order is already "${order.status}"`,
         });
       }
 
@@ -193,19 +169,13 @@ class OrderController {
             product.stock += item.quantity;
             await product.save({ transaction: t });
           }
-        })
+        }),
       );
 
       // Update order status and cancellation timestamp
-      order.status = "CANCELED";
+      order.status = "CANCELLED";
       order.canceledAt = new Date();
       await order.save({ transaction: t });
-
-      // Update invoice status (optional)
-      await Invoice.update(
-        { status: "CANCELED" },
-        { where: { orderId }, transaction: t }
-      );
 
       await t.commit();
       return res
@@ -237,19 +207,17 @@ class OrderController {
         orderItems.map(async (item) => {
           const product = await Product.findByPk(item.productId);
           return product;
-        })
+        }),
       );
-
-      const invoice = await Invoice.findOne({
-        where: { orderId },
-      });
 
       return res.status(200).json({
         message: "Order fetched successfully",
         order: {
           ...order.toJSON(),
-          products,
-          invoice,
+          products: products.map((p) => ({
+            ...p.dataValues,
+            images: JSON.parse(p.images),
+          })),
         },
       });
     } catch (error) {

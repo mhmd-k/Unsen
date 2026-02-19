@@ -1,8 +1,8 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/db.js";
 
-const Invoice = sequelize.define(
-  "Invoice",
+const Payment = sequelize.define(
+  "Payment",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -10,11 +10,10 @@ const Invoice = sequelize.define(
       autoIncrement: true,
     },
 
-    // Relation to Order (1-to-1)
+    // Relation to Order (1 Order → Many Payments)
     orderId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      unique: true, // Enforces 1 invoice per order
       references: {
         model: "Orders",
         key: "id",
@@ -22,14 +21,14 @@ const Invoice = sequelize.define(
       onDelete: "CASCADE",
     },
 
-    // Professional invoice identifier (NOT DB id)
-    invoiceNumber: {
-      type: DataTypes.STRING,
+    // Payment attempt tracking
+    attemptNumber: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-      unique: true,
     },
 
-    totalAmount: {
+    // Financial snapshot
+    amount: {
       type: DataTypes.FLOAT,
       allowNull: false,
     },
@@ -40,20 +39,27 @@ const Invoice = sequelize.define(
       defaultValue: "USD",
     },
 
-    // Invoice lifecycle status
+    // Payment method type (even if fake now)
+    paymentMethod: {
+      type: DataTypes.ENUM("CREDIT_CARD", "PAYPAL", "BANK_TRANSFER"),
+      allowNull: false,
+      defaultValue: "CREDIT_CARD",
+    },
+
+    // Card snapshot (DO NOT store real full card in real apps)
+    cardLast4: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+
+    // Payment lifecycle
     status: {
-      type: DataTypes.ENUM("ISSUED", "VOID", "REFUNDED"),
+      type: DataTypes.ENUM("PENDING", "SUCCESS", "FAILED"),
       allowNull: false,
-      defaultValue: "ISSUED",
+      defaultValue: "PENDING",
     },
 
-    issuedAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
-
-    refundedAt: {
+    processedAt: {
       type: DataTypes.DATE,
       allowNull: true,
     },
@@ -63,4 +69,4 @@ const Invoice = sequelize.define(
   },
 );
 
-export default Invoice;
+export default Payment;
