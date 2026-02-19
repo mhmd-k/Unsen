@@ -6,6 +6,7 @@ import OrderItem from "./orderItem.js";
 import Order from "./order.js";
 import Invoice from "./invoice.js";
 import Payment from "./payment.js";
+import Wishlist from "./wishlist.js";
 
 // one-to-one relationship between User and SellerBankAccount
 User.hasOne(SellerBankAccount, {
@@ -69,6 +70,24 @@ Payment.belongsTo(Order, {
   as: "order",
 });
 
+// many-to-many relationship between Product and User (Wishlist)
+Product.belongsToMany(User, {
+  through: Wishlist,
+  foreignKey: "productId",
+  otherKey: "userId",
+});
+User.belongsToMany(Product, {
+  through: Wishlist,
+  foreignKey: "userId",
+  otherKey: "productId",
+});
+Wishlist.belongsTo(User, {
+  foreignKey: "userId",
+});
+Wishlist.belongsTo(Product, {
+  foreignKey: "productId",
+});
+
 export {
   User,
   SellerBankAccount,
@@ -78,4 +97,5 @@ export {
   Order,
   OrderItem,
   Payment,
+  Wishlist,
 };
