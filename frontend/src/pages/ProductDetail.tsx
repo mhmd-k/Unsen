@@ -1,4 +1,3 @@
-import { useCartConext } from "../contexts/CartContext";
 import { useWishlistContext } from "../contexts/WishListContext";
 import { cn, formatCurrency } from "../lib/utils";
 import { BsSuitHeart } from "react-icons/bs";
@@ -13,6 +12,7 @@ import LoadingSpinnerInfinity from "@/components/LoadingSpinnerInfinity";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
 import RelatedProductsSection from "@/components/RelatedProductsSection";
+import { useCartStore } from "@/store/cart";
 
 export default function ProductDetail() {
   const [primaryImage, setPrimaryImage] = useState("");
@@ -32,7 +32,7 @@ export default function ProductDetail() {
   }, [isSuccess, data]);
 
   const { user } = useAuth();
-  const { addItem } = useCartConext();
+  const { addItem } = useCartStore();
   const { addToWishlist } = useWishlistContext();
 
   if (isLoading) return <LoadingSpinnerInfinity />;

@@ -1,6 +1,5 @@
 import { BsSuitHeart, BsCart2, BsEye, BsFillHeartFill } from "react-icons/bs";
 import { formatCurrency } from "../lib/utils";
-import { useCartConext } from "../contexts/CartContext";
 import { useWishlistContext } from "../contexts/WishListContext";
 import { memo, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +8,7 @@ import { Button } from "./ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { Eye, ShoppingBasket } from "lucide-react";
 import { Badge } from "./ui/badge";
+import { useCartStore } from "@/store/cart";
 
 const ProductCard = (props: Product) => {
   const { inWishlist, addToWishlist, removeFromWishlist } =
@@ -17,7 +17,7 @@ const ProductCard = (props: Product) => {
   const { user } = useAuth();
 
   const [heartClicked, setHeartClicked] = useState(inWishlist(props.id));
-  const { addItem } = useCartConext();
+  const { addItem } = useCartStore();
 
   const exists = inWishlist(props.id);
 

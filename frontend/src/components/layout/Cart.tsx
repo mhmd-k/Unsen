@@ -1,13 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { formatCurrency } from "@/lib/utils";
-import { useCartConext } from "@/contexts/CartContext";
 import CartProductCard from "./CartProductCard";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { useCartStore } from "@/store/cart";
 
 export default function Cart({ setCartShow }: { setCartShow: () => void }) {
-  const { cart, total } = useCartConext();
+  const { cart, total } = useCartStore();
   const { user } = useAuth();
   const navigate = useNavigate();
 

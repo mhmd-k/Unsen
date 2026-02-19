@@ -1,10 +1,10 @@
 import CheckoutForm from "@/components/CheckoutForm";
 import { Separator } from "@/components/ui/separator";
-import { useCartConext } from "@/contexts/CartContext";
 import { formatCurrency } from "@/lib/utils";
+import { useCartStore } from "@/store/cart";
 
 const Checkout = () => {
-  const { cart, total } = useCartConext();
+  const { cart, total } = useCartStore();
 
   return (
     <div className="bg-gray-100">
@@ -32,7 +32,7 @@ const Checkout = () => {
                     {formatCurrency(
                       (product.price -
                         (product.discount * product.price) / 100) *
-                        product.quantity
+                        product.quantity,
                     )}
                   </p>
                 </div>

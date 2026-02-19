@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { BsSuitHeart, BsSearch } from "react-icons/bs";
-import { useCartConext } from "@/contexts/CartContext";
 import { formatCurrency } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -43,6 +42,7 @@ import { AxiosError } from "axios";
 import MobileSidebar from "./MobileSidebar";
 import { toast } from "sonner";
 import { RoleComponentGuard } from "../guard";
+import { useCartStore } from "@/store/cart";
 
 const navLinks = [
   { path: "/", label: "Home" },
@@ -55,7 +55,7 @@ function Appbar() {
 
   const navigate = useNavigate();
 
-  const { total } = useCartConext();
+  const { total } = useCartStore();
   const { updateUser, isAuthenticated, user } = useAuth();
   const axiosPrivate = useAxiosPrivate();
   const location = useLocation();
@@ -76,7 +76,7 @@ function Appbar() {
       toast.error(
         error instanceof AxiosError
           ? error.message
-          : "An error occurred while logging you out! Please try again"
+          : "An error occurred while logging you out! Please try again",
       );
     } finally {
       setShow(false);
@@ -159,7 +159,7 @@ function Appbar() {
                   Login
                 </Link>
               )}
-              <RoleComponentGuard requiredRoles={['SELLER']}>
+              <RoleComponentGuard requiredRoles={["SELLER"]}>
                 {isAuthenticated &&
                   !location.pathname.includes("add-product") && (
                     <Link to="/add-product" className="main-btn">
@@ -171,7 +171,7 @@ function Appbar() {
                 <BsSearch />
               </Link>
 
-              <RoleComponentGuard requiredRoles={['CUSTOMER']}>
+              <RoleComponentGuard requiredRoles={["CUSTOMER"]}>
                 <NavLink to="wishlist">
                   <BsSuitHeart />
                 </NavLink>
@@ -249,7 +249,7 @@ function Appbar() {
               <BsSearch />
             </Link>
 
-            <RoleComponentGuard requiredRoles={['CUSTOMER']}>
+            <RoleComponentGuard requiredRoles={["CUSTOMER"]}>
               <NavLink to="wishlist">
                 <BsSuitHeart />
               </NavLink>

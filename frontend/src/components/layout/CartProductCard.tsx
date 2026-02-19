@@ -1,9 +1,9 @@
 import { formatCurrency } from "@/lib/utils";
-import { useCartConext } from "@/contexts/CartContext";
 import { BsTrash } from "react-icons/bs";
 import { memo, type ChangeEvent } from "react";
 import type { CartItem } from "@/types";
 import { Button } from "@/components/ui/button";
+import { useCartStore } from "@/store/cart";
 
 const CartProductCard = ({
   id,
@@ -16,7 +16,7 @@ const CartProductCard = ({
   stock,
 }: CartItem) => {
   const { increaseQuantity, decreaseQuantity, setQuantity, cart } =
-    useCartConext();
+    useCartStore();
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     if (Number(e.target.value) < 0) setQuantity(id, 0);

@@ -17,13 +17,13 @@ type WishlistContextType = {
 };
 
 const WishlistContext = createContext<WishlistContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export function WishlistProvider({ children }: { children: ReactNode }) {
   const [wishlist, setWishlist] = useState<Product[]>(() => {
     const storedWishlist = localStorage.getItem("wishlist");
-    return storedWishlist ? JSON.parse(storedWishlist) : null;
+    return storedWishlist ? JSON.parse(storedWishlist) : [];
   });
 
   useEffect(() => {
@@ -71,7 +71,7 @@ export function useWishlistContext() {
 
   if (wishlistContext === undefined) {
     throw new Error(
-      "useWishlistContext must be used inside a context provider"
+      "useWishlistContext must be used inside a context provider",
     );
   }
 

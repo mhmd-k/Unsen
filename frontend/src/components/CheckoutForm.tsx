@@ -13,7 +13,6 @@ import { Card, CardContent } from "./ui/card";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
-import { useCartConext } from "@/contexts/CartContext";
 import { type PlaceOrderResponse } from "@/types/order";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -21,6 +20,7 @@ import { AxiosError } from "axios";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useCartStore } from "@/store/cart";
 
 const checkoutSchema = z.object({
   contact: z.string().min(3, "Required (email or phone number)"),
@@ -40,7 +40,7 @@ const CheckoutForm = () => {
     resolver: zodResolver(checkoutSchema),
   });
   const { user } = useAuth();
-  const { cart, clearCart } = useCartConext();
+  const { cart, clearCart } = useCartStore();
   const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
 

@@ -2,24 +2,23 @@ import { BsCart2, BsEye } from "react-icons/bs";
 import { formatCurrency } from "../lib/utils";
 import { AiOutlineClose } from "react-icons/ai";
 import { useWishlistContext } from "../contexts/WishListContext";
-import { useCartConext } from "../contexts/CartContext";
 import { useNavigate } from "react-router-dom";
 import { memo } from "react";
 import type { Product } from "@/types";
 import { Button } from "./ui/button";
+import { useCartStore } from "@/store/cart";
 
-const WishlistCard = ({ id, imageUrl, title, price, type }: Product) => {
+const WishlistCard = (props: Product) => {
+  const { id, name, images, price, primaryImageIndex } = props;
+
   const { removeFromWishlist } = useWishlistContext();
 
-  const { addItem } = useCartConext();
+  const { addItem } = useCartStore();
 
   const navigate = useNavigate();
 
   function handleView() {
-    localStorage.setItem(
-      "item",
-      JSON.stringify({ id, imageUrl, title, price, type })
-    );
+    localStorage.setItem("item", JSON.stringify(props));
     navigate(`/shop/${id}`, { state: { isLoading: true } });
   }
 
@@ -35,7 +34,7 @@ const WishlistCard = ({ id, imageUrl, title, price, type }: Product) => {
         <AiOutlineClose />
       </Button>
       <div className="image">
-        <img src={imageUrl} alt="..." />
+        <img src={images[primaryImageIndex]} alt="..." />
         <div className="buttons">
           <Button className="view" variant="ghost" onClick={handleView}>
             Quick View
@@ -43,9 +42,7 @@ const WishlistCard = ({ id, imageUrl, title, price, type }: Product) => {
           <Button
             className="add-top-cart"
             variant="ghost"
-            onClick={() =>
-              addItem({ id, imageUrl, title, price, type, quantity: 1 })
-            }
+            onClick={() => addItem({ ...props, quantity: 1 })}
           >
             Add To Cart
           </Button>
@@ -63,14 +60,12 @@ const WishlistCard = ({ id, imageUrl, title, price, type }: Product) => {
         <Button
           className="border-l-1 rounded-none flex-1 group hover:bg-gray-50"
           variant="link"
-          onClick={() =>
-            addItem({ id, imageUrl, title, price, type, quantity: 1 })
-          }
+          onClick={() => addItem({ ...props, quantity: 1 })}
         >
           <BsCart2 className="group-hover:scale-150 transition-all duration-300 ease-in-out" />
         </Button>
       </div>
-      <h3>{title}</h3>
+      <h3>{name}</h3>
       <p className="text-muted-foreground">{formatCurrency(price)}</p>
     </div>
   );

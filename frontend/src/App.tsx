@@ -1,6 +1,5 @@
 import { BrowserRouter as Router } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
-import CartProvider from "./contexts/CartContext";
 import { WishlistProvider } from "./contexts/WishListContext";
 import AppRoutes from "./routes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -13,13 +12,11 @@ function App() {
     <Router>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <CartProvider>
-            <WishlistProvider>
-              <AppRoutes />
+          <WishlistProvider>
+            <AppRoutes />
 
-              <Toaster duration={10000} closeButton position="bottom-right" />
-            </WishlistProvider>
-          </CartProvider>
+            <Toaster duration={10000} closeButton position="bottom-right" />
+          </WishlistProvider>
         </AuthProvider>
       </QueryClientProvider>
     </Router>
