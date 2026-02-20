@@ -4,7 +4,7 @@ import CartProductCard from "./CartProductCard";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import { useCartStore } from "@/store/cart";
+import { useCartStore } from "@/stores/cart";
 
 export default function Cart({ setCartShow }: { setCartShow: () => void }) {
   const { cart, total } = useCartStore();

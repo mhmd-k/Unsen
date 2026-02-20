@@ -1,6 +1,5 @@
 import { BsSuitHeart, BsCart2, BsEye, BsFillHeartFill } from "react-icons/bs";
 import { formatCurrency } from "../lib/utils";
-import { useWishlistContext } from "../contexts/WishListContext";
 import { memo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Product } from "@/types";
@@ -8,31 +7,71 @@ import { Button } from "./ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { Eye, ShoppingBasket } from "lucide-react";
 import { Badge } from "./ui/badge";
-import { useCartStore } from "@/store/cart";
+import { useCartStore } from "@/stores/cart";
+import { useWishlistStore } from "@/stores/wishlist";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
+import { toast } from "sonner";
+import { ImSpinner8 } from "react-icons/im";
 
 const ProductCard = (props: Product) => {
-  const { inWishlist, addToWishlist, removeFromWishlist } =
-    useWishlistContext();
-
+  const { inWishlist, addToWishlist, removeFromWishlist } = useWishlistStore();
   const { user } = useAuth();
-
-  const [heartClicked, setHeartClicked] = useState(inWishlist(props.id));
   const { addItem } = useCartStore();
-
-  const exists = inWishlist(props.id);
-
   const navigate = useNavigate();
+  const axiosPrivate = useAxiosPrivate();
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const productInWishlist = inWishlist(props.id);
+
+  const add = async (productId: number) => {
+    setIsLoading(true);
+
+    const t = toast.loading("Adding to wishlist...");
+
+    try {
+      await axiosPrivate.post("/wishlist/add", {
+        productId,
+      });
+
+      toast.success("Added Successfully to Wishlist!", { id: t });
+    } catch (error) {
+      console.error(error);
+
+      toast.error("Error Adding product to wishlist!", { id: t });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const remove = async (productId: number) => {
+    setIsLoading(true);
+
+    const t = toast.loading("Adding to wishlist...");
+
+    try {
+      await axiosPrivate.delete(`/wishlist/remove/${productId}`);
+      toast.success("Removed from Wishlist!", { id: t });
+    } catch (error) {
+      console.error(error);
+
+      toast.error("Error Removing product from wishlist!", { id: t });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleView = () => navigate(`/shop/${props.id}`);
 
-  function handleClick(item: Product) {
-    if (heartClicked) {
+  const handleWishlistClick = async (item: Product) => {
+    if (productInWishlist) {
       removeFromWishlist(item.id);
+      await remove(item.id);
     } else {
       addToWishlist(item);
+      await add(item.id);
     }
-    setHeartClicked(!heartClicked);
-  }
+  };
 
   return (
     <div className="shop-card relative">
@@ -61,17 +100,23 @@ const ProductCard = (props: Product) => {
           className="btn wishlist"
           title="Add to wishlist"
           style={{
-            backgroundColor: exists ? "#E33131" : "white",
-            color: exists ? "white" : "black",
+            backgroundColor: productInWishlist ? "#E33131" : "white",
+            color: productInWishlist ? "white" : "black",
           }}
           variant="ghost"
           size="icon"
-          onClick={() => handleClick(props)}
+          onClick={() => handleWishlistClick(props)}
         >
-          {inWishlist(props.id) ? (
-            <BsFillHeartFill className="size-3" />
+          {isLoading ? (
+            <ImSpinner8 className="animate-spin" />
           ) : (
-            <BsSuitHeart className="size-3" />
+            <>
+              {inWishlist(props.id) ? (
+                <BsFillHeartFill className="size-3" />
+              ) : (
+                <BsSuitHeart className="size-3" />
+              )}
+            </>
           )}
         </Button>
       )}

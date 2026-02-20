@@ -1,17 +1,17 @@
 import { BsCart2, BsEye } from "react-icons/bs";
 import { formatCurrency } from "../lib/utils";
 import { AiOutlineClose } from "react-icons/ai";
-import { useWishlistContext } from "../contexts/WishListContext";
 import { useNavigate } from "react-router-dom";
 import { memo } from "react";
 import type { Product } from "@/types";
 import { Button } from "./ui/button";
-import { useCartStore } from "@/store/cart";
+import { useCartStore } from "@/stores/cart";
+import { useWishlistStore } from "@/stores/wishlist";
 
 const WishlistCard = (props: Product) => {
   const { id, name, images, price, primaryImageIndex } = props;
 
-  const { removeFromWishlist } = useWishlistContext();
+  const { removeFromWishlist } = useWishlistStore();
 
   const { addItem } = useCartStore();
 

@@ -7,6 +7,7 @@ import authRoutes from "./routes/authRouter.js";
 import productRoutes from "./routes/productRouter.js";
 import orderRoutes from "./routes/orderRouter.js";
 import paymentRouter from "./routes/paymentRouter.js";
+import wishlistRouter from "./routes/wishlistRouter.js";
 import "dotenv/config";
 import { connectDB } from "./config/db.js";
 import path from "path";
@@ -47,15 +48,11 @@ app.use(cookieParser());
 // Serve static files from uploads directory
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
-// Example route
-app.get("/api", (req, res) => {
-  res.json({ message: "Hello from Express!" });
-});
-
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/payment", paymentRouter);
+app.use("/api/wishlist", wishlistRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

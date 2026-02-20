@@ -42,7 +42,7 @@ import { AxiosError } from "axios";
 import MobileSidebar from "./MobileSidebar";
 import { toast } from "sonner";
 import { RoleComponentGuard } from "../guard";
-import { useCartStore } from "@/store/cart";
+import { useCartStore } from "@/stores/cart";
 
 const navLinks = [
   { path: "/", label: "Home" },

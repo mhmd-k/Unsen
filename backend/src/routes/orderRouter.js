@@ -1,5 +1,5 @@
 import express from "express";
-import orderController from "../controllers/order/orderController.js";
+import orderController from "../controllers/orderController.js";
 import { placeOrderValidation } from "../validations/orderValidations.js";
 import validateRequest from "../middleware/validateRequest.js";
 import verifyJWTMiddleware from "../middleware/auth.js";

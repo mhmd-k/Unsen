@@ -1,5 +1,5 @@
-import { sequelize } from "../../config/db.js";
-import { Order, OrderItem, Product } from "../../models/associations.js";
+import { sequelize } from "../config/db.js";
+import { Order, OrderItem, Product } from "../models/associations.js";
 
 class OrderController {
   placeOrder = async (req, res) => {

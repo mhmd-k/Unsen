@@ -1,7 +1,7 @@
 import CheckoutForm from "@/components/CheckoutForm";
 import { Separator } from "@/components/ui/separator";
 import { formatCurrency } from "@/lib/utils";
-import { useCartStore } from "@/store/cart";
+import { useCartStore } from "@/stores/cart";
 
 const Checkout = () => {
   const { cart, total } = useCartStore();

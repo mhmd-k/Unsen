@@ -3,7 +3,7 @@ import { BsTrash } from "react-icons/bs";
 import { memo, type ChangeEvent } from "react";
 import type { CartItem } from "@/types";
 import { Button } from "@/components/ui/button";
-import { useCartStore } from "@/store/cart";
+import { useCartStore } from "@/stores/cart";
 
 const CartProductCard = ({
   id,

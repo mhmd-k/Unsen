@@ -20,7 +20,7 @@ import { AxiosError } from "axios";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useCartStore } from "@/store/cart";
+import { useCartStore } from "@/stores/cart";
 
 const checkoutSchema = z.object({
   contact: z.string().min(3, "Required (email or phone number)"),

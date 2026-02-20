@@ -18,9 +18,12 @@ import AddProduct from "@/pages/AddProduct";
 import Checkout from "@/pages/Checkout";
 import Orders from "@/pages/Orders";
 import OrderDetails from "@/pages/OrderDetails";
-import Payment from "@/pages/payment";
+import Payment from "@/pages/Payment";
+import useGetWishlist from "@/hooks/useGetWishlist";
 
 const AppRoutes = () => {
+  useGetWishlist();
+
   return (
     <Routes>
       <Route element={<Layout />}>

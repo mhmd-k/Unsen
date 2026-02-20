@@ -1,6 +1,5 @@
 import { BrowserRouter as Router } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
-import { WishlistProvider } from "./contexts/WishListContext";
 import AppRoutes from "./routes";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
@@ -12,11 +11,9 @@ function App() {
     <Router>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <WishlistProvider>
-            <AppRoutes />
+          <AppRoutes />
 
-            <Toaster duration={10000} closeButton position="bottom-right" />
-          </WishlistProvider>
+          <Toaster duration={10000} closeButton position="bottom-right" />
         </AuthProvider>
       </QueryClientProvider>
     </Router>

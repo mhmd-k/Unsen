@@ -1,4 +1,3 @@
-import { useWishlistContext } from "../contexts/WishListContext";
 import { cn, formatCurrency } from "../lib/utils";
 import { BsSuitHeart } from "react-icons/bs";
 import { Button } from "../components/ui/button";
@@ -12,7 +11,10 @@ import LoadingSpinnerInfinity from "@/components/LoadingSpinnerInfinity";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
 import RelatedProductsSection from "@/components/RelatedProductsSection";
-import { useCartStore } from "@/store/cart";
+import { useCartStore } from "@/stores/cart";
+import { useWishlistStore } from "@/stores/wishlist";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
+import { toast } from "sonner";
 
 export default function ProductDetail() {
   const [primaryImage, setPrimaryImage] = useState("");
@@ -33,7 +35,8 @@ export default function ProductDetail() {
 
   const { user } = useAuth();
   const { addItem } = useCartStore();
-  const { addToWishlist } = useWishlistContext();
+  const { addToWishlist, inWishlist } = useWishlistStore();
+  const axiosPrivate = useAxiosPrivate();
 
   if (isLoading) return <LoadingSpinnerInfinity />;
 
@@ -45,8 +48,22 @@ export default function ProductDetail() {
     if (data.product) addItem({ ...data.product, quantity: 1 });
   };
 
-  const handleAddToWishlist = () => {
-    if (data.product) addToWishlist(data.product);
+  const handleAddToWishlist = async () => {
+    if (inWishlist(data.product.id)) {
+      toast.warning("Product Already in Wishlist!");
+      return;
+    }
+
+    try {
+      await axiosPrivate.post("/wishlist/add", { productId: data.product.id });
+
+      addToWishlist(data.product);
+      toast.success("Added Successfully to Wishlist!");
+    } catch (error) {
+      console.error(error);
+
+      toast.error("Error Adding product to wishlist!");
+    }
   };
 
   return (

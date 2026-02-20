@@ -1,5 +1,5 @@
-import { sequelize } from "../../config/db.js";
-import { Payment, Order, Invoice } from "../../models/associations.js";
+import { sequelize } from "../config/db.js";
+import { Payment, Order, Invoice } from "../models/associations.js";
 
 class PaymentController {
   pay = async (req, res) => {

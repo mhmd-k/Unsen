@@ -1,9 +1,9 @@
-import { useWishlistContext } from "../contexts/WishListContext";
 import WishlistCard from "@/components/WishlistCard";
+import { useWishlistStore } from "@/stores/wishlist";
 import { Link } from "react-router-dom";
 
 export default function Wishlist() {
-  const { wishlist } = useWishlistContext();
+  const { wishlist } = useWishlistStore();
 
   if (wishlist.length === 0) {
     return (

@@ -45,9 +45,11 @@ Order.belongsToMany(Product, {
 });
 OrderItem.belongsTo(Order, {
   foreignKey: "orderId",
+  onDelete: "CASCADE",
 });
 OrderItem.belongsTo(Product, {
   foreignKey: "productId",
+  onDelete: "CASCADE",
 });
 
 // One-to-One relationship between Order and Invoice
@@ -83,9 +85,13 @@ User.belongsToMany(Product, {
 });
 Wishlist.belongsTo(User, {
   foreignKey: "userId",
+  onDelete: "CASCADE",
+  as: "user",
 });
 Wishlist.belongsTo(Product, {
   foreignKey: "productId",
+  onDelete: "CASCADE",
+  as: "product",
 });
 
 export {

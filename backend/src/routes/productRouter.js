@@ -1,5 +1,5 @@
 import express from "express";
-import productController from "../controllers/product/productController.js";
+import productController from "../controllers/productController.js";
 import { createProductValidation } from "../validations/productValidations.js";
 import validateRequest from "../middleware/validateRequest.js";
 import multer from "multer";
@@ -22,7 +22,7 @@ const storage = multer.diskStorage({
       req.body.name.replaceAll(" ", "-") +
         "-" +
         uniqueSuffix +
-        path.extname(file.originalname)
+        path.extname(file.originalname),
     );
   },
 });
@@ -52,7 +52,7 @@ router.post(
   upload.array("images[]", 5), // Handle up to 5 images
   createProductValidation,
   validateRequest,
-  productController.createProduct
+  productController.createProduct,
 );
 
 router.get("/", paginationMiddleware(Product), productController.getProducts);
@@ -60,7 +60,7 @@ router.get("/", paginationMiddleware(Product), productController.getProducts);
 router.get(
   "/category/:category",
   paginationMiddleware(Product),
-  productController.getProductsByCategory
+  productController.getProductsByCategory,
 );
 
 router.get("/:id", productController.getProductById);

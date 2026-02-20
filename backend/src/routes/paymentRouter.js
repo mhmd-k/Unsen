@@ -1,6 +1,6 @@
 import express from "express";
 import verifyJWTMiddleware from "../middleware/auth.js";
-import paymentController from "../controllers/payment/paymentController.js";
+import paymentController from "../controllers/paymentController.js";
 
 const router = express.Router();
 
