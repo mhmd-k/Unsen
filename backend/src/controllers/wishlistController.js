@@ -83,7 +83,10 @@ class WishlistController {
 
       return res.status(200).json({
         message: "Wishlist retrieved successfully",
-        data: wishlistItems,
+        data: wishlistItems.map((e) => ({
+          ...e.product.dataValues,
+          images: JSON.parse(e.product.dataValues.images),
+        })),
       });
     } catch (error) {
       console.error(error);

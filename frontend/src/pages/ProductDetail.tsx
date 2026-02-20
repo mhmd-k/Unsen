@@ -15,6 +15,7 @@ import { useCartStore } from "@/stores/cart";
 import { useWishlistStore } from "@/stores/wishlist";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { toast } from "sonner";
+import { AxiosError } from "axios";
 
 export default function ProductDetail() {
   const [primaryImage, setPrimaryImage] = useState("");
@@ -62,7 +63,11 @@ export default function ProductDetail() {
     } catch (error) {
       console.error(error);
 
-      toast.error("Error Adding product to wishlist!");
+      toast.error(
+        error instanceof AxiosError
+          ? error.response?.data.message
+          : "Error Adding product to wishlist!",
+      );
     }
   };
 

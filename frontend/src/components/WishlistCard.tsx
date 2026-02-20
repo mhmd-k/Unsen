@@ -7,20 +7,32 @@ import type { Product } from "@/types";
 import { Button } from "./ui/button";
 import { useCartStore } from "@/stores/cart";
 import { useWishlistStore } from "@/stores/wishlist";
+import { toast } from "sonner";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 
 const WishlistCard = (props: Product) => {
   const { id, name, images, price, primaryImageIndex } = props;
 
+  const axiosPrivate = useAxiosPrivate();
   const { removeFromWishlist } = useWishlistStore();
-
   const { addItem } = useCartStore();
-
   const navigate = useNavigate();
 
-  function handleView() {
-    localStorage.setItem("item", JSON.stringify(props));
-    navigate(`/shop/${id}`, { state: { isLoading: true } });
-  }
+  const handleView = () => navigate(`/shop/${id}`);
+  const handleRemove = async (productId: number) => {
+    const t = toast.loading("Adding to wishlist...");
+
+    try {
+      await axiosPrivate.delete(`/wishlist/remove/${productId}`);
+      toast.success("Removed from Wishlist!", { id: t });
+
+      removeFromWishlist(id);
+    } catch (error) {
+      console.error(error);
+
+      toast.error("Error Removing product from wishlist!", { id: t });
+    }
+  };
 
   return (
     <div className="shop-card relative">
@@ -29,7 +41,7 @@ const WishlistCard = (props: Product) => {
         variant="outline"
         title="remove from wishlist"
         size="icon"
-        onClick={() => removeFromWishlist(id)}
+        onClick={() => handleRemove(id)}
       >
         <AiOutlineClose />
       </Button>
