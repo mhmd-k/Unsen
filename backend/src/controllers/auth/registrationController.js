@@ -12,6 +12,7 @@ import {
   storeRefreshTokenInCookie,
   generateRefreshToken,
 } from "../../utils/jwtTokens.js";
+import { ROLES } from "../../constants/roles.js";
 
 class RegistrationController {
   signup = async (req, res) => {
@@ -43,7 +44,7 @@ class RegistrationController {
       // Generate verification token
       const verificationToken = crypto.randomBytes(32).toString("hex");
       const verificationTokenExpires = new Date(
-        Date.now() + 24 * 60 * 60 * 1000
+        Date.now() + 24 * 60 * 60 * 1000,
       ); // 24 hours
 
       // Send verification email
@@ -53,7 +54,7 @@ class RegistrationController {
         username,
         email,
         password: hashedPassword,
-        role: role || "CUSTOMER",
+        role: role || ROLES.CUSTOMER,
         verificationToken,
         verificationTokenExpires,
       });
@@ -118,10 +119,19 @@ class RegistrationController {
 
       // Generate tokens after successful verification
       const userData = user.get({ plain: true });
-      const bankAccountData = user.role === "SELLER" ? sellerBankAccount.get({ plain: true }) : {};
+      const bankAccountData =
+        user.role === "SELLER" ? sellerBankAccount.get({ plain: true }) : {};
 
-      const accessToken = generateAccessToken(userData.id, userData.email);
-      const refreshToken = generateRefreshToken(userData.id, userData.email);
+      const accessToken = generateAccessToken(
+        userData.id,
+        userData.email,
+        userData.role,
+      );
+      const refreshToken = generateRefreshToken(
+        userData.id,
+        userData.email,
+        userData.role,
+      );
       storeRefreshTokenInCookie(res, refreshToken);
 
       res.json({
@@ -177,7 +187,7 @@ class RegistrationController {
       // Generate new verification token
       const verificationToken = crypto.randomBytes(32).toString("hex");
       const verificationTokenExpires = new Date(
-        Date.now() + 24 * 60 * 60 * 1000
+        Date.now() + 24 * 60 * 60 * 1000,
       ); // 24 hours
 
       // Update user with new token

@@ -1,4 +1,5 @@
 import { body } from "express-validator";
+import { ROLES } from "../constants/roles.js";
 
 export const signupValidation = [
   body("username")
@@ -16,12 +17,12 @@ export const signupValidation = [
     .withMessage("Password must be at least 6 characters long")
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
     .withMessage(
-      "Password must contain at least one uppercase letter, one lowercase letter, and one number"
+      "Password must contain at least one uppercase letter, one lowercase letter, and one number",
     ),
 
   body("role")
     .optional()
-    .isIn(["CUSTOMER", "SELLER"])
+    .isIn([ROLES.CUSTOMER, ROLES.SELLER])
     .withMessage("Role must be either CUSTOMER or SELLER"),
 
   // Seller-specific validations

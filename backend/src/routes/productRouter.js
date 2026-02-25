@@ -7,6 +7,8 @@ import path from "path";
 import verifyJWTMiddleware from "../middleware/auth.js";
 import paginationMiddleware from "../middleware/pagination.js";
 import { Product } from "../models/associations.js";
+import requireRoleMiddleware from "../middleware/requireRole.js";
+import { ROLES } from "../constants/roles.js";
 
 const router = express.Router();
 
@@ -29,7 +31,9 @@ const storage = multer.diskStorage({
 
 const fileFilter = (req, file, cb) => {
   // Accept images only
-  if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF)$/)) {
+  if (
+    !file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF|WEBP|webp)$/)
+  ) {
     req.fileValidationError = "Only image files are allowed!";
     return cb(new Error("Only image files are allowed!"), false);
   }
@@ -40,27 +44,74 @@ const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB max file size
+    fileSize: 2 * 1024 * 1024, // 2MB max file size
     files: 5, // max 5 files
   },
 });
 
-// Create product route (protected, seller only)
 router.post(
   "/create",
   verifyJWTMiddleware,
-  upload.array("images[]", 5), // Handle up to 5 images
+  requireRoleMiddleware(ROLES.SELLER),
+  upload.array("images[]", 5),
   createProductValidation,
   validateRequest,
   productController.createProduct,
 );
 
-router.get("/", paginationMiddleware(Product), productController.getProducts);
+router.patch(
+  "/:productId",
+  verifyJWTMiddleware,
+  requireRoleMiddleware(ROLES.SELLER),
+  productController.updateProduct,
+);
 
+// Upload new images
+router.post(
+  "/:productId/images",
+  verifyJWTMiddleware,
+  requireRoleMiddleware(ROLES.SELLER),
+  upload.array("images", 5),
+  productController.uploadProductImages,
+);
+
+// Delete an image
+router.delete(
+  "/:productId/images/:imageIndex",
+  verifyJWTMiddleware,
+  requireRoleMiddleware(ROLES.SELLER),
+  productController.deleteProductImage,
+);
+
+// Change primary image
+router.patch(
+  "/:productId/images/primary",
+  verifyJWTMiddleware,
+  requireRoleMiddleware(ROLES.SELLER),
+  productController.changePrimaryImage,
+);
+
+// --- Get all products (paginated) ---
+router.get(
+  "/",
+  paginationMiddleware(Product),
+  productController.listPaginatedProducts,
+);
+
+// --- Get products by category (paginated) ---
 router.get(
   "/category/:category",
-  paginationMiddleware(Product),
-  productController.getProductsByCategory,
+  paginationMiddleware(Product, (req) => ({ category: req.params.category })),
+  productController.listPaginatedProducts,
+);
+
+// --- Get seller products (paginated) ---
+router.get(
+  "/seller/products",
+  verifyJWTMiddleware,
+  requireRoleMiddleware(ROLES.SELLER),
+  paginationMiddleware(Product, (req) => ({ sellerId: req.user.userId })),
+  productController.listPaginatedProducts,
 );
 
 router.get("/:id", productController.getProductById);

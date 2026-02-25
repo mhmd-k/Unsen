@@ -13,7 +13,9 @@ class AuthController {
     try {
       const user = await User.findOne({ where: { email } });
       if (!user)
-        return res.status(401).json({ message: "This email is not registered" });
+        return res
+          .status(401)
+          .json({ message: "This email is not registered" });
 
       if (!user.isVerified) {
         return res
@@ -35,8 +37,8 @@ class AuthController {
       }
 
       // Generate tokens
-      const accessToken = generateAccessToken(user.id, user.email);
-      const refreshToken = generateRefreshToken(user.id, user.email);
+      const accessToken = generateAccessToken(user.id, user.email, user.role);
+      const refreshToken = generateRefreshToken(user.id, user.email, user.role);
 
       storeRefreshTokenInCookie(res, refreshToken);
 
@@ -92,11 +94,13 @@ class AuthController {
 
           const newAccessToken = generateAccessToken(
             userData.id,
-            userData.email
+            userData.email,
+            userData.role,
           );
           const newRefreshToken = generateRefreshToken(
             userData.id,
-            userData.email
+            userData.email,
+            userData.role,
           );
           storeRefreshTokenInCookie(res, newRefreshToken);
 
@@ -108,7 +112,7 @@ class AuthController {
               accessToken: newAccessToken,
             },
           });
-        }
+        },
       );
     } catch (err) {
       res.status(500).json({ message: "Internal server error" });

@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 const verifyJWTMiddleware = (req, res, next) => {
-  const authHeader = req.headers.authorization || req.headers.Authorization;
+  const authHeader = req.headers.authorization;
 
   if (!authHeader?.startsWith("Bearer ")) {
     return res.status(401).json({ message: "Unauthorized" });
@@ -9,11 +9,18 @@ const verifyJWTMiddleware = (req, res, next) => {
 
   const token = authHeader.split(" ")[1];
 
-  jwt.verify(token, process.env.ACCESS_SECRET, (err, decoded) => {
-    if (err) return res.status(403).json({ message: "Forbidden" });
+  try {
+    const decoded = jwt.verify(token, process.env.ACCESS_SECRET);
+
+    if (!decoded?.userId) {
+      return res.status(403).json({ message: "Invalid token payload" });
+    }
+
     req.user = decoded;
     next();
-  });
+  } catch (err) {
+    return res.status(403).json({ message: "Forbidden" });
+  }
 };
 
 export default verifyJWTMiddleware;

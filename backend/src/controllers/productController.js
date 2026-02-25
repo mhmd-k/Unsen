@@ -1,45 +1,41 @@
 import { Op } from "sequelize";
 import { Product, User } from "../models/associations.js";
-import jwt from "jsonwebtoken";
 
 class ProductController {
+  listPaginatedProducts = async (req, res) => {
+    try {
+      const formattedData = res.paginatedResults.data.map((p) => ({
+        ...p,
+        images: JSON.parse(p.images || "[]"),
+      }));
+
+      res.status(200).json({
+        ...res.paginatedResults,
+        data: formattedData,
+        message: "Products fetched successfully",
+      });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ message: error.message || "Error fetching products" });
+    }
+  };
+
   createProduct = async (req, res) => {
-    const refreshToken = req.cookies.refreshToken;
+    const sellerId = req.user.userId;
+
+    const {
+      name,
+      description,
+      price,
+      category,
+      brand,
+      stock,
+      primaryImageIndex,
+    } = req.body;
 
     try {
-      // Validate seller role
-      jwt.verify(
-        refreshToken,
-        process.env.REFRESH_SECRET,
-        async (err, decoded) => {
-          if (err)
-            return res.status(403).json({ message: "Invalid refresh token" });
-
-          const user = await User.findByPk(decoded.userId);
-          if (!user) return res.status(404).json({ message: "User not found" });
-
-          const userData = user.get({ plain: true });
-
-          if (userData.role !== "SELLER") {
-            return res.status(403).json({
-              message: "Only sellers can create products",
-            });
-          }
-        },
-      );
-
-      // Get form data fields
-      const {
-        name,
-        description,
-        price,
-        category,
-        brand,
-        stock,
-        sellerId,
-        primaryImageIndex,
-      } = req.body;
-
       // Create new product
       const product = await Product.create({
         sellerId: sellerId,
@@ -65,40 +61,6 @@ class ProductController {
       res.status(500).json({
         message: err.message || "Error creating product",
       });
-    }
-  };
-
-  getProducts = async (req, res) => {
-    try {
-      res.status(200).json({
-        ...res.paginatedResults,
-        data: res.paginatedResults.data.map((e) => ({
-          ...e,
-          images: JSON.parse(e.images),
-        })),
-        message: "fetched products successfully",
-      });
-    } catch (error) {
-      res
-        .status(500)
-        .json({ message: error.message || "Error fetching products" });
-    }
-  };
-
-  getProductsByCategory = async (req, res) => {
-    try {
-      res.status(200).json({
-        ...res.paginatedResults,
-        data: res.paginatedResults.data.map((e) => ({
-          ...e,
-          images: JSON.parse(e.images),
-        })),
-        message: "fetched products successfully",
-      });
-    } catch (error) {
-      res
-        .status(500)
-        .json({ message: error.message || "Error fetching products" });
     }
   };
 
@@ -154,10 +116,207 @@ class ProductController {
     }
   };
 
-  // Future methods can be added here:
-  // - updateProduct
-  // - deleteProduct
-  // - getSellerProducts
+  updateProduct = async (req, res) => {
+    const productId = req.params.productId;
+    const sellerId = req.user.userId;
+
+    // Only allow these fields to be updated
+    const {
+      name,
+      description,
+      price,
+      category,
+      brand,
+      stock,
+      primaryImageIndex,
+    } = req.body;
+
+    try {
+      // Find product by ID + sellerId to ensure the seller owns it
+      const product = await Product.findOne({
+        where: {
+          id: productId,
+          sellerId,
+        },
+      });
+
+      if (!product)
+        return res.status(404).json({ message: "Product not found!" });
+
+      // Update only fields that exist in the request
+      if (name !== undefined) product.name = name;
+      if (description !== undefined) product.description = description;
+      if (price !== undefined) product.price = parseFloat(price);
+      if (category !== undefined) product.category = category;
+      if (brand !== undefined) product.brand = brand;
+      if (stock !== undefined) product.stock = stock;
+      if (primaryImageIndex !== undefined)
+        product.primaryImageIndex = primaryImageIndex;
+
+      await product.save();
+
+      res.status(200).json({
+        message: "Product updated successfully",
+        product,
+      });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ message: error.message || "Error updating product" });
+    }
+  };
+
+  // Upload new images
+  uploadProductImages = async (req, res) => {
+    const productId = req.params.productId;
+    const sellerId = req.user.userId;
+
+    try {
+      const product = await Product.findOne({
+        where: { id: productId, sellerId },
+      });
+      if (!product)
+        return res.status(404).json({ message: "Product not found" });
+
+      const existingImages = JSON.parse(product.images || "[]");
+      const newFiles = req.files;
+
+      if (!newFiles || newFiles.length === 0) {
+        return res.status(400).json({ message: "No images uploaded" });
+      }
+
+      if (existingImages.length + newFiles.length > 5) {
+        return res
+          .status(400)
+          .json({ message: "You can upload at most 5 images per product" });
+      }
+
+      const newImages = newFiles.map(
+        (file) => `http://localhost:5000/uploads/products/${file.filename}`,
+      );
+
+      const updatedImages = [...existingImages, ...newImages];
+      product.images = JSON.stringify(updatedImages);
+
+      // If there is no primary image, set the first one as primary
+      if (
+        product.primaryImageIndex === null ||
+        product.primaryImageIndex === undefined
+      ) {
+        product.primaryImageIndex = 0;
+      }
+
+      await product.save();
+
+      res.status(200).json({
+        message: "Images uploaded successfully",
+        images: updatedImages,
+        primaryImageIndex: product.primaryImageIndex,
+      });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ message: error.message || "Error uploading images" });
+    }
+  };
+
+  // Delete an image
+  deleteProductImage = async (req, res) => {
+    const productId = req.params.productId;
+    const sellerId = req.user.userId;
+    const imageIndex = parseInt(req.params.imageIndex);
+
+    try {
+      const product = await Product.findOne({
+        where: { id: productId, sellerId },
+      });
+      if (!product)
+        return res.status(404).json({ message: "Product not found" });
+
+      const images = JSON.parse(product.images || "[]");
+
+      if (images.length === 1) {
+        return res.status(400).json({
+          message:
+            "Cannot delete the only image. At least one image is required",
+        });
+      }
+
+      if (imageIndex < 0 || imageIndex >= images.length) {
+        return res.status(400).json({ message: "Invalid image index" });
+      }
+
+      if (product.primaryImageIndex === imageIndex) {
+        return res.status(400).json({
+          message: "Cannot delete primary image. Change primary image first",
+        });
+      }
+
+      // Delete the image file from disk
+      const filename = path.basename(images[imageIndex]);
+      const filePath = path.join("uploads/products/", filename);
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+
+      // Remove image from array
+      images.splice(imageIndex, 1);
+
+      // Adjust primaryImageIndex if needed
+      if (product.primaryImageIndex > imageIndex) {
+        product.primaryImageIndex -= 1;
+      }
+
+      product.images = JSON.stringify(images);
+      await product.save();
+
+      res.status(200).json({
+        message: "Image deleted successfully",
+        images,
+        primaryImageIndex: product.primaryImageIndex,
+      });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ message: error.message || "Error deleting image" });
+    }
+  };
+
+  // Change primary image
+  changePrimaryImage = async (req, res) => {
+    const productId = req.params.productId;
+    const sellerId = req.user.userId;
+    const { newPrimaryIndex } = req.body;
+
+    try {
+      const product = await Product.findOne({
+        where: { id: productId, sellerId },
+      });
+      if (!product)
+        return res.status(404).json({ message: "Product not found" });
+
+      const images = JSON.parse(product.images || "[]");
+
+      if (newPrimaryIndex < 0 || newPrimaryIndex >= images.length) {
+        return res.status(400).json({ message: "Invalid image index" });
+      }
+
+      product.primaryImageIndex = newPrimaryIndex;
+      await product.save();
+
+      res.status(200).json({
+        message: "Primary image updated successfully",
+        primaryImageIndex: newPrimaryIndex,
+        images,
+      });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ message: error.message || "Error updating primary image" });
+    }
+  };
 }
 
 export default new ProductController();
