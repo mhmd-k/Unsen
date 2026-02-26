@@ -54,9 +54,7 @@ const MobileSidebar = ({ setShow, show, handleLogout }: MobileSidebarProps) => {
     <Sheet>
       <SheetTrigger asChild>
         <div className="header-icons">
-          <a href="#">
-            <BsTextLeft size={30} />
-          </a>
+          <BsTextLeft size={30} />
         </div>
       </SheetTrigger>
       <SheetContent side="left" className="w-[300px] sm:w-[400px]">
