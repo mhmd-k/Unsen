@@ -36,9 +36,21 @@ class ProductController {
     } = req.body;
 
     try {
+      const productCount = await Product.count({
+        where: {
+          sellerId,
+        },
+      });
+
+      if (productCount >= 5) {
+        return res.status(403).json({
+          message: "You've reached the limit of uploaded products (max 5).",
+        });
+      }
+
       // Create new product
       const product = await Product.create({
-        sellerId: sellerId,
+        sellerId,
         name,
         description,
         images: JSON.stringify(

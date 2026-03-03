@@ -23,3 +23,7 @@ export type GetProductByIdResponse = {
   owner: User;
   message: string;
 };
+
+export type GetSellerProductsResponse = {
+  data: Product[];
+};

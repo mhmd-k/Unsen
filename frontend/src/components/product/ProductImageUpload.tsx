@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/file-upload";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
+const MAX_IMAGE_SIZE = 2 * 1024 * 1024; // 2MB
+
 type Props = {
   files: File[];
   setFiles: (files: File[]) => void;
@@ -38,7 +40,7 @@ const ProductImageUpload = ({
       <FileUpload
         accept="image/*"
         maxFiles={5}
-        maxSize={2 * 1024 * 1024}
+        maxSize={MAX_IMAGE_SIZE}
         value={files}
         onValueChange={setFiles}
         onFileReject={onFileReject}

@@ -121,7 +121,6 @@ router.get("/:id/related", productController.getRelatedProducts);
 // Future routes can be added here:
 // router.get("/:id", productController.getProductById);
 // router.put("/:id", authenticateToken, productController.updateProduct);
-// router.delete("/:id", authenticateToken, productController.deleteProduct);
 // router.get("/seller/products", authenticateToken, productController.getSellerProducts);
 
 export default router;

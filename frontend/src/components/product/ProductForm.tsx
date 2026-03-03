@@ -69,13 +69,14 @@ const ProductForm = ({ onSubmit, loading }: Props) => {
   const handleSubmit = (data: FormData) => {
     onSubmit(data, data.images, data.primaryIndex);
   };
+
   return (
     <Form {...form}>
       <Card className="mx-auto max-w-4xl">
         <CardContent>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className="grid md:grid-cols-2 gap-4 md:gap-8"
+            className="grid md:grid-cols-2 gap-x-4 md:gap-x-8"
           >
             <div className="space-y-4">
               {/* Text Fields */}

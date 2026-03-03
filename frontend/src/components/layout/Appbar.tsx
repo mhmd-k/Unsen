@@ -162,7 +162,10 @@ function Appbar() {
               <RoleComponentGuard requiredRoles={["SELLER"]}>
                 {isAuthenticated &&
                   !location.pathname.includes("add-product") && (
-                    <Link to="/add-product" className="main-btn">
+                    <Link
+                      to="/seller-dashboard/products/add-product"
+                      className="main-btn"
+                    >
                       Sell a product
                     </Link>
                   )}

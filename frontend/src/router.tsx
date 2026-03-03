@@ -15,13 +15,14 @@ import Login from "@/pages/Login";
 import ForgotPassword from "@/pages/ForgotPassword";
 import NotFound from "@/pages/NotFound";
 import Account from "@/pages/Account";
-import AddProduct from "@/pages/AddProduct";
+import AddProduct from "@/pages/seller-dashboard/AddProduct";
 import Checkout from "@/pages/Checkout";
 import Orders from "@/pages/Orders";
 import OrderDetails from "@/pages/OrderDetails";
 import Payment from "@/pages/Payment";
 import SellerDashboardLayout from "./components/SellerDashboardLayout";
 import SellerDashboard from "@/pages/seller-dashboard/Home";
+import Products from "./pages/seller-dashboard/Products";
 
 export const router = createBrowserRouter([
   {
@@ -76,16 +77,28 @@ export const router = createBrowserRouter([
                   </RolePageGuard>
                 ),
               },
+              {
+                path: "products",
+                children: [
+                  {
+                    element: (
+                      <RolePageGuard requiredRoles={["SELLER"]}>
+                        <Products />
+                      </RolePageGuard>
+                    ),
+                    index: true,
+                  },
+                  {
+                    path: "add-product",
+                    element: (
+                      <RolePageGuard requiredRoles={["SELLER"]}>
+                        <AddProduct />
+                      </RolePageGuard>
+                    ),
+                  },
+                ],
+              },
             ],
-          },
-
-          {
-            path: "add-product",
-            element: (
-              <RolePageGuard requiredRoles={["SELLER"]}>
-                <AddProduct />
-              </RolePageGuard>
-            ),
           },
 
           {
