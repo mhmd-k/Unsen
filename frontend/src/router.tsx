@@ -24,6 +24,7 @@ import SellerDashboardLayout from "./components/SellerDashboardLayout";
 import SellerDashboard from "@/pages/seller-dashboard/Home";
 import Products from "./pages/seller-dashboard/Products";
 import EditProduct from "./pages/seller-dashboard/EditProduct";
+import SellerOrders from "./pages/seller-dashboard/SellerOrders";
 
 export const router = createBrowserRouter([
   {
@@ -75,6 +76,14 @@ export const router = createBrowserRouter([
                 element: (
                   <RolePageGuard requiredRoles={["SELLER"]}>
                     <SellerDashboard />
+                  </RolePageGuard>
+                ),
+              },
+              {
+                path: "orders",
+                element: (
+                  <RolePageGuard requiredRoles={["SELLER"]}>
+                    <SellerOrders />
                   </RolePageGuard>
                 ),
               },

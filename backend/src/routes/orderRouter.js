@@ -3,6 +3,8 @@ import orderController from "../controllers/orderController.js";
 import { placeOrderValidation } from "../validations/orderValidations.js";
 import validateRequest from "../middleware/validateRequest.js";
 import verifyJWTMiddleware from "../middleware/auth.js";
+import { ROLES } from "../constants/roles.js";
+import requireRoleMiddleware from "../middleware/requireRole.js";
 
 const router = express.Router();
 
@@ -23,6 +25,14 @@ router.put(
 );
 
 router.get("/:orderId", verifyJWTMiddleware, orderController.getOrderById);
+
+// get seller orders
+router.get(
+  "/seller/orders",
+  verifyJWTMiddleware,
+  requireRoleMiddleware(ROLES.SELLER),
+  orderController.getSellerOrders,
+);
 
 // Future routes can be added here:
 // router.get("/:id", verifyJWTMiddleware, orderController.getOrderById);

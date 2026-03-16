@@ -32,24 +32,34 @@ Product.belongsTo(User, {
   as: "seller",
 });
 
-// many-to-many relationship between Product and Order
-Product.belongsToMany(Order, {
-  through: OrderItem,
-  foreignKey: "productId",
-  otherKey: "orderId",
+// one-to-many relationship between User and Order
+Order.belongsTo(User, {
+  foreignKey: "userId",
+  as: "user",
 });
-Order.belongsToMany(Product, {
-  through: OrderItem,
-  foreignKey: "orderId",
-  otherKey: "productId",
+User.hasMany(Order, {
+  foreignKey: "userId",
+  as: "orders",
 });
+
+// many-to-many relationship between Product and Order through OrderItem
 OrderItem.belongsTo(Order, {
   foreignKey: "orderId",
+  as: "order",
   onDelete: "CASCADE",
 });
 OrderItem.belongsTo(Product, {
   foreignKey: "productId",
+  as: "product",
   onDelete: "CASCADE",
+});
+Order.hasMany(OrderItem, {
+  foreignKey: "orderId",
+  as: "orderItems",
+});
+Product.hasMany(OrderItem, {
+  foreignKey: "productId",
+  as: "orderItems",
 });
 
 // One-to-One relationship between Order and Invoice

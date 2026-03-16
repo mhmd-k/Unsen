@@ -1,0 +1,82 @@
+import LoadingSpinnerInfinity from "@/components/LoadingSpinnerInfinity";
+import OrderStatusBadge from "@/components/OrderStatusBadge";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import useGetSellerOrders from "@/hooks/useGetSellerOrders";
+import { formatCurrency } from "@/lib/utils";
+
+const SellerOrders = () => {
+  const { data, isLoading } = useGetSellerOrders();
+
+  if (isLoading) {
+    return <LoadingSpinnerInfinity />;
+  }
+
+  return (
+    <>
+      <div className="mb-4 flex justify-between items-center">
+        <h1 className="text-lg md:text-2xl">Your Orders</h1>
+      </div>
+
+      <Card>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Order ID</TableHead>
+                <TableHead>User</TableHead>
+                <TableHead>Address</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Total Price</TableHead>
+                <TableHead></TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {data?.map((order) => (
+                <TableRow key={order.id}>
+                  <TableCell>#{order.id}</TableCell>
+                  <TableCell>{order.contact}</TableCell>
+                  <TableCell>
+                    {order.address}, {order.city}, {order.state} {order.zipCode}
+                  </TableCell>
+                  <TableCell>
+                    {order.canceledAt ? (
+                      <Tooltip>
+                        <TooltipContent>
+                          Canceled at:{" "}
+                          {new Date(order.canceledAt).toLocaleString()}
+                        </TooltipContent>
+                        <TooltipTrigger>
+                          {OrderStatusBadge(order.status)}
+                        </TooltipTrigger>
+                      </Tooltip>
+                    ) : (
+                      <>{OrderStatusBadge(order.status)}</>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-right font-semibold">
+                    {formatCurrency(order.totalPrice)}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </>
+  );
+};
+
+export default SellerOrders;

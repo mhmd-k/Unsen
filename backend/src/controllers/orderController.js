@@ -227,6 +227,38 @@ class OrderController {
         .json({ message: error.message || "Failed to fetch order" });
     }
   };
+
+  getSellerOrders = async (req, res) => {
+    const sellerId = req.user.userId;
+
+    try {
+      const sellerOrders = await Order.findAll({
+        include: [
+          {
+            model: OrderItem,
+            as: "orderItems", // ✅ must match alias above
+            include: [
+              {
+                model: Product,
+                as: "product", // ✅ must match alias above
+                where: { sellerId },
+              },
+            ],
+          },
+        ],
+      });
+
+      return res.status(200).json({
+        message: "Seller orders fetched successfully",
+        orders: sellerOrders,
+      });
+    } catch (error) {
+      console.error(error);
+      return res
+        .status(error.status || 500)
+        .json({ message: error.message || "Failed to fetch seller orders" });
+    }
+  };
 }
 
 export default new OrderController();

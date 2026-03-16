@@ -3,6 +3,7 @@ import { BsBoxSeam } from "react-icons/bs";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { Tabs, TabsList } from "@/components/ui/tabs";
 import { NavLink, useLocation } from "react-router-dom";
+import { TbShoppingCartFilled } from "react-icons/tb";
 
 const links = [
   {
@@ -14,6 +15,11 @@ const links = [
     href: "/seller-dashboard/products",
     title: "Products",
     icon: <BsBoxSeam className="w-5 h-5" />,
+  },
+  {
+    href: "/seller-dashboard/orders",
+    title: "Orders",
+    icon: <TbShoppingCartFilled className="w-5 h-5" />,
   },
 ];
 
