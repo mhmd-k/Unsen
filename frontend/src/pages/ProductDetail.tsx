@@ -4,8 +4,6 @@ import { Button } from "../components/ui/button";
 import { Separator } from "../components/ui/separator";
 import { ShoppingBag } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { useQuery } from "@tanstack/react-query";
-import { getProductsById } from "@/lib/api";
 import { Link, useParams } from "react-router-dom";
 import LoadingSpinnerInfinity from "@/components/LoadingSpinnerInfinity";
 import { Badge } from "@/components/ui/badge";
@@ -16,17 +14,15 @@ import { useWishlistStore } from "@/stores/wishlist";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
+import useGetProductById from "@/hooks/useGetProductById";
 
 export default function ProductDetail() {
   const [primaryImage, setPrimaryImage] = useState("");
 
   const params = useParams();
-  const id = parseInt(params.id || "");
+  const id = params.id || "";
 
-  const { data, isLoading, isSuccess } = useQuery({
-    queryFn: () => getProductsById(id),
-    queryKey: ["product", id],
-  });
+  const { data, isLoading, isSuccess } = useGetProductById(id);
 
   useEffect(() => {
     if (isSuccess && data.product?.images?.[data.product.primaryImageIndex]) {
@@ -134,7 +130,7 @@ export default function ProductDetail() {
                 {data.product.stock > 0 && (
                   <Button
                     size="lg"
-                    className="w-full h-[50px] md:max-w-[250px] bg-black-btn rounded-none hover:bg-main"
+                    className="w-full h-12.5 md:max-w-62.5 bg-black-btn rounded-none hover:bg-main"
                     onClick={handleAddToCart}
                   >
                     ADD TO CART <ShoppingBag className="size-5" />
@@ -143,10 +139,10 @@ export default function ProductDetail() {
                 <Button
                   variant="ghost"
                   size="lg"
-                  className="group p-0 justify-start w-full max-w-[200px] hover:text-emerald-500 hover:bg-transparent"
+                  className="group p-0 justify-start w-full max-w-50 hover:text-emerald-500 hover:bg-transparent"
                   onClick={handleAddToWishlist}
                 >
-                  <span className="border-1 border-black p-2 rounded-full group-hover:border-emerald-500">
+                  <span className="border border-black p-2 rounded-full group-hover:border-emerald-500">
                     <BsSuitHeart />
                   </span>{" "}
                   Add to Wishlist
@@ -155,7 +151,7 @@ export default function ProductDetail() {
             )}
 
             <Link
-              className="ms-auto w-fit block !text-main text-xs text-end !underline italic font-semibold"
+              className="ms-auto w-fit block text-main! text-xs text-end underline! italic font-semibold"
               to={`/users/${data.owner.id}`}
             >
               Owner: {data.owner.username}

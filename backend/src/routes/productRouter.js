@@ -21,7 +21,7 @@ const storage = multer.diskStorage({
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     cb(
       null,
-      req.body.name.replaceAll(" ", "-") +
+      file.originalname.replaceAll(" ", "-") +
         "-" +
         uniqueSuffix +
         path.extname(file.originalname),
@@ -71,7 +71,7 @@ router.post(
   "/:productId/images",
   verifyJWTMiddleware,
   requireRoleMiddleware(ROLES.SELLER),
-  upload.array("images", 5),
+  upload.array("images[]", 5),
   productController.uploadProductImages,
 );
 

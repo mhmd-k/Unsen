@@ -72,7 +72,7 @@ export async function verifyEmail(token: string): Promise<VerifyEmailResponse> {
       },
       {
         withCredentials: true,
-      }
+      },
     );
     return response.data;
   } catch (error) {
@@ -81,12 +81,12 @@ export async function verifyEmail(token: string): Promise<VerifyEmailResponse> {
 }
 
 export async function resendVerificationEmail(
-  email: string
+  email: string,
 ): Promise<{ message: string; email: string }> {
   try {
     const response = await api.post<{ message: string; email: string }>(
       "/auth/resend-verification",
-      { email }
+      { email },
     );
     return response.data;
   } catch (error) {
@@ -98,7 +98,7 @@ export async function changePassword(
   currentPassword: string,
   newPassword: string,
   token: string | undefined,
-  userId: number | undefined
+  userId: number | undefined,
 ): Promise<void> {
   try {
     await apiPrivate.post(
@@ -112,7 +112,7 @@ export async function changePassword(
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
   } catch (error) {
     handleAxiosError(error);
@@ -122,7 +122,7 @@ export async function changePassword(
 export async function getProducts(category?: string): Promise<Product[]> {
   try {
     const response = await api.get(
-      category ? `/products/category/${category}` : "/products"
+      category ? `/products/category/${category}` : "/products",
     );
 
     return response.data.data;
@@ -132,7 +132,7 @@ export async function getProducts(category?: string): Promise<Product[]> {
 }
 
 export async function getProductsById(
-  id: number
+  id: number | string,
 ): Promise<GetProductByIdResponse> {
   try {
     const response = await api.get(`/products/${id}`);
@@ -143,7 +143,9 @@ export async function getProductsById(
   }
 }
 
-export async function getRelatedProducts(id: number): Promise<Product[]> {
+export async function getRelatedProducts(
+  id: number | string,
+): Promise<Product[]> {
   try {
     const response = await api.get(`/products/${id}/related`);
 
@@ -152,4 +154,3 @@ export async function getRelatedProducts(id: number): Promise<Product[]> {
     handleAxiosError(error);
   }
 }
-

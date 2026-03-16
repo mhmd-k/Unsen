@@ -3,8 +3,11 @@ import { TableCell, TableRow } from "../ui/table";
 import { formatCurrency } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { Pencil } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const ProductTableRow = ({ product }: { product: Product }) => {
+  const navigate = useNavigate();
+
   return (
     <TableRow key={product.id}>
       <TableCell>
@@ -28,7 +31,13 @@ const ProductTableRow = ({ product }: { product: Product }) => {
       </TableCell>
       <TableCell>
         <div className="flex items-center">
-          <Button variant="ghost" size="icon">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() =>
+              navigate(`/seller-dashboard/products/edit-product/${product.id}`)
+            }
+          >
             <Pencil />
           </Button>
         </div>

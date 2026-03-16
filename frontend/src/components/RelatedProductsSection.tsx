@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AlertCircle } from "lucide-react";
 import LoadingSpinnerInfinity from "./LoadingSpinnerInfinity";
 
-const RelatedProductsSection = ({ id }: { id: number }) => {
+const RelatedProductsSection = ({ id }: { id: number | string }) => {
   const {
     data: relatedProducts,
     isLoading: isRelatedProductLoading,

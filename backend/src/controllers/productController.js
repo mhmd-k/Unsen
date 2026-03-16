@@ -1,5 +1,7 @@
 import { Op } from "sequelize";
 import { Product, User } from "../models/associations.js";
+import path from "path";
+import fs from "fs";
 
 class ProductController {
   listPaginatedProducts = async (req, res) => {
@@ -55,7 +57,8 @@ class ProductController {
         description,
         images: JSON.stringify(
           req.files.map(
-            (file) => `http://localhost:5000/uploads/products/${file.filename}`,
+            (file) =>
+              `${process.env.SERVER_URL}/uploads/products/${file.filename}`,
           ),
         ),
         price: parseFloat(price),
@@ -141,6 +144,7 @@ class ProductController {
       brand,
       stock,
       primaryImageIndex,
+      discount,
     } = req.body;
 
     try {
@@ -164,6 +168,7 @@ class ProductController {
       if (stock !== undefined) product.stock = stock;
       if (primaryImageIndex !== undefined)
         product.primaryImageIndex = primaryImageIndex;
+      if (discount !== undefined) product.discount = discount;
 
       await product.save();
 
@@ -205,7 +210,7 @@ class ProductController {
       }
 
       const newImages = newFiles.map(
-        (file) => `http://localhost:5000/uploads/products/${file.filename}`,
+        (file) => `${process.env.SERVER_URL}/uploads/products/${file.filename}`,
       );
 
       const updatedImages = [...existingImages, ...newImages];

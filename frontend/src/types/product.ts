@@ -1,5 +1,11 @@
 import type { User } from "./user";
 
+export type Category =
+  | "headphones"
+  | "phone-cases"
+  | "speakers"
+  | "game-controllers";
+
 export type Product = {
   id: number;
   sellerId: number;

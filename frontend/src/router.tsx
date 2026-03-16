@@ -23,6 +23,7 @@ import Payment from "@/pages/Payment";
 import SellerDashboardLayout from "./components/SellerDashboardLayout";
 import SellerDashboard from "@/pages/seller-dashboard/Home";
 import Products from "./pages/seller-dashboard/Products";
+import EditProduct from "./pages/seller-dashboard/EditProduct";
 
 export const router = createBrowserRouter([
   {
@@ -93,6 +94,14 @@ export const router = createBrowserRouter([
                     element: (
                       <RolePageGuard requiredRoles={["SELLER"]}>
                         <AddProduct />
+                      </RolePageGuard>
+                    ),
+                  },
+                  {
+                    path: "edit-product/:id",
+                    element: (
+                      <RolePageGuard requiredRoles={["SELLER"]}>
+                        <EditProduct />
                       </RolePageGuard>
                     ),
                   },
