@@ -38,7 +38,9 @@ const AddProduct = () => {
       navigate("/seller-dashboard/products");
     } catch (error: unknown) {
       toast.error(
-        error instanceof AxiosError ? error?.response?.data?.message : "Failed",
+        error instanceof AxiosError
+          ? error?.response?.data?.message
+          : "An Error Occured! Try Again Later.",
       );
     } finally {
       setLoading(false);

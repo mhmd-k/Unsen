@@ -17,7 +17,7 @@ export const sendVerificationEmail = async (email, token) => {
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: email,
-    subject: "Verify Your Email",
+    subject: "Unsen - Verify Your Email",
     html: `
       <h1>Unsen - Email Verification</h1>
       <p>Please click the link below to verify your email address:</p>
@@ -32,7 +32,7 @@ export const sendVerificationEmail = async (email, token) => {
   } catch (error) {
     console.error(error);
     throw new Error(
-      "Error sending verification email! please check that you provided a valid email address."
+      "Error sending verification email! please check that you provided a valid email address.",
     );
   }
 };

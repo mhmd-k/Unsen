@@ -148,11 +148,7 @@ export const router = createBrowserRouter([
 
           {
             path: "orders/:id",
-            element: (
-              <RolePageGuard requiredRoles={["CUSTOMER"]}>
-                <OrderDetails />
-              </RolePageGuard>
-            ),
+            element: <OrderDetails />,
           },
         ],
       },

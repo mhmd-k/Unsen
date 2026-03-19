@@ -47,24 +47,26 @@ const SellerDashboardSidebar = () => {
       </div>
 
       {/* mobile tabs */}
-      <Tabs className="md:hidden mt-4">
-        <TabsList>
-          {links.map((link) => (
-            <NavLink
-              to={link.href}
-              key={link.href}
-              className={clsx(
-                location.pathname === link.href
-                  ? "text-main! bg-white shadow-sm"
-                  : "",
-                "text-sm font-semibold whitespace-nowrap flex gap-2 items-center text-gray-600 py-2 px-4 hover:text-main! hover:bg-gray-100 hover:shadow-sm rounded-lg transition-all",
-              )}
-            >
-              {link.icon} {link.title}
-            </NavLink>
-          ))}
-        </TabsList>
-      </Tabs>
+      <div className="container mx-auto px-2 md:hidden">
+        <Tabs className="mt-4">
+          <TabsList className="flex flex-col sm:flex-row h-fit! w-full">
+            {links.map((link) => (
+              <NavLink
+                to={link.href}
+                key={link.href}
+                className={clsx(
+                  location.pathname === link.href
+                    ? "text-main! bg-white shadow-sm"
+                    : "",
+                  "w-full text-sm font-semibold whitespace-nowrap flex gap-2 items-center text-gray-600 py-2 px-4 hover:text-main! hover:bg-gray-100 hover:shadow-sm rounded-lg transition-all",
+                )}
+              >
+                {link.icon} {link.title}
+              </NavLink>
+            ))}
+          </TabsList>
+        </Tabs>
+      </div>
     </>
   );
 };

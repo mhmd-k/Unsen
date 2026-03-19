@@ -39,8 +39,6 @@ const OrderDetails = () => {
     products,
   } = data;
 
-  console.log(products);
-
   return (
     <div className="py-10 px-4 container mx-auto">
       <Card>

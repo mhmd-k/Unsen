@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/tooltip";
 import useGetSellerOrders from "@/hooks/useGetSellerOrders";
 import { formatCurrency } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 const SellerOrders = () => {
   const { data, isLoading } = useGetSellerOrders();
@@ -39,14 +40,21 @@ const SellerOrders = () => {
                 <TableHead>User</TableHead>
                 <TableHead>Address</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="text-right">Total Price</TableHead>
-                <TableHead></TableHead>
+                <TableHead >Total Price</TableHead>
+                {/* <TableHead></TableHead> */}
               </TableRow>
             </TableHeader>
             <TableBody>
               {data?.map((order) => (
                 <TableRow key={order.id}>
-                  <TableCell>#{order.id}</TableCell>
+                  <TableCell>
+                    <Link
+                      to={`/orders/${order.id}`}
+                      className="text-main! font-medium"
+                    >
+                      #{order.id}
+                    </Link>
+                  </TableCell>
                   <TableCell>{order.contact}</TableCell>
                   <TableCell>
                     {order.address}, {order.city}, {order.state} {order.zipCode}
@@ -66,9 +74,26 @@ const SellerOrders = () => {
                       <>{OrderStatusBadge(order.status)}</>
                     )}
                   </TableCell>
-                  <TableCell className="text-right font-semibold">
+                  <TableCell className="font-semibold">
                     {formatCurrency(order.totalPrice)}
                   </TableCell>
+
+                  {/* <TableCell className="text-right">
+                    {order.status === "PAID" && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <EllipsisVertical />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>
+                            <RiRefund2Line /> Refund
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
+                  </TableCell> */}
                 </TableRow>
               ))}
             </TableBody>
