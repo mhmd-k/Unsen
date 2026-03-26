@@ -3,7 +3,6 @@ import productController from "../controllers/productController.js";
 import { createProductValidation } from "../validations/productValidations.js";
 import validateRequest from "../middleware/validateRequest.js";
 import multer from "multer";
-import path from "path";
 import verifyJWTMiddleware from "../middleware/auth.js";
 import paginationMiddleware from "../middleware/pagination.js";
 import { Product } from "../models/associations.js";
@@ -12,40 +11,21 @@ import { ROLES } from "../constants/roles.js";
 
 const router = express.Router();
 
-// Configure multer for file upload
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/products/");
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(
-      null,
-      file.originalname.replaceAll(" ", "-") +
-        "-" +
-        uniqueSuffix +
-        path.extname(file.originalname),
-    );
-  },
-});
-
 const fileFilter = (req, file, cb) => {
   // Accept images only
-  if (
-    !file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF|WEBP|webp)$/)
-  ) {
-    req.fileValidationError = "Only image files are allowed!";
-    return cb(new Error("Only image files are allowed!"), false);
+  if (!file.mimetype.startsWith("image/")) {
+    return cb(new Error("Only image files allowed"), false);
   }
   cb(null, true);
 };
 
+// Configure multer for file upload
 const upload = multer({
-  storage: storage,
+  storage: multer.memoryStorage(),
   fileFilter: fileFilter,
   limits: {
-    fileSize: 2 * 1024 * 1024, // 2MB max file size
-    files: 5, // max 5 files
+    fileSize: 2 * 1024 * 1024,
+    files: 5,
   },
 });
 

@@ -2,13 +2,13 @@ import { cn, formatCurrency } from "../lib/utils";
 import { BsSuitHeart } from "react-icons/bs";
 import { Button } from "../components/ui/button";
 import { Separator } from "../components/ui/separator";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, UserCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Link, useParams } from "react-router-dom";
 import LoadingSpinnerInfinity from "@/components/LoadingSpinnerInfinity";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
-import RelatedProductsSection from "@/components/RelatedProductsSection";
+import RelatedProductsSection from "@/components/product/RelatedProductsSection";
 import { useCartStore } from "@/stores/cart";
 import { useWishlistStore } from "@/stores/wishlist";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
@@ -26,7 +26,7 @@ export default function ProductDetail() {
 
   useEffect(() => {
     if (isSuccess && data.product?.images?.[data.product.primaryImageIndex]) {
-      setPrimaryImage(data.product.images[data.product.primaryImageIndex]);
+      setPrimaryImage(data.product.images[data.product.primaryImageIndex].url);
     }
   }, [isSuccess, data]);
 
@@ -78,15 +78,16 @@ export default function ProductDetail() {
                   data.product.images.map((img, i) => (
                     <button
                       className="h-22 w-22 rounded-md cursor-pointer"
-                      onClick={() => setPrimaryImage(img)}
+                      onClick={() => setPrimaryImage(img.url)}
                     >
                       <img
-                        key={img}
-                        src={img}
+                        key={img.url}
+                        src={img.url}
                         alt={`${data.product.name}-${i}`}
                         className={cn(
                           "object-fit transition-all duration-500",
-                          primaryImage !== img && "grayscale hover:filter-none",
+                          primaryImage !== img.url &&
+                            "grayscale hover:filter-none",
                         )}
                       />
                     </button>
@@ -151,10 +152,10 @@ export default function ProductDetail() {
             )}
 
             <Link
-              className="ms-auto w-fit block text-main! text-xs text-end underline! italic font-semibold"
+              className="flex items-center gap-2 ms-auto w-fit text-main! text-xs text-end underline! italic font-semibold"
               to={`/users/${data.owner.id}`}
             >
-              Owner: {data.owner.username}
+              <UserCircle /> Owner: {data.owner.username}
             </Link>
           </div>
         </div>

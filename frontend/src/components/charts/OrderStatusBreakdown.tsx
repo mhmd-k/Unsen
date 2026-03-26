@@ -13,6 +13,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
+import { ShoppingBag } from "lucide-react";
 
 export const description = "A donut chart";
 
@@ -52,24 +53,33 @@ const OrderStatusBreakdown = ({
         </CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
-        <ChartContainer config={chartConfig} className="mx-auto h-75 w-full">
-          <PieChart>
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
-            <Pie
-              data={data.map((item) => ({
-                ...item,
-                fill: chartConfig[item.status as keyof typeof chartConfig]
-                  .color,
-              }))}
-              dataKey="count"
-              nameKey="status"
-              innerRadius="40%"
-            />
-          </PieChart>
-        </ChartContainer>
+        {data.length === 0 ? (
+          <div className="h-75 flex items-center">
+            <p className="text-gray-400 flex flex-col gap-2 w-full justify-center items-center">
+              <ShoppingBag size={50} className="text-gray-300" /> No orders
+              related to you yet!
+            </p>
+          </div>
+        ) : (
+          <ChartContainer config={chartConfig} className="mx-auto h-75 w-full">
+            <PieChart>
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent hideLabel />}
+              />
+              <Pie
+                data={data.map((item) => ({
+                  ...item,
+                  fill: chartConfig[item.status as keyof typeof chartConfig]
+                    .color,
+                }))}
+                dataKey="count"
+                nameKey="status"
+                innerRadius="40%"
+              />
+            </PieChart>
+          </ChartContainer>
+        )}
       </CardContent>
     </Card>
   );

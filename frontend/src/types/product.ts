@@ -11,7 +11,7 @@ export type Product = {
   sellerId: number;
   name: string;
   description: string;
-  images: string[];
+  images: { url: string; public_id: string }[];
   price: number;
   discount: number;
   category: string;

@@ -16,6 +16,7 @@ import CarousalImageOne from "../assets/images/landing/Electronic-1.png";
 import CarousalImageTwo from "../assets/images/landing/Electronic-2.png";
 import CarousalImageThree from "../assets/images/landing/Electronic-3.png";
 import { Card } from "@/components/ui/card";
+import { RoleComponentGuard } from "@/components/guard";
 
 const carouselItems = [
   {
@@ -69,8 +70,8 @@ function Home() {
                     {item.subtitle}
                   </p>
                   <div className="flex flex-col gap-4">
-                    {!user ||
-                      (user.role === "CUSTOMER" && (
+                    {!user && (
+                      <RoleComponentGuard requiredRoles={["CUSTOMER"]}>
                         <Button
                           onClick={() => navigate("/shop")}
                           size="lg"
@@ -78,17 +79,20 @@ function Home() {
                         >
                           SHOP NOW <BsFillArrowRightCircleFill />
                         </Button>
-                      ))}
+                      </RoleComponentGuard>
+                    )}
 
-                    {user?.role === "SELLER" && (
+                    <RoleComponentGuard requiredRoles={["SELLER"]}>
                       <Button
-                        onClick={() => navigate("/add-product")}
+                        onClick={() =>
+                          navigate("/seller-dashboard/products/add-product")
+                        }
                         size="lg"
                         className="landing-btn"
                       >
                         SELL NOW <BsFillArrowRightCircleFill />
                       </Button>
-                    )}
+                    </RoleComponentGuard>
 
                     {!user && (
                       <Button

@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/tooltip";
 import useGetSellerOrders from "@/hooks/useGetSellerOrders";
 import { formatCurrency } from "@/lib/utils";
+import { ShoppingBag } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const SellerOrders = () => {
@@ -40,11 +41,21 @@ const SellerOrders = () => {
                 <TableHead>User</TableHead>
                 <TableHead>Address</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead >Total Price</TableHead>
+                <TableHead>Total Price</TableHead>
                 {/* <TableHead></TableHead> */}
               </TableRow>
             </TableHeader>
             <TableBody>
+              {data?.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-10">
+                    <p className="text-gray-400 flex flex-col gap-2 w-full justify-center items-center">
+                      <ShoppingBag size={50} className="text-gray-300" /> No
+                      orders found
+                    </p>
+                  </TableCell>
+                </TableRow>
+              )}
               {data?.map((order) => (
                 <TableRow key={order.id}>
                   <TableCell>

@@ -1,7 +1,7 @@
 import { Op } from "sequelize";
 import { Product, User } from "../models/associations.js";
-import path from "path";
-import fs from "fs";
+import cloudinary from "../config/cloudinary.js";
+import streamifier from "streamifier";
 
 class ProductController {
   listPaginatedProducts = async (req, res) => {
@@ -50,17 +50,43 @@ class ProductController {
         });
       }
 
+      const uploadToCloudinary = (file) => {
+        return new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { folder: "products" },
+            (error, result) => {
+              if (error) return reject(error);
+
+              resolve({
+                url: result.secure_url,
+                public_id: result.public_id,
+              });
+            },
+          );
+
+          streamifier.createReadStream(file.buffer).pipe(stream);
+        });
+      };
+
+      const uploadedImages = await Promise.all(
+        req.files.map(uploadToCloudinary),
+      );
+
+      if (
+        primaryImageIndex !== undefined &&
+        (primaryImageIndex < 0 || primaryImageIndex >= uploadedImages.length)
+      ) {
+        return res.status(400).json({
+          message: "Invalid primary image index",
+        });
+      }
+
       // Create new product
       const product = await Product.create({
         sellerId,
         name,
         description,
-        images: JSON.stringify(
-          req.files.map(
-            (file) =>
-              `${process.env.SERVER_URL}/uploads/products/${file.filename}`,
-          ),
-        ),
+        images: JSON.stringify(uploadedImages),
         price: parseFloat(price),
         category,
         brand,
@@ -209,11 +235,18 @@ class ProductController {
           .json({ message: "You can upload at most 5 images per product" });
       }
 
-      const newImages = newFiles.map(
-        (file) => `${process.env.SERVER_URL}/uploads/products/${file.filename}`,
+      const uploadedImages = await Promise.all(
+        newFiles.map(uploadToCloudinary),
       );
 
-      const updatedImages = [...existingImages, ...newImages];
+      const updatedImages = [...existingImages, ...uploadedImages];
+
+      if (product.primaryImageIndex >= updatedImages.length) {
+        return res.status(400).json({
+          message: "Primary image index is now invalid",
+        });
+      }
+
       product.images = JSON.stringify(updatedImages);
 
       // If there is no primary image, set the first one as primary
@@ -271,10 +304,9 @@ class ProductController {
         });
       }
 
-      // Delete the image file from disk
-      const filename = path.basename(images[imageIndex]);
-      const filePath = path.join("uploads/products/", filename);
-      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      // Delete the image file from cloudinary
+      const imageToDelete = images[imageIndex];
+      await cloudinary.uploader.destroy(imageToDelete.public_id);
 
       // Remove image from array
       images.splice(imageIndex, 1);

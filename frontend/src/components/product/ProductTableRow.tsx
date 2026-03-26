@@ -13,7 +13,7 @@ const ProductTableRow = ({ product }: { product: Product }) => {
       <TableCell>
         <div className="flex gap-2 items-center me-7">
           <img
-            src={product.images[product.primaryImageIndex]}
+            src={product.images[product.primaryImageIndex].url}
             className="h-20 aspect-square object-cover"
           />
           <span className="whitespace-break-spaces">{product.name}</span>

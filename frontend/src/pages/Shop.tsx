@@ -1,7 +1,7 @@
 import { AiOutlineClose } from "react-icons/ai";
 import { useSearchParams, NavLink, useLocation, Link } from "react-router-dom";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
-import ProductCard from "@/components/ProductCard";
+import ProductCard from "@/components/product/ProductCard";
 import { Input } from "../components/ui/input";
 import {
   DropdownMenu,
@@ -52,12 +52,12 @@ function Shop() {
     searchInput === ""
       ? productsArr
       : productsArr?.filter(
-        (e) =>
-          e.name
-            .toLowerCase()
-            .trim()
-            .search(searchInput.toLowerCase().trim()) !== -1
-      );
+          (e) =>
+            e.name
+              .toLowerCase()
+              .trim()
+              .search(searchInput.toLowerCase().trim()) !== -1,
+        );
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     setSearchInput(e.target.value);

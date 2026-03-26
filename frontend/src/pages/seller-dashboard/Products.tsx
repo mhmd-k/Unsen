@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   Table,
   TableBody,
+  TableCell,
   TableHead,
   TableHeader,
   TableRow,
@@ -12,7 +13,7 @@ import { useAuth } from "@/hooks/useAuth";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import type { GetSellerProductsResponse } from "@/types";
 import { useQuery } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
+import { BoxIcon, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Products = () => {
@@ -56,6 +57,17 @@ const Products = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
+              {data?.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-10">
+                    <p className="text-gray-400 flex flex-col gap-2 w-full justify-center items-center">
+                      <BoxIcon size={50} className="text-gray-300" /> No
+                      products found
+                    </p>
+                  </TableCell>
+                </TableRow>
+              )}
+
               {data?.map((p) => <ProductTableRow key={p.id} product={p} />)}
             </TableBody>
           </Table>

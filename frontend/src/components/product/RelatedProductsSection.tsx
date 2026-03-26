@@ -1,9 +1,9 @@
 import { FaBoxOpen } from "react-icons/fa";
-import ProductCard from "@/components/ProductCard";
+import ProductCard from "./ProductCard";
 import { getRelatedProducts } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { AlertCircle } from "lucide-react";
-import LoadingSpinnerInfinity from "./LoadingSpinnerInfinity";
+import LoadingSpinnerInfinity from "../LoadingSpinnerInfinity";
 
 const RelatedProductsSection = ({ id }: { id: number | string }) => {
   const {

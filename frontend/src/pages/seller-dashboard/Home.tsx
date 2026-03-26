@@ -8,7 +8,7 @@ import { formatCurrency } from "@/lib/utils";
 import { RiMoneyDollarCircleLine } from "react-icons/ri";
 import RevenueOverTime from "@/components/charts/RevenueOverTime";
 import Top3Products from "@/components/charts/Top3Products";
-import OrderStatusBreakdown from "@/components/charts/orderStatusBreakdown";
+import OrderStatusBreakdown from "@/components/charts/OrderStatusBreakdown";
 import OrdersOverTime from "@/components/charts/OrdersOverTime";
 
 const Home = () => {
