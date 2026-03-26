@@ -35,6 +35,7 @@ class ProductController {
       brand,
       stock,
       primaryImageIndex,
+      discount,
     } = req.body;
 
     try {
@@ -92,6 +93,7 @@ class ProductController {
         brand,
         stock,
         primaryImageIndex,
+        discount: parseFloat(discount) || 0,
       });
 
       res.status(201).json({
@@ -194,7 +196,7 @@ class ProductController {
       if (stock !== undefined) product.stock = stock;
       if (primaryImageIndex !== undefined)
         product.primaryImageIndex = primaryImageIndex;
-      if (discount !== undefined) product.discount = discount;
+      if (discount !== undefined) product.discount = parseFloat(discount);
 
       await product.save();
 

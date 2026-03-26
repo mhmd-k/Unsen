@@ -8,7 +8,7 @@ import UploadImagesDialog from "./UploadImagesDialog";
 
 interface EditProductImagesProps {
   productId: number;
-  images: string[];
+  images: { public_id: string; url: string }[];
   primaryIndex: number;
 }
 
@@ -62,7 +62,7 @@ const EditProductImages = ({
             <div key={index} className="flex flex-col gap-2">
               <div className="relative">
                 <img
-                  src={img}
+                  src={img.url}
                   alt={`Product Image ${index + 1}`}
                   className={`w-full h-48 object-cover rounded-md ${index === primaryIndex ? "border-2 border-main" : "border-2 border-gray-300"}`}
                 />
