@@ -13,8 +13,6 @@ import "dotenv/config";
 import { connectDB } from "./config/db.js";
 import dotenv from "dotenv";
 
-import "./models/associations.js"; // Import associations to set up relationships between models
-
 dotenv.config();
 
 const app = express();
