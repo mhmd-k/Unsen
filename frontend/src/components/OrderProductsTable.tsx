@@ -37,7 +37,7 @@ const OrderProductsTable = ({
                 <TableCell className="flex items-center">
                   <div className="w-20 h-20">
                     <img
-                      src={product.images[product.primaryImageIndex]}
+                      src={product.images[product.primaryImageIndex].url}
                       className="object-fill"
                     />
                   </div>{" "}

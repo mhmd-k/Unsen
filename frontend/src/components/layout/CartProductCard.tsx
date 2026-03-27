@@ -32,7 +32,7 @@ const CartProductCard = ({
           width: "100px",
         }}
       >
-        <img className="w-100" src={images[primaryImageIndex]} alt={name} />
+        <img className="w-100" src={images[primaryImageIndex].url} alt={name} />
       </div>
       <div style={{ flex: 1 }}>
         <h4 className="text-sm">{name}</h4>

@@ -15,13 +15,13 @@ const Checkout = () => {
             {cart.map((product) => (
               <div key={product.id}>
                 <div className="flex gap-4 p-4 items-center">
-                  <div className="relative w-15 h-15 bg-white rounded-lg border-1 border-gray-300">
-                    <div className="absolute w-6 h-6 font-semibold -left-2 -top-2 bg-gray-500 text-white border-1 rounded-full flex justify-center items-center">
+                  <div className="relative w-15 h-15 bg-white rounded-lg border border-gray-300">
+                    <div className="absolute w-6 h-6 font-semibold -left-2 -top-2 bg-gray-500 text-white border rounded-full flex justify-center items-center">
                       {product.quantity}
                     </div>
                     <img
                       className="w-full h-full object-contain rounded-lg"
-                      src={product.images[product.primaryImageIndex]}
+                      src={product.images[product.primaryImageIndex].url}
                       alt={product.name}
                     />
                   </div>
@@ -40,7 +40,7 @@ const Checkout = () => {
               </div>
             ))}
 
-            <div className="flex max-w-[400px] mx-auto gap-12 font-medium text-xl">
+            <div className="flex max-w-100 mx-auto gap-12 font-medium text-xl">
               Total:
               <span>{formatCurrency(total)}</span>
             </div>

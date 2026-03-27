@@ -46,7 +46,7 @@ const WishlistCard = (props: Product) => {
         <AiOutlineClose />
       </Button>
       <div className="image">
-        <img src={images[primaryImageIndex]} alt="..." />
+        <img src={images[primaryImageIndex].url} alt="..." />
         <div className="buttons">
           <Button className="view" variant="ghost" onClick={handleView}>
             Quick View
@@ -60,7 +60,7 @@ const WishlistCard = (props: Product) => {
           </Button>
         </div>
       </div>
-      <div className="w-full md:hidden flex border-1">
+      <div className="w-full md:hidden flex border">
         <Button
           className="flex-1 rounded-none group hover:bg-gray-50"
           variant="link"
@@ -70,7 +70,7 @@ const WishlistCard = (props: Product) => {
         </Button>
 
         <Button
-          className="border-l-1 rounded-none flex-1 group hover:bg-gray-50"
+          className="border-l rounded-none flex-1 group hover:bg-gray-50"
           variant="link"
           onClick={() => addItem({ ...props, quantity: 1 })}
         >

@@ -11,6 +11,7 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { Loader2 } from "lucide-react";
+import { AxiosError } from "axios";
 
 // Define the form data type using Zod schema
 const forgotPasswordSchema = z.object({
@@ -33,7 +34,7 @@ const ForgotPassword: React.FC = () => {
     resolver: zodResolver(forgotPasswordSchema),
   });
 
-  const onSubmit = async (formData: ForgotPasswordFormData) => {
+  const onSubmit = async () => {
     try {
       setStatus("loading");
       setErrorMessage(null);
@@ -42,11 +43,13 @@ const ForgotPassword: React.FC = () => {
 
       setStatus("success");
       setShowSuccess(true);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.log(error);
       setStatus("error");
       setErrorMessage(
-        error.message || "An error occurred while requesting password reset"
+        error instanceof AxiosError
+          ? error.message
+          : "An error occurred while requesting password reset",
       );
     }
   };
