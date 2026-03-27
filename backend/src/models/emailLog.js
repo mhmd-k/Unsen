@@ -29,7 +29,7 @@ const EmailLog = sequelize.define(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export default EmailLog;
