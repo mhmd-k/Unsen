@@ -11,23 +11,13 @@ import wishlistRouter from "./routes/wishlistRouter.js";
 import sellerAnalyticsRouter from "./routes/sellerAnalyticsRouter.js";
 import "dotenv/config";
 import { connectDB } from "./config/db.js";
-import path from "path";
-import { fileURLToPath } from "url";
-import fs from "fs";
 import dotenv from "dotenv";
+
+import "./models/associations.js"; // Import associations to set up relationships between models
 
 dotenv.config();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 const app = express();
-
-// Create uploads directory if it doesn't exist
-const uploadsDir = path.join(__dirname, "../uploads/products");
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
 
 connectDB();
 
@@ -47,9 +37,6 @@ app.use(express.json());
 
 //middleware for cookies
 app.use(cookieParser());
-
-// Serve static files from uploads directory
-app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
