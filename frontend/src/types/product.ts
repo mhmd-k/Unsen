@@ -31,5 +31,5 @@ export type GetProductByIdResponse = {
 };
 
 export type GetSellerProductsResponse = {
-  data: Product[];
+  data: (Product & { soldQuantity: number })[];
 };

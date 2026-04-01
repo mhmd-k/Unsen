@@ -36,6 +36,7 @@ import {
   LogOut,
   UserCog,
   CircleUserRound,
+  LayoutDashboard,
 } from "lucide-react";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { AxiosError } from "axios";
@@ -198,6 +199,16 @@ function Appbar() {
                           <UserCog /> Account
                         </NavLink>
                       </DropdownMenuItem>
+                      <RoleComponentGuard requiredRoles={["SELLER"]}>
+                        <DropdownMenuItem>
+                          <NavLink
+                            to="/seller-dashboard"
+                            className="cursor-pointer flex whitespace-nowrap gap-2"
+                          >
+                            <LayoutDashboard /> Dashboard
+                          </NavLink>
+                        </DropdownMenuItem>
+                      </RoleComponentGuard>
                       <DropdownMenuItem
                         onClick={handleLogout}
                         className="flex gap-2"

@@ -2,10 +2,10 @@ import type { Invoice } from "./invoice";
 import type { Product } from "./product";
 
 export type OrderStatus =
-  "WAITING_FOR_PAYMENT" |
-  "PAID" |
-  "CANCELLED" |
-  "REFUNDED"
+  | "WAITING_FOR_PAYMENT"
+  | "PAID"
+  | "CANCELLED"
+  | "REFUNDED";
 
 export type Order = {
   id: number;
@@ -47,5 +47,8 @@ export type GetUserOrdersResponse = {
 
 export type GetOrderResponse = {
   message: string;
-  order: Order & { products: Product[]; invoice: Invoice };
+  order: Order & {
+    products: (Product & { quantity: number })[];
+    invoice: Invoice;
+  };
 };

@@ -217,6 +217,8 @@ class OrderController {
           products: products.map((p) => ({
             ...p.dataValues,
             images: JSON.parse(p.images),
+            quantity:
+              orderItems.find((oi) => oi.productId === p.id)?.quantity || 0,
           })),
         },
       });

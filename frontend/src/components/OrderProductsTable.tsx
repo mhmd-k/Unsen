@@ -14,7 +14,7 @@ const OrderProductsTable = ({
   products,
   totalPrice,
 }: {
-  products: Product[];
+  products: (Product & { quantity: number })[];
   totalPrice: number;
 }) => {
   return (
@@ -26,13 +26,14 @@ const OrderProductsTable = ({
             <TableRow>
               <TableHead>Product</TableHead>
               <TableHead>Brand</TableHead>
-              <TableHead>Discount</TableHead>
               <TableHead>Original Price</TableHead>
+              <TableHead>Discount</TableHead>
+              <TableHead>Quantity</TableHead>
               <TableHead>Final Price</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {products.map((product: Product) => (
+            {products.map((product) => (
               <TableRow key={product.id}>
                 <TableCell className="flex items-center">
                   <div className="w-20 h-20">
@@ -49,14 +50,15 @@ const OrderProductsTable = ({
                   </Link>
                 </TableCell>
                 <TableCell>{product.brand}</TableCell>
-                <TableCell>
-                  {" "}
+                <TableCell>{formatCurrency(product.price)}</TableCell>
+                <TableCell className="text-red-400 font-semibold text-xs">
                   {Number(product.discount) ? `%${product.discount}` : "_"}
                 </TableCell>
-                <TableCell>{formatCurrency(product.price)}</TableCell>
-                <TableCell>
+                <TableCell>{product.quantity}</TableCell>
+                <TableCell className="text-main font-semibold">
                   {formatCurrency(
-                    product.price - (product.discount * product.price) / 100,
+                    (product.price - (product.discount * product.price) / 100) *
+                      product.quantity,
                   )}
                 </TableCell>
               </TableRow>

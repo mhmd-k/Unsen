@@ -34,12 +34,6 @@ const Invoice = sequelize.define(
       allowNull: false,
     },
 
-    currency: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      defaultValue: "USD",
-    },
-
     // Invoice lifecycle status
     status: {
       type: DataTypes.ENUM("ISSUED", "VOID", "REFUNDED"),

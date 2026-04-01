@@ -5,7 +5,11 @@ import { Button } from "../ui/button";
 import { Pencil } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const ProductTableRow = ({ product }: { product: Product }) => {
+const ProductTableRow = ({
+  product,
+}: {
+  product: Product & { soldQuantity?: number };
+}) => {
   const navigate = useNavigate();
 
   return (
@@ -29,6 +33,11 @@ const ProductTableRow = ({ product }: { product: Product }) => {
       <TableCell>
         {Number(product.discount) ? `${product.discount}%` : "_"}
       </TableCell>
+      <TableCell>
+        {formatCurrency(product.price * (1 - product.discount / 100))}
+      </TableCell>
+      {product.soldQuantity && <TableCell>{product.soldQuantity}</TableCell>}
+
       <TableCell>
         <div className="flex items-center">
           <Button

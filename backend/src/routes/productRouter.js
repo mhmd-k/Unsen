@@ -90,8 +90,7 @@ router.get(
   "/seller/products",
   verifyJWTMiddleware,
   requireRoleMiddleware(ROLES.SELLER),
-  paginationMiddleware(Product, (req) => ({ sellerId: req.user.userId })),
-  productController.listPaginatedProducts,
+  productController.getSellerProducts,
 );
 
 router.get("/:id", productController.getProductById);

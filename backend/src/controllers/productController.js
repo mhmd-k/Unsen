@@ -1,7 +1,8 @@
 import { Op } from "sequelize";
-import { Product, User } from "../models/associations.js";
+import { OrderItem, Product, User } from "../models/associations.js";
 import cloudinary from "../config/cloudinary.js";
 import streamifier from "streamifier";
+import { sequelize } from "../config/db.js";
 
 class ProductController {
   listPaginatedProducts = async (req, res) => {
@@ -21,6 +22,49 @@ class ProductController {
       res
         .status(500)
         .json({ message: error.message || "Error fetching products" });
+    }
+  };
+
+  getSellerProducts = async (req, res) => {
+    const sellerId = req.user.userId;
+
+    try {
+      const products = await Product.findAll({
+        where: { sellerId },
+        include: [
+          {
+            model: OrderItem,
+            as: "orderItems",
+            attributes: [],
+            required: false,
+          },
+        ],
+        attributes: {
+          include: [
+            [
+              sequelize.fn("SUM", sequelize.col("orderItems.quantity")),
+              "quantity",
+            ],
+          ],
+        },
+        group: ["Product.id"],
+      });
+
+      const formattedProducts = products.map((p) => ({
+        ...p.dataValues,
+        images: JSON.parse(p.images || "[]"),
+        soldQuantity: Number(p.dataValues.quantity) || 0,
+      }));
+
+      res.status(200).json({
+        data: formattedProducts,
+        message: "Seller products fetched successfully",
+      });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ message: error.message || "Error fetching seller products" });
     }
   };
 

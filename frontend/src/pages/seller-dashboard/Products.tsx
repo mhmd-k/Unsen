@@ -53,6 +53,8 @@ const Products = () => {
                 <TableHead>category</TableHead>
                 <TableHead>price</TableHead>
                 <TableHead className="text-right">discount</TableHead>
+                <TableHead>final price</TableHead>
+                <TableHead className="text-right">sales</TableHead>
                 <TableHead></TableHead>
               </TableRow>
             </TableHeader>
