@@ -8,10 +8,11 @@ import { Alert, AlertDescription, AlertTitle } from "../components/ui/alert";
 import { Loader2 } from "lucide-react";
 
 function VerifyEmail() {
+  const [status, setStatus] = useState<Status>("idle");
+
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { updateUser } = useAuth();
-  const [status, setStatus] = useState<Status>("idle");
 
   useEffect(() => {
     const token = searchParams.get("token");
@@ -27,13 +28,13 @@ function VerifyEmail() {
         updateUser(response.user);
         toast.success("Email verified successfuly");
         setStatus("success");
-        navigate("/");
+        setTimeout(() => navigate("/"), 2000);
       } catch (error: unknown) {
         setStatus("error");
         toast.error(
           error instanceof Error
             ? error.message
-            : "An error occured during verifying your email!"
+            : "An error occured during verifying your email!",
         );
       }
     };

@@ -16,7 +16,7 @@ export const storeRefreshTokenInCookie = (res, token) => {
   res.cookie("refreshToken", token, {
     httpOnly: true,
     secure: true,
-    sameSite: "strict",
+    sameSite: "None",
     maxAge: 14 * 24 * 60 * 60 * 1000, // 14 day
   });
 };
