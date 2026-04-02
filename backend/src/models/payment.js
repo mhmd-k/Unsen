@@ -21,32 +21,13 @@ const Payment = sequelize.define(
       onDelete: "CASCADE",
     },
 
-    // Payment attempt tracking
-    attemptNumber: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-
     // Financial snapshot
     amount: {
       type: DataTypes.FLOAT,
       allowNull: false,
     },
 
-    currency: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      defaultValue: "USD",
-    },
-
-    // Payment method type (even if fake now)
-    paymentMethod: {
-      type: DataTypes.ENUM("CREDIT_CARD", "PAYPAL", "BANK_TRANSFER"),
-      allowNull: false,
-      defaultValue: "CREDIT_CARD",
-    },
-
-    // Card snapshot (DO NOT store real full card in real apps)
+    // Card snapshot
     cardLast4: {
       type: DataTypes.STRING,
       allowNull: true,

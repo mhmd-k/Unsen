@@ -13,7 +13,7 @@ import { api, apiPrivate } from "../api/axios";
 
 // Error handler for axios requests
 function handleAxiosError(error: unknown): never {
-  console.log(error);
+  console.error(error);
 
   if (axios.isAxiosError(error)) {
     const axiosError = error as AxiosError<ApiError>;

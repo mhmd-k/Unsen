@@ -14,8 +14,6 @@ function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  console.log(user);
-
   // Check for existing session on mount
   useLayoutEffect(() => {
     const checkAuth = async () => {
@@ -53,7 +51,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-export { AuthContext, AuthProvider }
+export { AuthContext, AuthProvider };
 
 // email: testuser_mhmd_k_2000@proton.me
 // pass: 123F#Ccs1

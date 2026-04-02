@@ -70,17 +70,15 @@ function Home() {
                     {item.subtitle}
                   </p>
                   <div className="flex flex-col gap-4">
-                    {!user && (
-                      <RoleComponentGuard requiredRoles={["CUSTOMER"]}>
-                        <Button
-                          onClick={() => navigate("/shop")}
-                          size="lg"
-                          className="landing-btn"
-                        >
-                          SHOP NOW <BsFillArrowRightCircleFill />
-                        </Button>
-                      </RoleComponentGuard>
-                    )}
+                    <RoleComponentGuard requiredRoles={["CUSTOMER"]}>
+                      <Button
+                        onClick={() => navigate("/shop")}
+                        size="lg"
+                        className="landing-btn"
+                      >
+                        SHOP NOW <BsFillArrowRightCircleFill />
+                      </Button>
+                    </RoleComponentGuard>
 
                     <RoleComponentGuard requiredRoles={["SELLER"]}>
                       <Button

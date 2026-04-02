@@ -37,6 +37,7 @@ import {
   UserCog,
   CircleUserRound,
   LayoutDashboard,
+  ListOrdered,
 } from "lucide-react";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { AxiosError } from "axios";
@@ -206,6 +207,16 @@ function Appbar() {
                             className="cursor-pointer flex whitespace-nowrap gap-2"
                           >
                             <LayoutDashboard /> Dashboard
+                          </NavLink>
+                        </DropdownMenuItem>
+                      </RoleComponentGuard>
+                      <RoleComponentGuard requiredRoles={["CUSTOMER"]}>
+                        <DropdownMenuItem>
+                          <NavLink
+                            to="/orders"
+                            className="cursor-pointer flex whitespace-nowrap gap-2"
+                          >
+                            <ListOrdered /> Orders
                           </NavLink>
                         </DropdownMenuItem>
                       </RoleComponentGuard>

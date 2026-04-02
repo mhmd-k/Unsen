@@ -4,7 +4,8 @@ import EmailLog from "./emailLog.js";
 import Product from "./product.js";
 import OrderItem from "./orderItem.js";
 import Order from "./order.js";
-import Invoice from "./invoice.js";
+import CustomerInvoice from "./customerInvoice.js";
+import SellerInvoice from "./sellerInvoice.js";
 import Payment from "./payment.js";
 import Wishlist from "./wishlist.js";
 
@@ -62,12 +63,22 @@ Product.hasMany(OrderItem, {
   as: "orderItems",
 });
 
-// One-to-One relationship between Order and Invoice
-Order.hasOne(Invoice, {
+// One-to-One relationship between Order and CustomerInvoice
+Order.hasOne(CustomerInvoice, {
   foreignKey: "orderId",
-  as: "invoice",
+  as: "customerInvoice",
 });
-Invoice.belongsTo(Order, {
+CustomerInvoice.belongsTo(Order, {
+  foreignKey: "orderId",
+  as: "order",
+});
+
+// One-to-Many relationship between Order and SellerInvoice
+Order.hasMany(SellerInvoice, {
+  foreignKey: "orderId",
+  as: "sellerInvoices",
+});
+SellerInvoice.belongsTo(Order, {
   foreignKey: "orderId",
   as: "order",
 });
@@ -109,7 +120,8 @@ export {
   SellerBankAccount,
   EmailLog,
   Product,
-  Invoice,
+  CustomerInvoice,
+  SellerInvoice,
   Order,
   OrderItem,
   Payment,

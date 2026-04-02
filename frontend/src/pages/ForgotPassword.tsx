@@ -44,7 +44,7 @@ const ForgotPassword: React.FC = () => {
       setStatus("success");
       setShowSuccess(true);
     } catch (error: unknown) {
-      console.log(error);
+      console.error(error);
       setStatus("error");
       setErrorMessage(
         error instanceof AxiosError

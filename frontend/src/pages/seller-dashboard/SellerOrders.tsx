@@ -17,7 +17,6 @@ import {
 import useGetSellerOrders from "@/hooks/useGetSellerOrders";
 import { formatCurrency } from "@/lib/utils";
 import { ShoppingBag } from "lucide-react";
-import { Link } from "react-router-dom";
 
 const SellerOrders = () => {
   const { data, isLoading } = useGetSellerOrders();
@@ -58,14 +57,7 @@ const SellerOrders = () => {
               )}
               {data?.map((order) => (
                 <TableRow key={order.id}>
-                  <TableCell>
-                    <Link
-                      to={`/orders/${order.id}`}
-                      className="text-main! font-medium"
-                    >
-                      #{order.id}
-                    </Link>
-                  </TableCell>
+                  <TableCell>#{order.id}</TableCell>
                   <TableCell>{order.contact}</TableCell>
                   <TableCell>
                     {order.address}, {order.city}, {order.state} {order.zipCode}

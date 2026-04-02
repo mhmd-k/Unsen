@@ -24,7 +24,7 @@ import {
   EllipsisVertical,
   EyeIcon,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import OrderStatusBadge from "@/components/OrderStatusBadge";
 import { RiRefund2Fill } from "react-icons/ri";
 import LoadingSpinnerInfinity from "@/components/LoadingSpinnerInfinity";
@@ -98,9 +98,16 @@ const Orders = () => {
                     <TableCell colSpan={5}>No orders yet!</TableCell>
                   </TableRow>
                 )}
-                {orders.map((order, idx) => (
+                {orders.map((order) => (
                   <TableRow key={order.id}>
-                    <TableCell>{idx + 1}</TableCell>
+                    <TableCell>
+                      <Link
+                        to={`/orders/${order.id}`}
+                        className="font-semibold text-main!"
+                      >
+                        #{order.id}
+                      </Link>
+                    </TableCell>
                     <TableCell>{OrderStatusBadge(order.status)}</TableCell>
                     <TableCell className="hidden md:table-cell">
                       <ul className="ml-4">

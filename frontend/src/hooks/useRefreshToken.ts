@@ -8,9 +8,8 @@ const useRefreshToken = () => {
     try {
       const response = await apiPrivate.get("/auth/refresh");
 
-      console.log(response);
-
       updateUser(response.data.user);
+
       return response.data.user.accessToken;
     } catch (error) {
       console.error("Refresh token error:", error);

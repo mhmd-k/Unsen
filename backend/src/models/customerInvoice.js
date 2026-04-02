@@ -1,8 +1,8 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/db.js";
 
-const Invoice = sequelize.define(
-  "Invoice",
+const CustomerInvoice = sequelize.define(
+  "CustomerInvoice",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -57,4 +57,4 @@ const Invoice = sequelize.define(
   },
 );
 
-export default Invoice;
+export default CustomerInvoice;

@@ -1,15 +1,22 @@
 import { sequelize } from "../config/db.js";
-import { Payment, Order, Invoice } from "../models/associations.js";
+import {
+  Payment,
+  Order,
+  CustomerInvoice,
+  SellerInvoice,
+  OrderItem,
+  Product,
+} from "../models/associations.js";
 
 class PaymentController {
   pay = async (req, res) => {
     const t = await sequelize.transaction();
 
+    const { orderId, cardNumber } = req.body;
+
+    const userId = req.user.userId;
+
     try {
-      const { orderId, cardNumber } = req.body;
-
-      const userId = req.user.userId;
-
       const order = await Order.findByPk(orderId, { transaction: t });
 
       if (!order) {
@@ -29,20 +36,12 @@ class PaymentController {
           .json({ message: "Unauthorized to pay this order!" });
       }
 
-      // Count previous attempts
-      const attemptCount = await Payment.count({
-        where: { orderId },
-        transaction: t,
-      });
-
       // 🔒 Simulate payment processing
       // In real world: call Stripe here
       const payment = await Payment.create(
         {
           orderId,
-          attemptNumber: attemptCount + 1,
           amount: order.totalPrice,
-          paymentMethod: "CREDIT_CARD",
           cardLast4: cardNumber.slice(-4),
           status: "SUCCESS",
           processedAt: new Date(),
@@ -58,9 +57,9 @@ class PaymentController {
       // Generate proper invoice number
       const invoiceNumber = `INV-${Date.now()}-${order.id}`;
 
-      const invoice = await Invoice.create(
+      const customerInvoice = await CustomerInvoice.create(
         {
-          orderId: order.id,
+          orderId: orderId,
           invoiceNumber,
           totalAmount: order.totalPrice,
           status: "ISSUED",
@@ -69,12 +68,38 @@ class PaymentController {
         { transaction: t },
       );
 
+      const orderItems = await OrderItem.findAll({
+        where: { orderId: orderId },
+        transaction: t,
+      });
+
+      for (const item of orderItems) {
+        const product = await Product.findByPk(item.productId, {
+          transaction: t,
+          attributes: ["sellerId"],
+        });
+
+        const sellerId = product.sellerId;
+
+        await SellerInvoice.create(
+          {
+            orderId,
+            sellerId,
+            invoiceNumber: `SELLER-INV-${Date.now()}-${order.id}-${sellerId}`,
+            totalAmount: item.unitPrice * item.quantity,
+            status: "ISSUED",
+            issuedAt: new Date(),
+          },
+          { transaction: t },
+        );
+      }
+
       await t.commit();
 
       return res.status(200).json({
         message: "Payment successful",
         paymentId: payment.id,
-        invoiceId: invoice.id,
+        invoiceId: customerInvoice.id,
       });
     } catch (error) {
       await t.rollback();

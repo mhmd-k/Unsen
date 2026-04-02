@@ -1,5 +1,11 @@
 import { sequelize } from "../config/db.js";
-import { Order, OrderItem, Product } from "../models/associations.js";
+import {
+  CustomerInvoice,
+  Order,
+  OrderItem,
+  Payment,
+  Product,
+} from "../models/associations.js";
 
 class OrderController {
   placeOrder = async (req, res) => {
@@ -210,10 +216,22 @@ class OrderController {
         }),
       );
 
+      const invoice = await CustomerInvoice.findOne({
+        where: { orderId },
+      });
+
+      const payment = await Payment.findOne({
+        where: { orderId },
+      });
+
       return res.status(200).json({
         message: "Order fetched successfully",
         order: {
           ...order.toJSON(),
+          invoice: {
+            ...invoice.toJSON(),
+            payment,
+          },
           products: products.map((p) => ({
             ...p.dataValues,
             images: JSON.parse(p.images),
@@ -238,11 +256,11 @@ class OrderController {
         include: [
           {
             model: OrderItem,
-            as: "orderItems", // ✅ must match alias above
+            as: "orderItems",
             include: [
               {
                 model: Product,
-                as: "product", // ✅ must match alias above
+                as: "product",
                 where: { sellerId },
               },
             ],

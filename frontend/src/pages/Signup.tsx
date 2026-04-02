@@ -45,7 +45,7 @@ const signupSchema = z
       .min(8, "Password must be at least 8 characters")
       .regex(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#@$!%*?&])[A-Za-z\d#@$!%*?&]{8,}$/,
-        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
       ),
     confirmPassword: z.string(),
     role: z.enum(["CUSTOMER", "SELLER"]),
@@ -98,7 +98,7 @@ const signupSchema = z
     {
       message: "This field is required for sellers",
       path: ["bankName"],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -110,7 +110,7 @@ const signupSchema = z
     {
       message: "Account holder name is required for sellers",
       path: ["accountHolderName"],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -122,7 +122,7 @@ const signupSchema = z
     {
       message: "Account number is required for sellers",
       path: ["accountNumber"],
-    }
+    },
   )
   .refine(
     (data) => {
@@ -134,7 +134,7 @@ const signupSchema = z
     {
       message: "Routing number is required for sellers",
       path: ["routingNumber"],
-    }
+    },
   )
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
@@ -147,13 +147,11 @@ type SignupFormData = z.infer<typeof signupSchema>;
 const Signup: React.FC = () => {
   const [status, setStatus] = useState<Status>("idle");
   const [resendEmailStatus, setResendEmailStatus] = useState<Status>("idle");
-  const [showResendEmailBtn, setShowResendEmailBtn] = useState<boolean>(false);
+  const [, setShowResendEmailBtn] = useState<boolean>(false);
   const [showVerifyEmail, setShowVerifyEmail] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
-
-  console.log("showResendEmailBtn:", showResendEmailBtn);
 
   const form = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
@@ -193,13 +191,13 @@ const Signup: React.FC = () => {
       setStatus("success");
       setShowVerifyEmail(true);
     } catch (error: unknown) {
-      console.log(error);
+      console.error(error);
 
       setStatus("error");
       toast.error(
         error instanceof Error
           ? error.message
-          : "An error occurred during signup"
+          : "An error occurred during signup",
       );
     }
   };
@@ -218,7 +216,7 @@ const Signup: React.FC = () => {
       toast.error(
         error instanceof AxiosError
           ? error.message
-          : "An error occurred during resending verification email"
+          : "An error occurred during resending verification email",
       );
     }
   };
@@ -226,7 +224,7 @@ const Signup: React.FC = () => {
   const role = form.watch("role");
 
   return (
-    <Card className="w-[500px] max-w-full mx-auto">
+    <Card className="w-125 max-w-full mx-auto">
       <CardHeader>
         <div className="flex border-b">
           <Button
@@ -532,7 +530,9 @@ const Signup: React.FC = () => {
         <p className="text-center text-sm text-muted-foreground">
           Already have an account?{" "}
           <Button asChild variant="link" className="p-0">
-            <Link to="/login" className="underline!">Login</Link>
+            <Link to="/login" className="underline!">
+              Login
+            </Link>
           </Button>
         </p>
       </CardFooter>

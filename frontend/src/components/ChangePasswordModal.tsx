@@ -25,7 +25,7 @@ const passwordSchema = z
       .min(8, "Password must be at least 8 characters")
       .regex(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#@$!%*?&])[A-Za-z\d#@$!%*?&]{8,}$/,
-        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
       ),
     confirmPassword: z.string().min(1, "Please confirm your password"),
   })
@@ -74,15 +74,15 @@ const ChangePasswordModal = ({ show, onHide }: ChangePasswordModalProps) => {
         data.currentPassword,
         data.newPassword,
         user?.accessToken,
-        user?.id
+        user?.id,
       );
       toast.success("Password changed successfully!");
       reset();
       onHide();
     } catch (error: unknown) {
-      console.log(error);
+      console.error(error);
       toast.error(
-        error instanceof Error ? error.message : "Failed to change password"
+        error instanceof Error ? error.message : "Failed to change password",
       );
     } finally {
       setLoading(false);

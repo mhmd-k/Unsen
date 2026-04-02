@@ -65,6 +65,11 @@ const ProductCard = (props: Product) => {
   const handleView = () => navigate(`/shop/${props.id}`);
 
   const handleWishlistClick = async (item: Product) => {
+    if (!user) {
+      toast.warning("You need to be logged in to manage your wishlist!");
+      return navigate("/login");
+    }
+
     if (productInWishlist) {
       removeFromWishlist(item.id);
       await remove(item.id);
@@ -132,15 +137,17 @@ const ProductCard = (props: Product) => {
           >
             Quick View <Eye />
           </Button>
-          {user?.role === "CUSTOMER" && props.stock > 0 && (
-            <Button
-              className="add-to-cart"
-              size="sm"
-              variant="ghost"
-              onClick={() => addItem({ ...props, quantity: 1 })}
-            >
-              Add To Cart <ShoppingBasket />
-            </Button>
+          {props.stock > 0 && (
+            <RoleComponentGuard requiredRoles={["CUSTOMER"]}>
+              <Button
+                className="add-to-cart"
+                size="sm"
+                variant="ghost"
+                onClick={() => addItem({ ...props, quantity: 1 })}
+              >
+                Add To Cart <ShoppingBasket />
+              </Button>
+            </RoleComponentGuard>
           )}
         </div>
       </div>
