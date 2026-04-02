@@ -228,10 +228,12 @@ class OrderController {
         message: "Order fetched successfully",
         order: {
           ...order.toJSON(),
-          invoice: {
-            ...invoice.toJSON(),
-            payment,
-          },
+          invoice: invoice
+            ? {
+                ...invoice.toJSON(),
+                payment: payment || undefined,
+              }
+            : undefined,
           products: products.map((p) => ({
             ...p.dataValues,
             images: JSON.parse(p.images),
