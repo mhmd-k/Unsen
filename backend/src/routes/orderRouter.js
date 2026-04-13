@@ -24,7 +24,12 @@ router.put(
   orderController.cancelOrder,
 );
 
-router.get("/:orderId", verifyJWTMiddleware, orderController.getOrderById);
+router.get(
+  "/:orderId",
+  verifyJWTMiddleware,
+  requireRoleMiddleware(ROLES.CUSTOMER),
+  orderController.getOrderById,
+);
 
 // get seller orders
 router.get(
