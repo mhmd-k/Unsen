@@ -2,10 +2,12 @@ import { useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import useRefreshToken from "./useRefreshToken";
 import { apiPrivate } from "@/api/axios";
+import { useNavigate } from "react-router-dom";
 
 const useAxiosPrivate = () => {
   const { user } = useAuth();
   const refresh = useRefreshToken();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const requestIntercept = apiPrivate.interceptors.request.use(
@@ -15,7 +17,7 @@ const useAxiosPrivate = () => {
         }
         return config;
       },
-      (error) => Promise.reject(error)
+      (error) => Promise.reject(error),
     );
 
     const responseIntercept = apiPrivate.interceptors.response.use(
@@ -36,15 +38,20 @@ const useAxiosPrivate = () => {
             return Promise.reject(refreshError);
           }
         }
+
+        if (error?.response?.status === 403 && prevRequest?.sent) {
+          navigate("/", { replace: true });
+        }
+
         return Promise.reject(error);
-      }
+      },
     );
 
     return () => {
       apiPrivate.interceptors.request.eject(requestIntercept);
       apiPrivate.interceptors.response.eject(responseIntercept);
     };
-  }, [user, refresh]);
+  }, [user, refresh, navigate]);
 
   return apiPrivate;
 };

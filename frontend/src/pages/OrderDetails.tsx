@@ -27,20 +27,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import LoadingSpinnerInfinity from "@/components/LoadingSpinnerInfinity";
 
 const OrderDetails = () => {
   const { id } = useParams();
 
   const { data, isLoading, error } = useGetOrderById(Number(id));
 
-  if (isLoading)
-    return <div className="text-center p-6">Loading order details...</div>;
+  if (isLoading) return <LoadingSpinnerInfinity />;
 
   if (error || !data)
     return (
-      <div className="text-center p-6 text-red-500">
-        Error loading order details {JSON.stringify(error)}
-      </div>
+      <p className="text-center p-6">
+        Error loading order details. Please try again later.
+      </p>
     );
 
   const {
