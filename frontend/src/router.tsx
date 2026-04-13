@@ -24,7 +24,8 @@ import SellerDashboardLayout from "./components/SellerDashboardLayout";
 import SellerDashboard from "@/pages/seller-dashboard/Home";
 import Products from "./pages/seller-dashboard/Products";
 import EditProduct from "./pages/seller-dashboard/EditProduct";
-import SellerOrders from "./pages/seller-dashboard/SellerOrders";
+import SellerInvoices from "./pages/seller-dashboard/SellerInvoices";
+import InvoiceDetails from "@/pages/seller-dashboard/InvoiceDetails";
 
 export const router = createBrowserRouter([
   {
@@ -80,10 +81,18 @@ export const router = createBrowserRouter([
                 ),
               },
               {
-                path: "orders",
+                path: "invoices",
                 element: (
                   <RolePageGuard requiredRoles={["SELLER"]}>
-                    <SellerOrders />
+                    <SellerInvoices />
+                  </RolePageGuard>
+                ),
+              },
+              {
+                path: "invoices/:id",
+                element: (
+                  <RolePageGuard requiredRoles={["SELLER"]}>
+                    <InvoiceDetails />
                   </RolePageGuard>
                 ),
               },

@@ -72,7 +72,7 @@ const Home = () => {
       </div>
 
       <div className="grid lg:grid-cols-5 gap-4 mt-4">
-        <div className="lg:col-span-3">
+        <div className="col-span-full lg:col-span-3">
           <RevenueOverTime data={data.revenueOverTime} />
         </div>
 

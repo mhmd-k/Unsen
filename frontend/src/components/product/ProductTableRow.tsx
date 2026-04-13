@@ -23,11 +23,6 @@ const ProductTableRow = ({
           <span className="whitespace-break-spaces">{product.name}</span>
         </div>
       </TableCell>
-      <TableCell>
-        {product.description.length > 30
-          ? `${product.description.slice(0, 30)}...`
-          : product.description}
-      </TableCell>
       <TableCell>{product.category}</TableCell>
       <TableCell>{formatCurrency(product.price)}</TableCell>
       <TableCell>

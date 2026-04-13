@@ -10,6 +10,16 @@ const SellerInvoice = sequelize.define(
       autoIncrement: true,
     },
 
+    sellerId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "Users",
+        key: "id",
+      },
+      onDelete: "CASCADE",
+    },
+
     // Relation to Order (1-to-many)
     orderId: {
       type: DataTypes.INTEGER,
@@ -29,7 +39,7 @@ const SellerInvoice = sequelize.define(
     },
 
     totalAmount: {
-      type: DataTypes.FLOAT,
+      type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
     },
 
@@ -53,6 +63,13 @@ const SellerInvoice = sequelize.define(
   },
   {
     timestamps: true,
+
+    indexes: [
+      {
+        unique: true,
+        fields: ["orderId", "sellerId"],
+      },
+    ],
   },
 );
 

@@ -31,13 +31,13 @@ const OrderItem = sequelize.define(
       defaultValue: 1,
     },
     unitPrice: {
-      type: DataTypes.FLOAT,
+      type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
     },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export default OrderItem;

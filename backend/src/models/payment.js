@@ -23,7 +23,7 @@ const Payment = sequelize.define(
 
     // Financial snapshot
     amount: {
-      type: DataTypes.FLOAT,
+      type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
     },
 

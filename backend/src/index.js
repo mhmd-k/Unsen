@@ -9,6 +9,7 @@ import orderRoutes from "./routes/orderRouter.js";
 import paymentRouter from "./routes/paymentRouter.js";
 import wishlistRouter from "./routes/wishlistRouter.js";
 import sellerAnalyticsRouter from "./routes/sellerAnalyticsRouter.js";
+import invoiceRouter from "./routes/invoiceRouter.js";
 import "dotenv/config";
 import { connectDB } from "./config/db.js";
 import dotenv from "dotenv";
@@ -42,6 +43,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/payment", paymentRouter);
 app.use("/api/wishlist", wishlistRouter);
 app.use("/api/seller", sellerAnalyticsRouter);
+app.use("/api/seller/invoices", invoiceRouter);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server running on ${process.env.SERVER_URL}`);

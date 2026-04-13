@@ -49,7 +49,6 @@ const Products = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>product</TableHead>
-                <TableHead>description</TableHead>
                 <TableHead>category</TableHead>
                 <TableHead>price</TableHead>
                 <TableHead className="text-right">discount</TableHead>

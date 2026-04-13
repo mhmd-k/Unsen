@@ -69,24 +69,34 @@ class PaymentController {
       );
 
       const orderItems = await OrderItem.findAll({
-        where: { orderId: orderId },
+        where: { orderId },
+        include: {
+          model: Product,
+          as: "product",
+          attributes: ["sellerId"],
+        },
         transaction: t,
       });
 
+      const sellerMap = {};
+
       for (const item of orderItems) {
-        const product = await Product.findByPk(item.productId, {
-          transaction: t,
-          attributes: ["sellerId"],
-        });
+        const sellerId = item.product.sellerId;
 
-        const sellerId = product.sellerId;
+        if (!sellerMap[sellerId]) {
+          sellerMap[sellerId] = 0;
+        }
 
+        sellerMap[sellerId] += Number(item.unitPrice) * item.quantity;
+      }
+
+      for (const [sellerId, totalAmount] of Object.entries(sellerMap)) {
         await SellerInvoice.create(
           {
             orderId,
             sellerId,
             invoiceNumber: `SELLER-INV-${Date.now()}-${order.id}-${sellerId}`,
-            totalAmount: item.unitPrice * item.quantity,
+            totalAmount,
             status: "ISSUED",
             issuedAt: new Date(),
           },
