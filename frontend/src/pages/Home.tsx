@@ -18,7 +18,7 @@ import CarousalImageThree from "../assets/images/landing/Electronic-3.png";
 import { Card } from "@/components/ui/card";
 import { RoleComponentGuard } from "@/components/guard";
 
-const carouselItems = [
+const carouselItemsLoggedIn = [
   {
     title: "Color your look",
     subtitle: "Featured Apple Accessories",
@@ -36,10 +36,32 @@ const carouselItems = [
   },
 ];
 
+const carouselItemsNotLoggedIn = [
+  {
+    title: "Buy or Sell — Your Choice",
+    subtitle:
+      "Sign up as a customer to shop products or as a seller to list and manage your own items.",
+    image: CarousalImageOne,
+  },
+  {
+    title: "Browse Multiple Categories",
+    subtitle:
+      "Explore products across categories like headphones, speakers, phone cases, and game controllers.",
+    image: CarousalImageTwo,
+  },
+  {
+    title: "Simple Checkout",
+    subtitle: "Place orders easily and get a clear invoice for every purchase.",
+    image: CarousalImageThree,
+  },
+];
+
 function Home() {
   const { user } = useAuth();
 
   const navigate = useNavigate();
+
+  const carosalItems = user ? carouselItemsLoggedIn : carouselItemsNotLoggedIn;
 
   return (
     <>
@@ -54,7 +76,7 @@ function Home() {
         ]}
       >
         <CarouselContent>
-          {carouselItems.map((item, index) => (
+          {carosalItems.map((item, index) => (
             <CarouselItem key={index}>
               <div
                 style={{
