@@ -157,7 +157,13 @@ const Orders = () => {
                             </>
                           )}
                           {order.status === "PAID" && (
-                            <DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                toast.warning(
+                                  "Refunds are not implemented yet!",
+                                )
+                              }
+                            >
                               <RiRefund2Fill className="text-blue-400" /> Ask
                               For a Refund
                             </DropdownMenuItem>

@@ -142,7 +142,7 @@ function Home() {
               </Link>{" "}
             </Card>{" "}
             <Card className="bg-white p-0">
-              <Link to="shop?category=controllers" className="group">
+              <Link to="shop?category=game-controllers" className="group">
                 <div>
                   <div className="overflow-hidden rounded-lg">
                     <img

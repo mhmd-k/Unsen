@@ -69,7 +69,7 @@ const OrderDetails = () => {
                 </Button>
               </DialogTrigger>
 
-              <DialogContent className="max-w-lg">
+              <DialogContent className="max-w-lg max-h-96 overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>{data.invoice.invoiceNumber}</DialogTitle>
                 </DialogHeader>
