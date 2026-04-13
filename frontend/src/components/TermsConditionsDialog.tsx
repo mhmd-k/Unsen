@@ -12,6 +12,7 @@ import {
 
 export function TermsConditionsDialog() {
   const [open, setOpen] = useState(false);
+  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
     const hasSeen = localStorage.getItem("seenTerms");
@@ -31,6 +32,7 @@ export function TermsConditionsDialog() {
       <DialogContent className="sm:max-w-md" showCloseButton={false}>
         <DialogHeader>
           <DialogTitle>Important Notice</DialogTitle>
+
           <DialogDescription className="space-y-3 text-sm text-muted-foreground">
             <p>
               This website is a <strong>demo project</strong> built for learning
@@ -57,9 +59,28 @@ export function TermsConditionsDialog() {
           </DialogDescription>
         </DialogHeader>
 
+        {/* ✅ Checkbox */}
+        <div className="flex items-start gap-2 mt-4">
+          <input
+            id="terms"
+            type="checkbox"
+            checked={checked}
+            onChange={(e) => setChecked(e.target.checked)}
+            className="mt-1"
+          />
+          <label htmlFor="terms" className="text-sm text-muted-foreground">
+            I understand that this is a demo project and no real transactions
+            will occur.
+          </label>
+        </div>
+
         <DialogFooter>
           <DialogClose asChild>
-            <Button onClick={handleClose} className="w-full">
+            <Button
+              onClick={handleClose}
+              className="w-full"
+              disabled={!checked}
+            >
               I understand
             </Button>
           </DialogClose>
