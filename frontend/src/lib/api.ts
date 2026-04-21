@@ -119,6 +119,25 @@ export async function changePassword(
   }
 }
 
+export async function requestPasswordReset(email: string): Promise<void> {
+  try {
+    await api.post("/auth/forgot-password", { email });
+  } catch (error) {
+    handleAxiosError(error);
+  }
+}
+
+export async function resetPassword(
+  newPassword: string,
+  token: string,
+): Promise<void> {
+  try {
+    await api.post("/auth/reset-password", { newPassword, token });
+  } catch (error) {
+    handleAxiosError(error);
+  }
+}
+
 export async function getProducts(category?: string): Promise<Product[]> {
   try {
     const response = await api.get(

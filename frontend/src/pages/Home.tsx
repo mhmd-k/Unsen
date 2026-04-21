@@ -85,10 +85,10 @@ function Home() {
                 className="bg-cover bg-center h-[75dvh]"
               >
                 <div className="flex flex-col justify-center text-center h-full ps-4">
-                  <h2 className="mb-2 text-left text-5xl font-light">
+                  <h2 className="mb-2 text-left text-3xl md:text-5xl md:font-light">
                     {item.title}
                   </h2>
-                  <p className="text-2xl text-muted-foreground mb-6 text-left">
+                  <p className="text-md md:text-2xl text-muted-foreground mb-6 text-left">
                     {item.subtitle}
                   </p>
                   <div className="flex flex-col gap-4">

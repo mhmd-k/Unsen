@@ -36,3 +36,29 @@ export const sendVerificationEmail = async (email, token) => {
     );
   }
 };
+
+export const sendResetPasswordEmail = async (email, token) => {
+  const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: "Unsen - Reset Your Password",
+    html: `
+      <h1>Unsen - Password Reset</h1>
+      <p>Please click the link below to reset your password:</p>
+      <a href="${resetLink}">${resetLink}</a>
+      <p>This link will expire in 24 hours.</p>
+    `,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log("Reset password email sent successfully");
+  } catch (error) {
+    console.error(error);
+    throw new Error(
+      "Error sending reset password email! please check that you provided a valid email address.",
+    );
+  }
+};

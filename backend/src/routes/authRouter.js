@@ -10,7 +10,11 @@ import {
   verifyEmailValidation,
   resendVerificationValidation,
 } from "../validations/registrationValidations.js";
-import { changePasswordValidation } from "../validations/passwordValidations.js";
+import {
+  changePasswordValidation,
+  forgotPasswordValidation,
+  resetPasswordValidation,
+} from "../validations/passwordValidations.js";
 
 const router = express.Router();
 
@@ -19,19 +23,19 @@ router.post(
   "/signup",
   signupValidation,
   validateRequest,
-  registrationController.signup
+  registrationController.signup,
 );
 router.post(
   "/verify-email",
   verifyEmailValidation,
   validateRequest,
-  registrationController.verifyEmail
+  registrationController.verifyEmail,
 );
 router.post(
   "/resend-verification",
   resendVerificationValidation,
   validateRequest,
-  registrationController.resendVerificationEmail
+  registrationController.resendVerificationEmail,
 );
 
 // Authentication routes
@@ -41,7 +45,7 @@ router.post(
   "/logout",
   verifyJWTMiddleware,
   validateRequest,
-  authController.logout
+  authController.logout,
 );
 
 // Password routes
@@ -50,7 +54,21 @@ router.post(
   verifyJWTMiddleware,
   changePasswordValidation,
   validateRequest,
-  passwordController.changePassword
+  passwordController.changePassword,
+);
+
+router.post(
+  "/forgot-password",
+  forgotPasswordValidation,
+  validateRequest,
+  passwordController.forgotPassword,
+);
+
+router.post(
+  "/reset-password",
+  resetPasswordValidation,
+  validateRequest,
+  passwordController.resetPassword,
 );
 
 export default router;

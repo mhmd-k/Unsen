@@ -67,7 +67,7 @@ const Login: React.FC = () => {
           : "An error occurred during login",
         {
           id: toastId,
-        }
+        },
       );
       setStatus("error");
     }
@@ -144,7 +144,9 @@ const Login: React.FC = () => {
             />
 
             <Button asChild variant="link" className="p-0">
-              <Link to="/forgot-password" className='underline!'>Forgot your password?</Link>
+              <Link to="/forgot-password" className="underline!">
+                Forgot password?
+              </Link>
             </Button>
 
             <Button
@@ -165,7 +167,9 @@ const Login: React.FC = () => {
         <p className="text-center text-sm text-muted-foreground">
           Don't have an account?{" "}
           <Button asChild variant="link" className="p-0">
-            <Link to="/signup" className='underline!'>Sign Up</Link>
+            <Link to="/signup" className="underline!">
+              Sign Up
+            </Link>
           </Button>
         </p>
       </CardFooter>

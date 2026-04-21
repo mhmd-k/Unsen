@@ -26,6 +26,7 @@ import Products from "./pages/seller-dashboard/Products";
 import EditProduct from "./pages/seller-dashboard/EditProduct";
 import SellerInvoices from "./pages/seller-dashboard/SellerInvoices";
 import InvoiceDetails from "@/pages/seller-dashboard/InvoiceDetails";
+import ResetPassword from "./pages/ResetPassword";
 
 export const router = createBrowserRouter([
   {
@@ -57,6 +58,7 @@ export const router = createBrowserRouter([
           { path: "login", element: <Login /> },
           { path: "forgot-password", element: <ForgotPassword /> },
           { path: "verify-email", element: <VerifyEmail /> },
+          { path: "reset-password", element: <ResetPassword /> },
         ],
       },
 
