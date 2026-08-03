@@ -21,7 +21,7 @@ import type { Dispatch, SetStateAction } from "react";
 import { BsTextLeft } from "react-icons/bs";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
-import { LogOut, UserCog } from "lucide-react";
+import { LogOut, UserCog, LogIn } from "lucide-react";
 import { categories } from "@/lib/constants";
 
 const navLinks = [
@@ -96,6 +96,16 @@ const MobileSidebar = ({ setShow, show, handleLogout }: MobileSidebarProps) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent>{categoriesArr}</DropdownMenuContent>
           </DropdownMenu>
+
+          {!isAuthenticated && (
+               <Button
+                className="flex-1"
+                onClick={() => navigate("/login")}
+              >
+                Log in <LogIn />
+              </Button>
+          )}
+          
           {isAuthenticated && (
             <div className="flex gap-4 mt-auto mb-4 ">
               <Tooltip>
