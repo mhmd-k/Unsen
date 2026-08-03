@@ -99,7 +99,7 @@ const MobileSidebar = ({ setShow, show, handleLogout }: MobileSidebarProps) => {
 
           {!isAuthenticated && (
                <Button
-                className="flex-1"
+                className="mt-auto"
                 onClick={() => navigate("/login")}
               >
                 Log in <LogIn />
